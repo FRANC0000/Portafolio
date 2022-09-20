@@ -1,0 +1,40 @@
+table {
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+  }
+  
+  td, th {
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 8px;
+  }
+  
+  tr:nth-child(even) {
+    background-color: #dddddd;
+  }
+
+  .crear-usuario{
+    form label{
+      display: flex;
+      width: 120px;
+    }
+    form input {
+      display: flex;
+      margin-bottom: 5px;
+    }
+  }
+
+  .botones{
+    button{
+      margin: 10px;
+    }
+  }
+
+  ::ng-deep nz-form-label{
+    width: 130px;
+  }  
+
+  ::ng-deep nz-form-control{
+    width: 230px;
+  }   
