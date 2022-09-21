@@ -1,1 +1,136 @@
-<p>administrador works!</p>
+<div class="all">
+  <div class="botones">
+    <button nz-button (click)="crearUsuario()" > Crear un usuario </button>
+    <button nz-button (click)="obtenerUsuarios()"> Mostrar listado de usuarios </button>
+  </div>
+</div>
+
+<nz-modal nzTitle="Crear usuario"
+[nzWidth]="800"
+[nzContent]="crearUsuarioContent"
+[(nzVisible)]="isVisibleCrearUsuario"  
+(nzOnOk)="guardarCrearUsuario()"
+(nzOnCancel)="cerrarCrearUsuario()">
+  <ng-container #crearUsuarioContent>
+    <form nz-form [formGroup]="validateFormCrearUsuario" id="validateFormCrearUsuario"
+    [nzLayout]="'inline'" (ngSubmit)="enviarFormularioCrearUsuario()">
+      <div style="display: flex; justify-content: center;">
+        <nz-form-item>
+          <nz-form-label nzRequired nzFor="id_usuario">
+            Id usuario
+          </nz-form-label>
+          <nz-form-control nzErrorTip="Por favor ingrese su nombre de usuario">
+            <input nz-input type="text" name="id_usuario" id="id_usuario" placeholder="id_usuario" formControlName="id_usuario">
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <br>
+      <div nz-row clas="form-usuario">
+        <div nz-col nzSpan="12">
+          <nz-form-item>
+            <nz-form-label>
+              Rut
+            </nz-form-label>
+            <nz-form-control>
+              <input nz-input type="text" name="rut" id="rut" placeholder="11.111.111-1" formControlName="rut">
+            </nz-form-control>
+          </nz-form-item>
+          <nz-form-item>
+            <nz-form-label>
+              Nombre
+            </nz-form-label>
+            <nz-form-control>
+              <input nz-input type="text" name="nombre" id="nombre" placeholder="nombre" formControlName="nombre">
+            </nz-form-control>
+          </nz-form-item>
+          <nz-form-item>
+            <nz-form-label>
+              Apellido paterno
+            </nz-form-label>
+            <nz-form-control>
+              <input nz-input type="text" name="apellido_paterno" id="apellido_paterno" placeholder="apellido paterno" formControlName="apellido_paterno">
+            </nz-form-control>
+          </nz-form-item>
+          <nz-form-item>
+            <nz-form-label>
+              Apellido materno
+            </nz-form-label>
+            <nz-form-control>
+              <input nz-input type="text" name="apellido_materno" id="apellido_materno" placeholder="apellido materno" formControlName="apellido_materno">
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+        <div nz-col nzSpan="12">
+          <nz-form-item>
+            <nz-form-label>
+              Rol
+            </nz-form-label>
+            <nz-form-control>
+              <nz-select
+                [ngModel]="rolSelected"
+                nzPlaceHolder="Elegir rol"
+                name="rol"
+                formControlName="rol"
+              >
+                <nz-option nzValue="Administrador" nzLabel="Administrador"></nz-option>
+                <nz-option nzValue="Cocina" nzLabel="Cocina"></nz-option>
+                <nz-option nzValue="Finanzas" nzLabel="Finanzas"></nz-option>
+                <nz-option nzValue="Bodega" nzLabel="Bodega"></nz-option>
+                <nz-option nzValue="Cliente" nzLabel="Cliente"></nz-option>
+              </nz-select>
+            </nz-form-control>
+          </nz-form-item>
+          <nz-form-item>
+            <nz-form-label>
+              Correo
+            </nz-form-label>
+            <nz-form-control>
+              <input nz-input type="email" name="correo" id="correo" placeholder="mail@mail.com" formControlName="correo">
+            </nz-form-control>
+          </nz-form-item>
+          <nz-form-item>
+            <nz-form-label>
+              Constraseña
+            </nz-form-label>
+            <nz-form-control>
+              <input nz-input type="password" name="contraseña" id="contraseña" formControlName="contrasena">
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+      </div>
+    </form>
+  </ng-container>
+</nz-modal>
+
+<nz-modal nzTitle="Listado de usuarios"
+[nzContent]="listadoUsuariosContent"
+[nzWidth]="800"
+[(nzVisible)]="isVisibleListadoUsuarios"
+(nzOnOk)="okListadoUsuarios()"
+(nzOnCancel)="okListadoUsuarios()"
+[nzFooter]="null">
+
+  <ng-container #listadoUsuariosContent>
+    <div *ngIf="existenUsuarios">
+      <table>
+        <tr>
+          <th>id_usuario</th>
+          <th>rut</th>
+          <th>nombre</th>
+          <th>rol</th>
+          <th>correo</th>
+          <th>contraseña</th>
+        </tr>      
+        <tr *ngFor="let usuario of listUsuarios">
+          <td>{{usuario.id_usuario}}</td>
+          <td>{{usuario.rut}}</td>
+          <td>{{usuario.nombre | titlecase}} {{usuario.apellidoPaterno | titlecase}} {{usuario.apellidoMaterno | titlecase}}</td>
+          <td>{{usuario.rol}}</td>
+          <td>{{usuario.correo}}</td>
+          <td>{{usuario.contrasena}}</td>
+        </tr>
+      </table>
+    </div>
+  </ng-container>
+
+</nz-modal>
