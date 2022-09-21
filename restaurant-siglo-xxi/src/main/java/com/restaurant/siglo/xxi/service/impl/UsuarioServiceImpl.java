@@ -81,6 +81,17 @@ public class UsuarioServiceImpl implements UsuarioService{
 		
 		return resp;
 	}
+
+
+	@Override
+	public String iniciarSesion(Map<String, Object> credenciales) {
+		
+		String id_usuario = credenciales.get("id_usuario").toString();
+		String contrasena = credenciales.get("contrasena").toString();
+		String resp = usuarioRepository.iniciarSesion(id_usuario, contrasena);
+		
+		return resp;
+	}
 	
 
 }

@@ -16,7 +16,7 @@ BEGIN
   INSERT into usuario (id_usuario, apellido_materno, apellido_paterno, contrasena, correo, nombre, rol, rut)
   values (v_idUsuario, v_apellidoM, v_apellidoP, v_contrasena, v_correo, v_nombre, v_rol, v_rut );
 
-  RETURN 'Usuario v_idUsuario creado satisfactoriamente';
+  RETURN 'Usuario ¨'||v_idUsuario ||'¨ creado satisfactoriamente';
 
 END;
 $BODY$

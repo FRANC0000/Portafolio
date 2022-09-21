@@ -10,5 +10,6 @@ public interface UsuarioService {
 	
 	public String obtenerUsuarios() throws JSONException;
 	public String crearUsuario(Map<String, Object> usuario);
+	public String iniciarSesion(Map<String, Object> credenciales);
 	
 }

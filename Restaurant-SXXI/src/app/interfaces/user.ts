@@ -8,3 +8,8 @@ export interface user{
     correo: string,
     contrasena: string
 }
+
+export interface iniciarSesion{
+    id_usuario: string,
+    contrasena: string
+}

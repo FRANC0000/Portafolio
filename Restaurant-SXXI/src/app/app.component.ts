@@ -1,9 +1,10 @@
 import { Component } from '@angular/core';
 import { AppService } from './app.service';
 import { OnInit } from '@angular/core';
-import { user } from './interfaces/user';
+import { iniciarSesion, user } from './interfaces/user';
 import { FormBuilder, Validators, FormGroup, FormControl} from '@angular/forms';
 import { NzNotificationService } from 'ng-zorro-antd';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-root',
@@ -20,14 +21,23 @@ export class AppComponent implements OnInit {
 
   //Formulario Crear Usuario
   validateFormCrearUsuario!: FormGroup;
+
+  //LogIn
+  validateFormIniciarSesion!: FormGroup;
   
   constructor(
     private appService : AppService,
     private fb: FormBuilder,
-    private notification: NzNotificationService
+    private notification: NzNotificationService,
+    private router: Router
   ){}
 
   ngOnInit(){
+    this.validateFormIniciarSesion = this.fb.group({
+      id_usuario : [null, [Validators.required]],
+      contrasena: [null, [Validators.required]]
+    })
+
     this.validateFormCrearUsuario = new FormGroup({
       id_usuario : new FormControl,
       rut: new FormControl,
@@ -129,7 +139,8 @@ export class AppComponent implements OnInit {
   //FORMULARIO
   enviarFormularioCrearUsuario(){
     if (this.validateFormCrearUsuario.valid){
-      console.log('Formulario válido', this.validateFormCrearUsuario.value);
+      console.log('Formulario válido', this.validateFormCrearUsuario.value);      
+
     } else {
       console.log('Formulario no válido?', this.validateFormCrearUsuario.value);
 
@@ -138,6 +149,65 @@ export class AppComponent implements OnInit {
       )
 
       Object.values(this.validateFormCrearUsuario.controls).forEach(control => {
+        // console.log('control', control);
+        if (control.invalid) {
+          console.log('control inválido');          
+          control.markAsDirty();
+          control.updateValueAndValidity({onlySelf : true});
+        }
+      });
+    }
+  }
+
+  //LogIn
+  enviarInicioSesion(){
+    if (this.validateFormIniciarSesion.valid){
+      console.log('Formulario válido', this.validateFormIniciarSesion.value);
+
+      let id_usuario = this.validateFormIniciarSesion.value.id_usuario
+      let contrasena  = this.validateFormIniciarSesion.value.contrasena
+
+      const credenciales: iniciarSesion={
+        id_usuario: id_usuario,
+        contrasena: contrasena
+      }
+      
+      console.log('credenciales', credenciales);
+
+      this.appService.iniciarSesion(credenciales).subscribe(resp =>{
+        console.log('resp', resp);
+        if (resp == 'Accediendo al sistema correctamente'){
+          this.notification.create(
+            'success', 'Inicio de sesión exitoso', resp
+          );
+          this.router.navigate(['/modulo-admin'])
+        }
+        else if (resp == 'Credenciales incorrectas'){
+          this.notification.create(
+            'error', 'Inicio de sesión fallido', resp
+          );
+        }
+        else{
+          this.notification.create(
+            'warning', 'Problemas para autenticar', 'No fue posible autenticar sus credenciales, lo sentimos :('
+          );
+        }        
+      },
+      error => {
+        // console.log('error', error); 
+        this.notification.create(
+          'error', 'Error al iniciar sesión', 'Contactar con un administrador'
+        )
+      });
+
+    } else {
+      console.log('Formulario no válido?', this.validateFormIniciarSesion.value);
+
+      this.notification.create(
+        'error', 'Error al iniciar sesión', 'Debes ingresar con tus credenciales'
+      )
+
+      Object.values(this.validateFormIniciarSesion.controls).forEach(control => {
         // console.log('control', control);
         if (control.invalid) {
           console.log('control inválido');          

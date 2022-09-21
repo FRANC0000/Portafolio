@@ -18,12 +18,15 @@ import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzSelectModule } from 'ng-zorro-antd/select';
 import { NzNotificationModule } from 'ng-zorro-antd/notification';
+import { AdministradorComponent } from './modulos/administrador/administrador.component';
+import { AdministradorModule } from './modulos/administrador/administrador.module';
 
 registerLocaleData(es);
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    AdministradorComponent
   ],
   imports: [
     BrowserModule,

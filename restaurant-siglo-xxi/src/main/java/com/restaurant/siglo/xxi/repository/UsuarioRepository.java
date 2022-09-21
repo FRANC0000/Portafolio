@@ -20,4 +20,7 @@ public interface UsuarioRepository extends JpaRepository<Usuario, String>{
 			@Param("correo") String correo,
 			@Param("contrasena") String contrasena);
 	
+	@Query(value = "select iniciar_sesion(:id_usuario,:contrasena) ", nativeQuery = true)
+	String iniciarSesion(@Param("id_usuario") String id_usuario,@Param("contrasena") String contrasena);
+	
 }

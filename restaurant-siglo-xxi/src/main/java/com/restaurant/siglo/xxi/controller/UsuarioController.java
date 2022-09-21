@@ -32,4 +32,12 @@ public class UsuarioController {
 		return resp;	
 	}
 	
+	@RequestMapping(value="/iniciarSesion")
+	public String iniciarSesion(@RequestBody Map<String, Object> credenciales) {
+		
+		String resp = usuarioService.iniciarSesion(credenciales);
+		
+		return resp;	
+	}
+	
 }
