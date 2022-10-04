@@ -40,4 +40,12 @@ public class UsuarioController {
 		return resp;	
 	}
 	
+	@RequestMapping(value="/obtenerUnUsuario")
+	public String obtenerUnUsuario(@RequestBody Map<String, Object> usuario) throws JSONException {
+		
+		String resp = usuarioService.obtenerUnUsuario(usuario);
+		
+		return resp;	
+	}
+	
 }

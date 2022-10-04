@@ -20,13 +20,23 @@ import { NzSelectModule } from 'ng-zorro-antd/select';
 import { NzNotificationModule } from 'ng-zorro-antd/notification';
 import { AdministradorModule } from './modulos/administrador/administrador.module';
 import { LoginComponent } from './modulos/login/login.component';
+import { MesasComponent } from './modulos/mesas/mesas.component';
+import { BodegaComponent } from './modulos/bodega/bodega.component';
+import { FinanzasComponent } from './modulos/finanzas/finanzas.component';
+import { CocinaComponent } from './modulos/cocina/cocina.component';
+import { ClienteComponent } from './modulos/cliente/cliente.component';
 
 registerLocaleData(es);
 
 @NgModule({
   declarations: [
     AppComponent,
-    LoginComponent
+    LoginComponent,
+    MesasComponent,
+    BodegaComponent,
+    FinanzasComponent,
+    CocinaComponent,
+    ClienteComponent
   ],
   imports: [
     BrowserModule,

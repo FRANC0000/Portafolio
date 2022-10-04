@@ -92,6 +92,32 @@ public class UsuarioServiceImpl implements UsuarioService{
 		
 		return resp;
 	}
+
+
+	@Override
+	public String obtenerUnUsuario(Map<String, Object> usuario) throws JSONException {
+		
+		String id_usuario = usuario.get("id_usuario").toString();
+		
+		Usuario user = usuarioRepository.getById(id_usuario);
+		JSONObject resp = new JSONObject();
+		
+		try {			
+			resp.put("id_usuario", user.getId_usuario());
+			resp.put("nombre", user.getNombre());
+			resp.put("apellido_paterno", user.getApellidoPaterno());
+			resp.put("apellido_materno", user.getApellidoMaterno());
+			resp.put("rol", user.getRol());
+			resp.put("rut", user.getRut());
+			resp.put("correo", user.getCorreo());
+			
+		} catch (Exception e) {
+			return "Usuario no existe. \n"
+					+ "Mensaje: "+ e.getMessage();
+		}
+		
+		return resp.toString();
+	}
 	
 
 }

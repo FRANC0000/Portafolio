@@ -18,4 +18,10 @@ export class LoginService {
       'http://localhost:8085/restaurantSXXI/rest-rsxii/usuario/iniciarSesion', credenciales, { responseType : 'text'}
     );
   }
+
+  public obtenerUnUsuario(usuario :any) {
+    return this.http.post(
+      'http://localhost:8085/restaurantSXXI/rest-rsxii/usuario/obtenerUnUsuario', usuario
+    );
+  }
 }

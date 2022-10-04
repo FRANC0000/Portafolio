@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { NzNotificationService } from 'ng-zorro-antd';
+import { NzNotificationService, NzTreeHigherOrderServiceToken } from 'ng-zorro-antd';
 import { iniciarSesion } from 'src/app/interfaces/user';
 import { LoginService } from './login.service';
 
@@ -49,7 +49,28 @@ export class LoginComponent implements OnInit {
             this.notification.create(
               'success', 'Inicio de sesión exitoso', resp
             );
-            this.router.navigate(['/administrador'])
+            const usuario = {
+              "id_usuario" : credenciales.id_usuario.toString()
+            }
+            this.loginService.obtenerUnUsuario(usuario).subscribe(resp=>{
+              // console.log('resp', resp);
+              
+              if (resp['rol'] == 'Administrador'){
+                this.router.navigate(['/administrador'])
+              }
+              else if (resp['rol'] == 'Bodega'){
+                this.router.navigate(['/bodedga'])
+              }
+              else if (resp['rol'] == 'Cliente'){
+                this.router.navigate(['/cliente'])
+              }
+              else if (resp['rol'] == 'Finanzas'){
+                this.router.navigate(['/finanzas'])
+              }
+              else if (resp['rol'] == 'Cocina'){
+                this.router.navigate(['/cocina'])
+              }
+            })
           }
           else if (resp == 'Credenciales incorrectas'){
             this.notification.create(

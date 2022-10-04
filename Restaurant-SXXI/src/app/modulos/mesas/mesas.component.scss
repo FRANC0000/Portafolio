@@ -1,0 +1,61 @@
+.botones{
+    button{
+      margin: 10px;
+    }
+}
+
+.container{
+    padding: 20px;
+    width: 100%;
+    height: 100%;
+    justify-items: center;
+}
+
+.title-card{
+    font-weight: bold;
+}
+
+.card{
+    margin: 20px;
+    border: 2px solid gainsboro;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border-radius: 10px;
+    width: 255px;
+
+}
+
+.grid{
+    gap: 20px;
+    grid-template-columns: repeat(3, 1fr);
+    display: grid;
+}
+
+.card-no-disponible{
+    margin: 20px;
+    border: 2px solid gainsboro;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border-radius: 10px;
+    background-color: #ff000052;
+    width: 255px;
+}
+
+.content-card{
+    display: grid;
+    grid-template-rows: 1fr;
+    background: #dcdcdc4a;
+    padding: 15px 10px;
+    border-radius: 5px;
+}
+
+.mesas{
+    display: grid;
+    grid-template-rows: 1fr; 
+}

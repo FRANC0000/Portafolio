@@ -97,7 +97,7 @@ export class AdministradorComponent implements OnInit {
   }
 
   // MODAL LISTADO DE USUARIOS
-
+  
   obtenerUsuarios(){
     this.isVisibleListadoUsuarios = true;
     this.listUsuarios =[]
@@ -149,5 +149,9 @@ export class AdministradorComponent implements OnInit {
         }
       });
     }
+  }
+
+  cerrarSesion(){
+    this.router.navigate(['/login'])
   }
 }
