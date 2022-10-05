@@ -59,3 +59,11 @@
     display: grid;
     grid-template-rows: 1fr; 
 }
+
+.informacion-tipo-mesa{
+    margin: 13px 0px 0px 10px;
+}
+
+.informacion-tipo-mesa :hover{
+    background-color: gray;
+}

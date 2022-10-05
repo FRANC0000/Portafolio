@@ -16,7 +16,7 @@
                     Tipo de mesa: {{mesa.nombre_tipo_mesa}}
                 </div>
             </div>
-            <div class="card-no-disponible" *ngIf="mesa.nombre_estado_mesa == 'No disponible'">
+            <div class="card-no-disponible" *ngIf="mesa.nombre_estado_mesa == 'Ocupado'">
                 <div class="title-card">
                     Mesa nro. {{mesa.id_mesa}}
                 </div>
@@ -36,14 +36,15 @@
     (nzOnOk)="guardarCrearMesa()" (nzOnCancel)="cerrarCrearMesa()">
     <ng-container #crearMesaContent>
         <form nz-form [formGroup]="validateFormCrearMesa" id="validateFormCrearMesa" [nzLayout]="'inline'"
-            (ngSubmit)="enviarFormularioCrearMesa()">
+            (ngSubmit)="guardarCrearMesa()">
             <div style="display: flex; justify-content: center;">
                 <nz-form-item>
                     <nz-form-label nzRequired nzFor="id_mesa">
                         Id mesa
                     </nz-form-label>
+                    <br>
                     <nz-form-control nzErrorTip="Por favor ingrese número de mesa">
-                        <input nz-input type="number" name="id_mesa" id="id_mesa" placeholder="id_mesa"
+                        <input nz-input type="number" name="id_mesa" id="id_mesa" placeholder="1"
                             formControlName="id_mesa">
                     </nz-form-control>
                 </nz-form-item>
@@ -51,25 +52,27 @@
                     <nz-form-label>
                         Estado de la mesa
                     </nz-form-label>
-                    <nz-form-control>
-                        <nz-select nzShowSearch nzAllowClear nzPlaceHolder="Seleccionar"
-                            [(ngModel)]="selectIdEstadoMesa" formControlName="id_estado_mesa">
-                            <nz-option nzLabel="Jack" nzValue="jack"></nz-option>
-                            <nz-option nzLabel="Lucy" nzValue="lucy"></nz-option>
-                            <nz-option nzLabel="Tom" nzValue="tom"></nz-option>
+                    <br>
+                    <nz-form-control style="width: 100%;">
+                        <nz-select nzAllowClear nzPlaceHolder="Disponible"
+                            [(ngModel)]="estadoMesaSeleccionado" formControlName="id_estado_mesa">
+                            <ng-container *ngFor="let eM of listadoEstadosMesas">
+                                <nz-option [nzLabel]="eM.nombre_estado_mesa" [nzValue]="eM.id_estado_mesa"></nz-option>
+                            </ng-container>
                         </nz-select>
                     </nz-form-control>
                 </nz-form-item>
-                <nz-form-item>
+                <nz-form-item style="width: 120px;">
                     <nz-form-label>
                         Tipo de mesa
                     </nz-form-label>
-                    <nz-form-control>
-                        <nz-select nzShowSearch nzAllowClear nzPlaceHolder="Seleccionar"
-                            [(ngModel)]="selectIdTipoMesa" formControlName="id_tipo_mesa">
-                            <nz-option nzLabel="Jack" nzValue="jack"></nz-option>
-                            <nz-option nzLabel="Lucy" nzValue="lucy"></nz-option>
-                            <nz-option nzLabel="Tom" nzValue="tom"></nz-option>
+                    <br>
+                    <nz-form-control style="width: 100%;">
+                        <nz-select nzAllowClear nzPlaceHolder="Familiar"
+                            [(ngModel)]="tipoMesaSeleccionado" formControlName="id_tipo_mesa">
+                            <ng-container *ngFor="let tM of listadoTiposMesas">
+                                <nz-option nzLabel="{{tM.nombre_tipo_mesa}} ({{tM.cantidad_asientos}})" [nzValue]="tM.id_tipo_mesa"></nz-option>
+                            </ng-container>
                         </nz-select>
                     </nz-form-control>
                 </nz-form-item>

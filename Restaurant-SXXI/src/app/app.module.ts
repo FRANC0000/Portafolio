@@ -25,6 +25,8 @@ import { BodegaComponent } from './modulos/bodega/bodega.component';
 import { FinanzasComponent } from './modulos/finanzas/finanzas.component';
 import { CocinaComponent } from './modulos/cocina/cocina.component';
 import { ClienteComponent } from './modulos/cliente/cliente.component';
+import { NzIconModule } from 'ng-zorro-antd/icon';
+import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
 
 registerLocaleData(es);
 
@@ -52,7 +54,9 @@ registerLocaleData(es);
     NzFormModule,
     NzInputModule,
     NzSelectModule,
-    NzNotificationModule
+    NzNotificationModule,
+    NzIconModule,
+    NzToolTipModule
   ],
   providers: [{ provide: NZ_I18N, useValue: es_ES }],
   bootstrap: [AppComponent]
