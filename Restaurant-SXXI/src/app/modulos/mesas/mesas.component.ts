@@ -1,16 +1,17 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MesasService } from './mesas.service';
-import { EstadoMesa, Mesa, TipoMesa } from 'src/app/interfaces/mesa';
-import { isInteger, NzNotificationService } from 'ng-zorro-antd';
-import { stringify } from 'querystring';
+import { Cliente, EstadoMesa, Mesa, Reserva, TipoMesa } from 'src/app/interfaces/mesa';
+import { NzNotificationService } from 'ng-zorro-antd';
+import { ThrowStmt } from '@angular/compiler';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-mesas',
   templateUrl: './mesas.component.html',
   styleUrls: ['./mesas.component.scss']
 })
-export class MesasComponent implements OnInit {
+export class MesasComponent implements OnInit, OnDestroy{
 
   constructor(private mesasService : MesasService, private fb: FormBuilder, private notification: NzNotificationService) { }
 
@@ -18,11 +19,29 @@ export class MesasComponent implements OnInit {
   listadoEstadosMesas: EstadoMesa [] = [];
   listadoTiposMesas: TipoMesa [] = [];
   isVisibleCrearMesa = false;
+  isVisibleIngresarReserva = false;
   validateFormCrearMesa: FormGroup;
+  validateFormCrearCliente: FormGroup;
+  validateFormCrearReserva: FormGroup;
   selectIdEstadoMesa;
   selectIdTipoMesa;
   estadoMesaSeleccionado = '';
   tipoMesaSeleccionado = '';
+  mesaSeleccionada : Mesa;
+  rutSeleccionado = '';
+  dvSeleccionado = '';
+  now : Date;
+  sub :Subscription;
+
+  ngOnDestroy(){
+    this.sub.unsubscribe();
+  }
+
+  subsActualizarMesas(){
+    this.sub = this.mesasService.refresh$.subscribe(() => {
+      this.obtenerMesas();
+    })
+  }
 
   ngOnInit() {
     this.obtenerMesas();
@@ -32,6 +51,24 @@ export class MesasComponent implements OnInit {
       id_mesa : new FormControl,
       id_estado_mesa: new FormControl,
       id_tipo_mesa: new FormControl
+    })
+
+    this.validateFormCrearCliente = new FormGroup({
+      rut_cliente : new FormControl,
+      dv_cliente : new FormControl,
+      nombre_cliente: new FormControl
+    })
+
+    this.validateFormCrearReserva = this.fb.group({
+      id_reserva: new FormControl,
+      id_mesa: new FormControl,
+      rut_cliente: new FormControl,
+      dv_cliente: new FormControl,
+      cant_consumidores: new FormControl,
+      fecha_reserva: new FormControl,
+      hora_reserva: new FormControl,
+      comentario: new FormControl,
+      id_estado_reserva: new FormControl
     })
   }
 
@@ -115,6 +152,8 @@ export class MesasComponent implements OnInit {
           this.notification.create(
             'success', 'Mesa creada', resp
           )
+          this.obtenerMesas();
+          this.isVisibleCrearMesa = false;
         }
       });
     }
@@ -138,4 +177,107 @@ export class MesasComponent implements OnInit {
     })
   }
 
+  obtenerMesaSeleccionada(mesa : Mesa){
+    this.mesaSeleccionada = mesa;
+    return this.mesaSeleccionada;
+  }
+
+  clickMesa(mesa :Mesa){
+    this.obtenerMesaSeleccionada(mesa);
+
+    this.now = new Date();
+
+    this.validateFormCrearCliente = this.fb.group({
+      rut_cliente : [null, [Validators.required]],
+      dv_cliente : [null, [Validators.required]],
+      nombre_cliente : [null, [Validators.required]]
+    })
+
+    this.validateFormCrearReserva = this.fb.group({
+      id_reserva: [1, [Validators.required]],
+      id_mesa: [this.mesaSeleccionada.id_mesa, [Validators.required]],
+      rut_cliente: [null, [Validators.required]],
+      dv_cliente: [null, [Validators.required]],
+      cant_consumidores: [null, [Validators.required]],
+      fecha_reserva: [this.now.toLocaleDateString(), [Validators.required]],
+      hora_reserva: [this.now.toLocaleTimeString(), [Validators.required]],
+      comentario: [null],
+      id_estado_reserva: ['En cola', [Validators.required]],
+    })
+
+    this.isVisibleIngresarReserva = true;
+  }
+
+  onChangeRut(){
+    this.rutSeleccionado = this.validateFormCrearCliente.value.rut_cliente;
+    this.dvSeleccionado = this.validateFormCrearCliente.value.dv_cliente;
+    // console.log('rutSeleccionado', this.rutSeleccionado);
+    // console.log('dvSeleccionado', this.dvSeleccionado);
+    
+  }
+
+  enviarIngresoReserva(){
+    const ingresarCliente = this.ingresarCliente();
+    const ingresarReserva = this.ingresarReserva();
+    // console.log('FormCliente', ingresarCliente);
+    // console.log('FormReserva', ingresarReserva);
+
+    if (ingresarCliente.valid && ingresarReserva.valid){
+      // Aqui va servicio de ingresar reserva e ingresar cliente y se envía ingresarReserva && ingresarCliente'
+      const clienteAIngresar :Cliente ={
+        rut_cliente : ingresarCliente.value.rut_cliente,
+        dv_cliente : ingresarCliente.value.dv_cliente,
+        nombre_cliente : ingresarCliente.value.nombre_cliente,
+      }
+      const reservaAIngresar : Reserva = {
+        id_reserva : ingresarReserva.value.id_reserva,
+        id_estado_reserva : 1,
+        id_mesa : ingresarReserva.value.id_mesa,
+        rut_cliente: ingresarReserva.value.rut_cliente  ,
+        dv_cliente: ingresarReserva.value.dv_cliente,
+        cant_consumidores: ingresarReserva.value.cant_consumidores,
+        fecha_reserva : ingresarReserva.value.fecha_reserva,
+        hora_reserva : ingresarReserva.value.hora_reserva,
+        comentario : ingresarReserva.value.comentario
+      }
+      console.log('clienteAIngresar', clienteAIngresar);
+      console.log('reservaAIngresar', reservaAIngresar);
+            
+    }
+    else{
+      console.log('Ingreso de reserva erróneo');
+
+      this.notification.create(
+        'error', 'Error al ingresar reserva', 'Debes rellenar correctamente todos los campos'
+      )
+
+      Object.values(this.validateFormCrearCliente.controls).forEach(control => {
+        if (control.invalid) {
+          console.log('control inválido');          
+          control.markAsDirty();
+          control.updateValueAndValidity({onlySelf : true});
+        }
+      });
+      Object.values(this.validateFormCrearReserva.controls).forEach(control => {
+        if (control.invalid) {
+          console.log('control inválido');          
+          control.markAsDirty();
+          control.updateValueAndValidity({onlySelf : true});
+        }
+      });
+    }
+  }
+
+  cerrarIngresarReserva(){
+    this.isVisibleIngresarReserva = false;
+    this.mesaSeleccionada = null;
+  }
+
+  ingresarCliente(){
+    return this.validateFormCrearCliente
+  } 
+
+  ingresarReserva(){
+    return this.validateFormCrearReserva
+  }
 }

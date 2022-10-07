@@ -4,7 +4,7 @@
     </div>
     <div class="grid">
         <div *ngFor="let mesa of listadoMesas" class="mesas">
-            <div class="card" *ngIf="mesa.nombre_estado_mesa == 'Disponible'">
+            <div class="card" *ngIf="mesa.nombre_estado_mesa == 'Disponible'" (click)="clickMesa(mesa)">
                 <div class="title-card">
                     Mesa nro. {{mesa.id_mesa}}
                 </div>
@@ -16,7 +16,19 @@
                     Tipo de mesa: {{mesa.nombre_tipo_mesa}}
                 </div>
             </div>
-            <div class="card-no-disponible" *ngIf="mesa.nombre_estado_mesa == 'Ocupado'">
+            <div class="card-ocupado" *ngIf="mesa.nombre_estado_mesa == 'Ocupado'">
+                <div class="title-card">
+                    Mesa nro. {{mesa.id_mesa}}
+                </div>
+                <div class="content-card">
+                    Cantidad de asientos: {{mesa.cantidad_asientos}}
+                    <br>
+                    Estado de mesa: {{mesa.nombre_estado_mesa}}
+                    <br>
+                    Tipo de mesa: {{mesa.nombre_tipo_mesa}}
+                </div>
+            </div>
+            <div class="card-limpieza" *ngIf="mesa.nombre_estado_mesa == 'Limpieza'">
                 <div class="title-card">
                     Mesa nro. {{mesa.id_mesa}}
                 </div>
@@ -74,6 +86,127 @@
                                 <nz-option nzLabel="{{tM.nombre_tipo_mesa}} ({{tM.cantidad_asientos}})" [nzValue]="tM.id_tipo_mesa"></nz-option>
                             </ng-container>
                         </nz-select>
+                    </nz-form-control>
+                </nz-form-item>
+            </div>
+        </form>
+    </ng-container>
+</nz-modal>
+
+<nz-modal ([nzTitle])="ingresarClienteTitle" [nzWidth]="800" [nzContent]="ingresarClienteConent" [(nzVisible)]="isVisibleIngresarReserva"
+    (nzOnOk)="enviarIngresoReserva()" (nzOnCancel)="cerrarIngresarReserva()">
+    <ng-container #ingresarClienteTitle>
+        <nz-descriptions nzTitle="Ingresar reserva" nzLayout="vertical"></nz-descriptions>
+    </ng-container>
+    <ng-container #ingresarClienteConent>
+        <form nz-form [formGroup]="validateFormCrearCliente" id="validateFormCrearCliente" [nzLayout]="'inline'"
+            (ngSubmit)="ingresarCliente()">
+            <div style="display: flex; justify-content: center;">
+                <nz-form-item>
+                    <nz-form-label nzRequired nzFor="rut_cliente">
+                        Rut cliente
+                    </nz-form-label>
+                    <nz-form-control nzErrorTip="Por favor ingrese número de mesa">
+                        <input nz-input type="text" name="rut_cliente" id="rut_cliente" placeholder="11111111" maxlength="8"
+                            formControlName="rut_cliente" style="width: calc(100% - 40%);"
+                            (ngModelChange)="onChangeRut()">
+                        -
+                        <input nz-input type="text" name="dv_cliente" id="dv_cliente" placeholder="1" maxlength = "1"
+                            formControlName="dv_cliente" style="width: 33px;"
+                            (ngModelChange)="onChangeRut()">
+                    </nz-form-control>
+                </nz-form-item>
+                <nz-form-item>
+                    <nz-form-label nzRequired nzFor="nombre_cliente">
+                        Nombre cliente
+                    </nz-form-label>
+                    <nz-form-control nzErrorTip="Por favor ingrese número de mesa">
+                        <input nz-input type="text" name="nombre_cliente" id="nombre_cliente" placeholder="Jorge"
+                            formControlName="nombre_cliente" style="width: 88%; ">
+                    </nz-form-control>
+                </nz-form-item>
+            </div>
+        </form>
+        <nz-divider></nz-divider>
+        <form nz-form [formGroup]="validateFormCrearReserva" id="validateFormCrearReserva" [nzLayout]="'inline'"
+            (ngSubmit)="ingresarReserva()">
+            <div>
+                <div class="title-datos-reserva">
+                    <!-- <h3>Datos de la reserva</h3> -->
+                    <nz-descriptions nzTitle="Datos de la reserva" nzLayout="vertical"></nz-descriptions>
+                </div>
+                <div nz-row>
+                    <div nz-col nzSpan="12">
+                        <nz-form-item>
+                            <nz-form-label nzRequired nzFor="rut_cliente">
+                                Rut cliente
+                            </nz-form-label>
+                            <nz-form-control nzErrorTip="Por favor ingrese número de mesa">
+                                <input nz-input disabled type="number" name="rut_cliente" id="rut_cliente" placeholder="11111111" maxlength="8"
+                                    formControlName="rut_cliente" style="width: calc(100% - 40%);" [ngModel]="rutSeleccionado">
+                                -
+                                <input nz-input disabled type="text" name="dv_cliente" id="dv_cliente" placeholder="1" maxlength="1"
+                                    formControlName="dv_cliente" style="width: 33px;"
+                                    [ngModel]="dvSeleccionado">
+                            </nz-form-control>
+                        </nz-form-item>
+                        <nz-form-item>
+                            <nz-form-label nzRequired nzFor="fecha_reserva">
+                                Fecha reserva
+                            </nz-form-label>
+                            <nz-form-control nzErrorTip="Por favor ingrese número de mesa">
+                                <input nz-input disabled type="text" name="fecha_reserva" id="fecha_reserva" placeholder="Jorge"
+                                    formControlName="fecha_reserva">
+                            </nz-form-control>
+                        </nz-form-item>
+                        <nz-form-item>
+                            <nz-form-label nzRequired nzFor="id_estado_reserva">
+                                Estado reserva
+                            </nz-form-label>
+                            <nz-form-control nzErrorTip="Por favor ingrese número de mesa">
+                                <input nz-input disabled  type="text" name="id_estado_reserva" id="id_estado_reserva" placeholder="En cola"
+                                    formControlName="id_estado_reserva">
+                            </nz-form-control>
+                        </nz-form-item>
+                    </div>
+                    <div nz-col nzSpan="12">
+                        <nz-form-item>
+                            <nz-form-label nzRequired nzFor="id_mesa">
+                                ID Mesa
+                            </nz-form-label>
+                            <nz-form-control nzErrorTip="Por favor ingrese número de mesa">
+                                <input nz-input disabled type="text" name="id_mesa" id="id_mesa" placeholder="Jorge"
+                                    formControlName="id_mesa">
+                            </nz-form-control>
+                        </nz-form-item>
+                        <nz-form-item>
+                            <nz-form-label nzRequired nzFor="hora_reserva">
+                                Hora reserva
+                            </nz-form-label>
+                            <nz-form-control nzErrorTip="Por favor ingrese número de mesa">
+                                <input nz-input disabled type="text" name="hora_reserva" id="hora_reserva" placeholder="11111111-1"
+                                    formControlName="hora_reserva">
+                            </nz-form-control>
+                        </nz-form-item>
+                        <nz-form-item>
+                            <nz-form-label nzRequired nzFor="cant_consumidores">
+                                Cantidad consumidores
+                            </nz-form-label>
+                            <nz-form-control nzErrorTip="Por favor ingrese número de mesa">
+                                <input nz-input type="number" name="cant_consumidores" id="cant_consumidores" placeholder="4" min="1" [max]="mesaSeleccionada?.cantidad_asientos" onkeydown="return false" formControlName="cant_consumidores" [ngModel]="mesaSeleccionada?.cantidad_asientos">
+                            </nz-form-control>
+                        </nz-form-item>
+                    </div>
+                </div>
+                <nz-divider></nz-divider>
+                <nz-form-item style="width: 100%;">
+                    <nz-form-label nzFor="comentario">
+                        Comentario
+                    </nz-form-label>
+                    <nz-form-control nzErrorTip="Por favor ingrese número de mesa" style="width: 74.5%;">
+                        <textarea rows="4" nz-input name="comentario" id="comentario" placeholder="Añadir un comentario a la reserva..."
+                            formControlName="comentario">
+                        </textarea>
                     </nz-form-control>
                 </nz-form-item>
             </div>

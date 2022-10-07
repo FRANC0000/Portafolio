@@ -24,17 +24,17 @@
     justify-content: center;
     align-items: center;
     border-radius: 10px;
+    background-color: #00ff8c52;
     width: 255px;
-
 }
 
 .grid{
     gap: 20px;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(4, 1fr);
     display: grid;
 }
 
-.card-no-disponible{
+.card-ocupado{
     margin: 20px;
     border: 2px solid gainsboro;
     padding: 20px;
@@ -47,6 +47,19 @@
     width: 255px;
 }
 
+.card-limpieza{
+    margin: 20px;
+    border: 2px solid gainsboro;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border-radius: 10px;
+    background-color: #005bf852;
+    width: 255px;
+}
+
 .content-card{
     display: grid;
     grid-template-rows: 1fr;
@@ -54,6 +67,7 @@
     padding: 15px 10px;
     border-radius: 5px;
 }
+
 
 .mesas{
     display: grid;
@@ -66,4 +80,19 @@
 
 .informacion-tipo-mesa :hover{
     background-color: gray;
+}
+
+::ng-deep td.ant-descriptions-item-label.ng-star-inserted {
+    width: 200px;
+}
+
+::ng-deep td.ant-descriptions-item-content.ng-star-inserted {
+    width: 200px;
+}
+
+::ng-deep nz-form-label.ant-form-item-label.ant-col {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    width: 130px;
 }

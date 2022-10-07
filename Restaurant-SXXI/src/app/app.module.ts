@@ -27,6 +27,9 @@ import { CocinaComponent } from './modulos/cocina/cocina.component';
 import { ClienteComponent } from './modulos/cliente/cliente.component';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
+import { NzDividerModule } from 'ng-zorro-antd/divider';
+import { NzDescriptionsModule } from 'ng-zorro-antd/descriptions';
+import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
 
 registerLocaleData(es);
 
@@ -56,7 +59,10 @@ registerLocaleData(es);
     NzSelectModule,
     NzNotificationModule,
     NzIconModule,
-    NzToolTipModule
+    NzToolTipModule,
+    NzDividerModule,
+    NzDescriptionsModule,
+    NzInputNumberModule
   ],
   providers: [{ provide: NZ_I18N, useValue: es_ES }],
   bootstrap: [AppComponent]
