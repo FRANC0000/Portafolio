@@ -48,4 +48,13 @@ public class UsuarioController {
 		return resp;	
 	}
 	
+	@RequestMapping(value="/modificarUsuario")
+	public String modificarUsuario(@RequestBody Map<String , Object > usuario ) {
+	    
+	    String resp = usuarioService.modificarUsuario(usuario);
+	    
+	    return resp;
+	    
+	}
+	
 }
