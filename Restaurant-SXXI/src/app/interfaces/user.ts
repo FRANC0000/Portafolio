@@ -1,10 +1,11 @@
 export interface user{
     id_usuario:string,
-    rol: string,
+    rol: number,
     nombre: string,
     apellido_paterno: string,
     apellido_materno: string,
-    rut: string,
+    rut: number,
+    dv: string
     correo: string,
     contrasena: string
 }
@@ -12,4 +13,9 @@ export interface user{
 export interface iniciarSesion{
     id_usuario: string,
     contrasena: string
+}
+
+export interface rol{
+    id_rol : number,
+    nombre_rol : string
 }

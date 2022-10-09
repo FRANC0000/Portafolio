@@ -48,4 +48,10 @@ public class UsuarioController {
 		return resp;	
 	}
 	
+	
+	@RequestMapping(value="/obtenerRoles")
+	public String obtenerRoles() throws JSONException{
+		String listRoles = usuarioService.obtenerRoles();
+		return listRoles;
+	}
 }

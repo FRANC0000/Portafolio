@@ -14,9 +14,9 @@ public class Plato {
 	@Id
 	int id_plato;
 	
-	@OneToOne
-	@JoinColumn(name = "receta")
-	private Receta receta;
+//	@OneToOne
+//	@JoinColumn(name = "id_receta")
+//	private Receta receta;
 	
 	@ManyToOne
 	@JoinColumn(name = "id_tipo_plato")
@@ -35,12 +35,12 @@ public class Plato {
 	public void setId_plato(int id_plato) {
 		this.id_plato = id_plato;
 	}
-	public Receta getReceta() {
-		return receta;
-	}
-	public void setReceta(Receta receta) {
-		this.receta = receta;
-	}
+//	public Receta getReceta() {
+//		return receta;
+//	}
+//	public void setReceta(Receta receta) {
+//		this.receta = receta;
+//	}
 	public TipoPlato getTipo_plato() {
 		return tipo_plato;
 	}

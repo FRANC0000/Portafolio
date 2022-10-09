@@ -16,7 +16,7 @@ public class Reporte {
 	int id_reporte;
 	
 	@ManyToOne
-	@JoinColumn(name = "tipo_reporte")
+	@JoinColumn(name = "id_tipo_reporte")
 	private TipoReporte tipo_reporte;
 	
 	@ManyToOne

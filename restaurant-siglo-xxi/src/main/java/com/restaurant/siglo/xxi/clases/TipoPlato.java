@@ -10,7 +10,7 @@ public class TipoPlato {
 	@Id
 	int id_tipo_plato;
 	String nombre_tipo_plato;
-	String descripcion;
+	String descripcion_tipo_plato;
 
 	public int getId_tipo_plato() {
 		return id_tipo_plato;
@@ -29,11 +29,11 @@ public class TipoPlato {
 	}
 
 	public String getDescripcion() {
-		return descripcion;
+		return descripcion_tipo_plato;
 	}
 
-	public void setDescripcion(String descripcion) {
-		this.descripcion = descripcion;
+	public void setDescripcion(String descripcion_tipo_plato) {
+		this.descripcion_tipo_plato = descripcion_tipo_plato;
 	};
 	
 	

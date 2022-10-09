@@ -2,6 +2,8 @@ package com.restaurant.siglo.xxi.clases;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedNativeQueries;
 import javax.persistence.NamedNativeQuery;
 import javax.persistence.NamedQueries;
@@ -15,38 +17,29 @@ public class Usuario {
 	
 	@Id
 	String id_usuario;
-	String rol;
+	
+	@ManyToOne
+	@JoinColumn(name = "id_rol")
+	private Rol rol;
+	
 	String nombre;
 	String apellidoPaterno;
 	String apellidoMaterno;
-	String rut;
+	int rut;
+	String dv;
 	String correo;
 	String contrasena;
 	
-	public Usuario() {};
-	
-	public Usuario(String id_usuario, String rol, String nombre, String apellidoPaterno, String apellidoMaterno,
-			String rut, String correo, String contrasena) {
-		super();
-		this.id_usuario = id_usuario;
-		this.rol = rol;
-		this.nombre = nombre;
-		this.apellidoPaterno = apellidoPaterno;
-		this.apellidoMaterno = apellidoMaterno;
-		this.rut = rut;
-		this.correo = correo;
-		this.contrasena = contrasena;
-	}
 	public String getId_usuario() {
 		return id_usuario;
 	}
 	public void setId_usuario(String id_usuario) {
 		this.id_usuario = id_usuario;
 	}
-	public String getRol() {
+	public Rol getRol() {
 		return rol;
 	}
-	public void setRol(String rol) {
+	public void setRol(Rol rol) {
 		this.rol = rol;
 	}
 	public String getNombre() {
@@ -67,11 +60,17 @@ public class Usuario {
 	public void setApellidoMaterno(String apellidoMaterno) {
 		this.apellidoMaterno = apellidoMaterno;
 	}
-	public String getRut() {
+	public int getRut() {
 		return rut;
 	}
-	public void setRut(String rut) {
+	public void setRut(int rut) {
 		this.rut = rut;
+	}
+	public String getDv() {
+		return dv;
+	}
+	public void setDv(String dv) {
+		this.dv = dv;
 	}
 	public String getCorreo() {
 		return correo;
@@ -85,5 +84,6 @@ public class Usuario {
 	public void setContrasena(String contrasena) {
 		this.contrasena = contrasena;
 	}
-		
+
+	
 }

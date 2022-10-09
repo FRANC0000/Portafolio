@@ -15,15 +15,15 @@ public class Boleta {
 	int id_boleta;
 	
 	@ManyToOne
-	@JoinColumn(name = "cliente")
+	@JoinColumn(name = "id_cliente")
 	private Cliente cliente;	
 	
 	@ManyToOne
-	@JoinColumn(name = "usuario")
+	@JoinColumn(name = "id_usuario")
 	private Usuario usuario;	
 	
 	@ManyToOne
-	@JoinColumn(name = "tipo_pago")
+	@JoinColumn(name = "id_tipo_pago")
 	private TipoPago tipoPago;	
 	
 	Timestamp fecha_atencion;

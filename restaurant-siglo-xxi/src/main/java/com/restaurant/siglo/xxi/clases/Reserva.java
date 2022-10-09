@@ -4,6 +4,8 @@ package com.restaurant.siglo.xxi.clases;
 import java.sql.Timestamp;
 
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -15,10 +17,11 @@ import javax.persistence.Table;
 public class Reserva {
 	
 	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	String id_reserva;
 	
 	@ManyToOne
-	@JoinColumn(name = "estado_reserva")
+	@JoinColumn(name = "id_estado_reserva")
 	private EstadoReserva estado_reserva;
 	
 	@ManyToOne
@@ -29,10 +32,9 @@ public class Reserva {
 	@JoinColumn(name = "id_cliente")
 	private Cliente cliente;
 	
-	String dv_cliente;
 	int cant_consumidores;
 	Timestamp fecha_reserva;
-	Timestamp hora_reserva;
+	String hora_reserva;
 	String comentario;
 
 	

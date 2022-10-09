@@ -4,6 +4,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.restaurant.siglo.xxi.clases.PlatosPedido;
 
-public interface PlatosPedidoRepository extends JpaRepository<PlatosPedido,Integer>{
+public interface PlatosPedidoRepository extends JpaRepository<PlatosPedido,Long>{
 
 }

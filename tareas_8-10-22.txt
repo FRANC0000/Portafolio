@@ -1,0 +1,30 @@
+- ingreso del cliente
+- crud de usuario
+- crud de mesa
+- crud de plato
+- crud de receta
+
+Tareas:
+
+Matus: servicio de modificar cliente, modificar plato, modificar receta
+
+Soto: servicio de crear plato, eliminar plato, obtener plato por id plato
+
+Adrian: servicio de crear receta, eliminar receta, obtener receta por id plato
+
+Piero : servicio de crear producto, eliminar producto, modificar producto
+
+Javi: servicio de obtener todos los platos, obtener todos los productos 
+
+Recordatorio de cómo crear un servicio:
+1- Crear query en la base de datos
+2- Crear función que use la query en la base de datos
+3- Probar esa función en la base de datos
+4- Añadir función al repository de la tabla involucrada
+5- Crear función en el controller de la tabla involucrada
+6- Crear método en service de la tabla involucrada
+7- Crear el mismo método del punto 6 en service.impl
+8- Usar su función del repository en la lógica de service.impl
+9- Probar con postman (método post, enviando body como json con los atributos necesarios)
+
+Recordar siempre tomar como guía los ejemplos existentes.

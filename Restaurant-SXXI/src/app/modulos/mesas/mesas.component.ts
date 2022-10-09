@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MesasService } from './mesas.service';
-import { Cliente, EstadoMesa, Mesa, Reserva, TipoMesa } from 'src/app/interfaces/mesa';
+import { Cliente, EstadoMesa, IngresarReserva, Mesa, Reserva, TipoMesa } from 'src/app/interfaces/mesa';
 import { NzNotificationService } from 'ng-zorro-antd';
 import { ThrowStmt } from '@angular/compiler';
 import { Subscription } from 'rxjs';
@@ -15,7 +15,7 @@ export class MesasComponent implements OnInit, OnDestroy{
 
   constructor(private mesasService : MesasService, private fb: FormBuilder, private notification: NzNotificationService) { }
 
-  listadoMesas: any;
+  listadoMesas: Mesa[] = [];
   listadoEstadosMesas: EstadoMesa [] = [];
   listadoTiposMesas: TipoMesa [] = [];
   isVisibleCrearMesa = false;
@@ -30,6 +30,8 @@ export class MesasComponent implements OnInit, OnDestroy{
   mesaSeleccionada : Mesa;
   rutSeleccionado = '';
   dvSeleccionado = '';
+  idReservaRealizada :number = 0;
+  mostrarReservaRealizada : boolean = false;
   now : Date;
   sub :Subscription;
 
@@ -76,6 +78,15 @@ export class MesasComponent implements OnInit, OnDestroy{
     this.mesasService.obtenerMesas().subscribe(resp => {
       this.listadoMesas = resp["listado_mesas"];
       console.log('listadoMesas', this.listadoMesas);
+      this.listadoMesas.sort(function(a,b){
+        if(a.id_mesa < b.id_mesa){
+          return -1
+        }
+        if (a.id_mesa > b.id_mesa){
+          return 1
+        }
+        return 0;
+      })
     })
   }
 
@@ -229,6 +240,11 @@ export class MesasComponent implements OnInit, OnDestroy{
         dv_cliente : ingresarCliente.value.dv_cliente,
         nombre_cliente : ingresarCliente.value.nombre_cliente,
       }
+
+      if (ingresarReserva.value.comentario == null){
+        ingresarReserva.value.comentario = "";
+      }
+
       const reservaAIngresar : Reserva = {
         id_reserva : ingresarReserva.value.id_reserva,
         id_estado_reserva : 1,
@@ -242,7 +258,29 @@ export class MesasComponent implements OnInit, OnDestroy{
       }
       console.log('clienteAIngresar', clienteAIngresar);
       console.log('reservaAIngresar', reservaAIngresar);
-            
+
+      const ingresarReservaObj : IngresarReserva = {
+        clienteAIngresar: clienteAIngresar,
+        reservaAIngresar: reservaAIngresar
+      }
+
+      console.log('Servicio ingresarReserva');
+      this.mesasService.ingresarReserva(ingresarReservaObj).subscribe(resp =>{
+        console.log('resp', resp);
+        if (resp.includes('creada satisfactoriamente')){
+          this.isVisibleIngresarReserva = false;
+          let respString :string;
+          respString = resp;
+          let idReserva = respString.match(/(\d+)/);
+          console.log('idReserva', idReserva[0]);
+          this.idReservaRealizada = parseInt(idReserva[0]);
+          this.mostrarReservaRealizada = true;
+          setTimeout(() => {
+            this.mostrarReservaRealizada = false;
+          }, 10000);
+          this.obtenerMesas();
+        }
+      })
     }
     else{
       console.log('Ingreso de reserva erróneo');
@@ -279,5 +317,10 @@ export class MesasComponent implements OnInit, OnDestroy{
 
   ingresarReserva(){
     return this.validateFormCrearReserva
+  }
+
+  cancelarReserva(){
+    console.log('Aquí irá el proceso de cancelar pedido');
+    
   }
 }

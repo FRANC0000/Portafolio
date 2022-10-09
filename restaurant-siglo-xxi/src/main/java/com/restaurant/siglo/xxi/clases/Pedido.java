@@ -17,15 +17,15 @@ public class Pedido {
 	int id_pedido;
 	
 	@ManyToOne
-	@JoinColumn(name = "cliente")
+	@JoinColumn(name = "id_cliente")
 	private Cliente cliente;
 	
 	@ManyToOne
-	@JoinColumn(name = "estado_instancia")
+	@JoinColumn(name = "id_estado_instancia")
 	private EstadoInstancia estadoInstancia;
 
 	@ManyToOne
-	@JoinColumn(name = "mesa")
+	@JoinColumn(name = "id_mesa")
 	private Mesa mesa;
 	
 	Timestamp fecha_ingreso;

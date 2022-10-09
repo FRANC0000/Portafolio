@@ -10,13 +10,14 @@ import com.restaurant.siglo.xxi.clases.Usuario;
 
 public interface UsuarioRepository extends JpaRepository<Usuario, String>{
 	
-	@Query(value = "select crear_usuario(:id_usuario, :nombre, :apP, :apM, :rut, :rol, :correo, :contrasena) ", nativeQuery = true)
+	@Query(value = "select crear_usuario(:id_usuario, :nombre, :apP, :apM, :rut, :dv, :rol, :correo, :contrasena) ", nativeQuery = true)
 	String crearUsuario(@Param("id_usuario") String id_usuario, 
 			@Param("nombre") String nombre,
 			@Param("apP") String apP,
 			@Param("apM") String apM,
-			@Param("rut") String rut,
-			@Param("rol") String rol,
+			@Param("rut") int rut,
+			@Param("dv") String dv,
+			@Param("rol") int rol,
 			@Param("correo") String correo,
 			@Param("contrasena") String contrasena);
 	

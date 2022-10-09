@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NzNotificationService } from 'ng-zorro-antd';
-import { user } from 'src/app/interfaces/user';
+import { rol, user } from 'src/app/interfaces/user';
 import { AdministadorService } from './administador.service';
 
 @Component({
@@ -20,9 +20,11 @@ export class AdministradorComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    this.obtenerRoles();
     this.validateFormCrearUsuario = new FormGroup({
       id_usuario : new FormControl,
-      rut: new FormControl,
+      rut_usuario: new FormControl,
+      dv_usuario : new FormControl,
       nombre: new FormControl,
       apellido_paterno: new FormControl,
       apellido_materno: new FormControl,
@@ -38,16 +40,35 @@ export class AdministradorComponent implements OnInit {
   isVisibleCrearUsuario = false;
   isVisibleListadoUsuarios = false;
   rolSelected = '';
+  listRoles: rol[] = [];
 
   //Formulario Crear Usuario
   validateFormCrearUsuario!: FormGroup;
 
+  obtenerRoles(){
+    this.listRoles = []
+    this.administadorService.obtenerRoles().subscribe(resp => {
+      let respListRoles = resp["list_roles"]
+      for (let rol of respListRoles){
+        const unRol : rol = {
+          id_rol: rol.id_rol,
+          nombre_rol : rol.nombre_rol
+        }
+        this.listRoles.push(unRol);
+      }
+      console.log('listRoles', this.listRoles);
+      
+    })
+  }
+
   // MODAL USUARIOS
   crearUsuario(){
     this.isVisibleCrearUsuario = true;
+    this.obtenerRoles();
     this.validateFormCrearUsuario = this.fb.group({
       id_usuario : [null, [Validators.required]],
-      rut: [null, [Validators.required]],
+      rut_usuario: [null, [Validators.required]],
+      dv_usuario: [null, [Validators.required]],
       nombre: [null, [Validators.required]],
       apellido_paterno: [null, [Validators.required]],
       apellido_materno: [null, [Validators.required]],
@@ -70,7 +91,8 @@ export class AdministradorComponent implements OnInit {
     if (this.validateFormCrearUsuario.valid){
       var usuarioACrear : user = {
         id_usuario : valores.id_usuario,
-        rut: valores.rut,
+        rut: valores.rut_usuario,
+        dv: valores.dv_usuario,
         nombre: valores.nombre,
         apellido_paterno: valores.apellido_paterno,
         apellido_materno: valores.apellido_materno,
@@ -106,13 +128,14 @@ export class AdministradorComponent implements OnInit {
         // console.log('resp',resp);
         for (let user of resp["usuarios"]){
           // console.log('user', user);
-          const usuario = {
+          const usuario :user= {
             id_usuario: user.id_usuario,
             nombre: user.nombre,
             apellido_paterno: user.apellido_paterno,
             apellido_materno: user.apellido_materno,
             rol: user.rol,
             rut: user.rut,
+            dv : user.dv,
             contrasena: user.contrasena,
             correo: user.correo
           }

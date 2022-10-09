@@ -1,0 +1,1 @@
+create sequence seq_id_reserva as integer increment by 1 start 1000

@@ -30,6 +30,7 @@ import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
 import { NzDividerModule } from 'ng-zorro-antd/divider';
 import { NzDescriptionsModule } from 'ng-zorro-antd/descriptions';
 import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
+import { NzResultModule } from 'ng-zorro-antd/result';
 
 registerLocaleData(es);
 
@@ -62,7 +63,8 @@ registerLocaleData(es);
     NzToolTipModule,
     NzDividerModule,
     NzDescriptionsModule,
-    NzInputNumberModule
+    NzInputNumberModule,
+    NzResultModule
   ],
   providers: [{ provide: NZ_I18N, useValue: es_ES }],
   bootstrap: [AppComponent]

@@ -32,3 +32,8 @@ export interface Reserva {
     hora_reserva : Date,
     comentario : string
 }
+
+export interface IngresarReserva{
+    clienteAIngresar : Cliente,
+    reservaAIngresar : Reserva
+}

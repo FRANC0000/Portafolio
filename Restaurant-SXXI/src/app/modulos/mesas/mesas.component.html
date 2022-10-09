@@ -213,3 +213,26 @@
         </form>
     </ng-container>
 </nz-modal>
+
+<div class="reserva-ingresada-container" *ngIf="mostrarReservaRealizada">
+    <div>
+        <nz-result
+        nzStatus="success"
+        [nzTitle]="ReservaTitle"
+        [nzSubTitle]="ReservaSubTitle"
+        >
+        <ng-template #ReservaTitle>
+            <h1 style="display: flex; justify-content: center;">Mesa reservada correctamente.</h1>
+            <h1 style="display: flex; justify-content: center;">ID Reserva: #{{idReservaRealizada}}.</h1>
+        </ng-template>
+        <ng-template #ReservaSubTitle>
+            <h3 style="display: flex; justify-content: center;">Puede dirigirse a su mesa #{{mesaSeleccionada?.id_mesa}}</h3>
+        </ng-template>
+
+        <div nz-result-extra>
+            <button nz-button nzType="primary" (click)="mostrarReservaRealizada = false">Volver a mesas</button>
+            <button nz-button nzType="danger" (click)="cancelarReserva()">Cancelar reserva</button>
+        </div>
+        </nz-result>
+    </div>
+</div>

@@ -25,4 +25,10 @@ export class AdministadorService {
       'http://localhost:8085/restaurantSXXI/rest-rsxii/usuario/crearUsuario', usuarioACrear, { responseType : 'text'}
     );
   }
+
+  public obtenerRoles() {
+    return this.http.get(
+      'http://localhost:8085/restaurantSXXI/rest-rsxii/usuario/obtenerRoles', { headers: this.headers }
+    );
+  }
 }

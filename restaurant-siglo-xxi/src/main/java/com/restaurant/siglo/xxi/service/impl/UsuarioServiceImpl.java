@@ -11,7 +11,9 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.restaurant.siglo.xxi.clases.Rol;
 import com.restaurant.siglo.xxi.clases.Usuario;
+import com.restaurant.siglo.xxi.repository.RolRepository;
 import com.restaurant.siglo.xxi.repository.UsuarioRepository;
 import com.restaurant.siglo.xxi.service.UsuarioService;
 
@@ -20,6 +22,9 @@ public class UsuarioServiceImpl implements UsuarioService{
 	
 	@Autowired
 	UsuarioRepository usuarioRepository;
+	
+	@Autowired
+	RolRepository rolRepository;
 
 	@Override
 	public String obtenerUsuarios() throws JSONException {
@@ -45,11 +50,12 @@ public class UsuarioServiceImpl implements UsuarioService{
 			try {
 				JSONObject usuario = new JSONObject();
 				usuario.put("id_usuario", user.getId_usuario());
-				usuario.put("rol", user.getRol());
+				usuario.put("rol", user.getRol().getId_rol());
 				usuario.put("nombre", user.getNombre());
 				usuario.put("apellido_paterno", user.getApellidoPaterno());
 				usuario.put("apellido_materno", user.getApellidoMaterno());
 				usuario.put("rut", user.getRut());
+				usuario.put("dv", user.getDv());
 				usuario.put("correo", user.getCorreo());
 				usuario.put("contrasena", user.getContrasena());
 				listUsuarios.put(usuario);
@@ -68,16 +74,16 @@ public class UsuarioServiceImpl implements UsuarioService{
 	public String crearUsuario(Map<String, Object> usuario) {
 		
 		String id_usuario = usuario.get("id_usuario").toString();
-		String rol = usuario.get("rol").toString();
+		int rol = Integer.parseInt(usuario.get("rol").toString());
 		String nombre = usuario.get("nombre").toString();
 		String apP  = usuario.get("apellido_paterno").toString();
 		String apM  = usuario.get("apellido_materno").toString();
-		String rut  = usuario.get("rut").toString();
+		int rut  = Integer.parseInt(usuario.get("rut").toString());
+		String dv = usuario.get("dv").toString();
 		String correo = usuario.get("correo").toString();
 		String contrasena = usuario.get("contrasena").toString();
-		
-		String resp = usuarioRepository.crearUsuario(id_usuario, nombre, apP, apM, rut, rol, correo, contrasena); 
-	
+
+		String resp = usuarioRepository.crearUsuario(id_usuario, nombre, apP, apM, rut, dv, rol, correo, contrasena); 
 		
 		return resp;
 	}
@@ -107,14 +113,39 @@ public class UsuarioServiceImpl implements UsuarioService{
 			resp.put("nombre", user.getNombre());
 			resp.put("apellido_paterno", user.getApellidoPaterno());
 			resp.put("apellido_materno", user.getApellidoMaterno());
-			resp.put("rol", user.getRol());
+			resp.put("rol", user.getRol().getId_rol());
+			resp.put("nombre_id_rol", user.getRol().getNombre_rol());
 			resp.put("rut", user.getRut());
+			resp.put("dv", user.getDv());
 			resp.put("correo", user.getCorreo());
 			
 		} catch (Exception e) {
 			return "Usuario no existe. \n"
 					+ "Mensaje: "+ e.getMessage();
 		}
+		
+		return resp.toString();
+	}
+
+
+	@Override
+	public String obtenerRoles() throws JSONException {
+		
+		List<Rol> roles = rolRepository.findAll();
+		JSONObject resp = new JSONObject();
+		JSONArray listRoles = new JSONArray();
+		
+		for (Rol rol : roles) {
+			try {
+				JSONObject unRol = new JSONObject();
+				unRol.put("id_rol", rol.getId_rol());
+				unRol.put("nombre_rol", rol.getNombre_rol());
+				listRoles.put(unRol);
+			} catch (Exception e) {
+				// TODO: handle exception
+			}
+		}
+		resp.put("list_roles", listRoles);
 		
 		return resp.toString();
 	}

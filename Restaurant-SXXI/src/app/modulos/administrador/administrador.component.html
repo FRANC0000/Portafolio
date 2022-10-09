@@ -33,7 +33,11 @@
               Rut
             </nz-form-label>
             <nz-form-control>
-              <input nz-input type="text" name="rut" id="rut" placeholder="11.111.111-1" formControlName="rut">
+              <input nz-input type="text" name="rut_usuario" id="rut_usuario" placeholder="11111111" maxlength="8"
+                formControlName="rut_usuario" style="width: calc(100% - 40%);">
+                -
+              <input nz-input type="text" name="dv_usuario" id="dv_usuario" placeholder="1" maxlength = "1"
+                  formControlName="dv_usuario" style="width: 33px;">
             </nz-form-control>
           </nz-form-item>
           <nz-form-item>
@@ -73,11 +77,9 @@
                 name="rol"
                 formControlName="rol"
               >
-                <nz-option nzValue="Administrador" nzLabel="Administrador"></nz-option>
-                <nz-option nzValue="Cocina" nzLabel="Cocina"></nz-option>
-                <nz-option nzValue="Finanzas" nzLabel="Finanzas"></nz-option>
-                <nz-option nzValue="Bodega" nzLabel="Bodega"></nz-option>
-                <nz-option nzValue="Cliente" nzLabel="Cliente"></nz-option>
+              <ng-container *ngFor="let rol of listRoles">
+                <nz-option [nzValue]="rol.id_rol" [nzLabel]="rol.nombre_rol"></nz-option>
+              </ng-container>
               </nz-select>
             </nz-form-control>
           </nz-form-item>
@@ -120,15 +122,13 @@
           <th>nombre</th>
           <th>rol</th>
           <th>correo</th>
-          <th>contraseña</th>
         </tr>      
         <tr *ngFor="let usuario of listUsuarios">
           <td>{{usuario.id_usuario}}</td>
-          <td>{{usuario.rut}}</td>
+          <td>{{usuario.rut}}-{{usuario.dv}}</td>
           <td>{{usuario.nombre | titlecase}} {{usuario.apellidoPaterno | titlecase}} {{usuario.apellidoMaterno | titlecase}}</td>
           <td>{{usuario.rol}}</td>
           <td>{{usuario.correo}}</td>
-          <td>{{usuario.contrasena}}</td>
         </tr>
       </table>
     </div>
