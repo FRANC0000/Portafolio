@@ -16,4 +16,11 @@ public interface ClienteRepository extends JpaRepository<Cliente, Integer>{
 			@Param("dv_cliente") String dv_cliente,
 			@Param("fecha_ingreso") Timestamp fecha_ingreso,
 			@Param("nombre_cliente") String nombre_cliente);
+	
+	@Query(value = "select modificar_cliente(:rut_cliente, :dv_cliente, :fecha_ingreso, :nombre_cliente) ", nativeQuery = true)
+	String modificarCliente(
+			@Param("rut_cliente") int rut_cliente,
+			@Param("dv_cliente") String dv_cliente,
+			@Param("fecha_ingreso") Timestamp fecha_ingreso,
+			@Param("nombre_cliente") String nombre_cliente);
 }
