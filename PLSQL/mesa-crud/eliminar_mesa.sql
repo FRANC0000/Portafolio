@@ -15,3 +15,5 @@ BEGIN
 	end if;
 	
 END;
+$BODY$
+LANGUAGE plpgsql VOLATILE COST 100

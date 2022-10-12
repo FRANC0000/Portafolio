@@ -53,23 +53,26 @@ export class LoginComponent implements OnInit {
               "id_usuario" : credenciales.id_usuario.toString()
             }
             this.loginService.obtenerUnUsuario(usuario).subscribe(resp=>{
-              // console.log('resp', resp);
+              console.log('resp obtenerUnUsuario', resp);
               
-              if (resp['rol'] == 'Administrador'){
+              if (resp['rol'] == 1){
                 this.router.navigate(['/administrador'])
               }
-              else if (resp['rol'] == 'Bodega'){
+              else if (resp['rol'] == 2){
                 this.router.navigate(['/bodedga'])
               }
-              else if (resp['rol'] == 'Cliente'){
-                this.router.navigate(['/cliente'])
-              }
-              else if (resp['rol'] == 'Finanzas'){
-                this.router.navigate(['/finanzas'])
-              }
-              else if (resp['rol'] == 'Cocina'){
+              else if (resp['rol'] == 3){
                 this.router.navigate(['/cocina'])
               }
+              else if (resp['rol'] == 4){
+                var matches = resp['id_usuario'].match(/(\d+)/);
+                // console.log('matches[0]', matches[0]);
+                this.router.navigate(['/cliente/mesa/'+ matches[0]])
+              }
+              else if (resp['rol'] == 5){
+                this.router.navigate(['/finanzas'])
+              }
+              
             })
           }
           else if (resp == 'Credenciales incorrectas'){

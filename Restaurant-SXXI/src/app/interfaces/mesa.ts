@@ -37,3 +37,7 @@ export interface IngresarReserva{
     clienteAIngresar : Cliente,
     reservaAIngresar : Reserva
 }
+
+export interface CancelarReserva{
+    id_reserva : string
+}

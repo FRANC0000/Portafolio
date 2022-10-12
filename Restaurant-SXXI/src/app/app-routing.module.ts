@@ -7,6 +7,7 @@ import { ClienteComponent } from './modulos/cliente/cliente.component';
 import { CocinaComponent } from './modulos/cocina/cocina.component';
 import { FinanzasComponent } from './modulos/finanzas/finanzas.component';
 import { LoginComponent } from './modulos/login/login.component';
+import { MenuComponent } from './modulos/menu/menu.component';
 import { MesasComponent } from './modulos/mesas/mesas.component';
 
 
@@ -15,9 +16,10 @@ const routes: Routes = [
   { path: 'administrador', component: AdministradorComponent},
   { path: 'cocina', component: CocinaComponent},
   { path: 'bodega', component: BodegaComponent},
-  { path: 'cliente', component: ClienteComponent},
+  { path: 'cliente/mesa/:idMesa', component: ClienteComponent},
   { path: 'mesas', component: MesasComponent},
   { path: 'finanzas', component: FinanzasComponent},
+  { path: 'menu', component: MenuComponent},
   { path: '**', redirectTo: '/login'}
 ];
 

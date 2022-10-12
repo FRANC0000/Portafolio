@@ -54,4 +54,12 @@ public class UsuarioController {
 		String listRoles = usuarioService.obtenerRoles();
 		return listRoles;
 	}
+	
+	@RequestMapping(value="/modificarUsuario")
+    public String modificarUsuario(@RequestBody Map<String, Object> usuario) {
+
+        String resp = usuarioService.modificarUsuario(usuario);
+
+        return resp;
+    }
 }

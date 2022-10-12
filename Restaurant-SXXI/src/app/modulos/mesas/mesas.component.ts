@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MesasService } from './mesas.service';
-import { Cliente, EstadoMesa, IngresarReserva, Mesa, Reserva, TipoMesa } from 'src/app/interfaces/mesa';
+import { CancelarReserva, Cliente, EstadoMesa, IngresarReserva, Mesa, Reserva, TipoMesa } from 'src/app/interfaces/mesa';
 import { NzNotificationService } from 'ng-zorro-antd';
 import { ThrowStmt } from '@angular/compiler';
 import { Subscription } from 'rxjs';
@@ -321,6 +321,24 @@ export class MesasComponent implements OnInit, OnDestroy{
 
   cancelarReserva(){
     console.log('Aquí irá el proceso de cancelar pedido');
+    this.idReservaRealizada;
+
+    const cancelarReserva : CancelarReserva = {
+      id_reserva : this.idReservaRealizada.toString()
+    }
+
+    this.mesasService.cancelarReserva(cancelarReserva).subscribe(resp => {
+      console.log('resp', resp);
+      if (resp.includes('cancelada con éxito')){
+        this.notification.create(
+          'success', 'Reserva cancelada', resp
+        )
+        this.obtenerMesas();
+        this.idReservaRealizada = null;
+        this.mesaSeleccionada = null;
+        this.mostrarReservaRealizada = false;
+      }
+    })
     
   }
 }

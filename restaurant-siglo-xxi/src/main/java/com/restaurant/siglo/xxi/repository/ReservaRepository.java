@@ -2,6 +2,7 @@ package com.restaurant.siglo.xxi.repository;
 
 
 import java.sql.Timestamp;
+import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -9,7 +10,7 @@ import org.springframework.data.repository.query.Param;
 
 import com.restaurant.siglo.xxi.clases.Reserva;
 
-public interface ReservaRepository extends JpaRepository<Reserva, Integer>{
+public interface ReservaRepository extends JpaRepository<Reserva, String>{
 	
 	@Query(value = "select crear_reserva(:id_reserva, :cantidad_consumidores, :comentario , :fecha_reserva, :hora_reserva, :id_cliente, :id_estado_reserva, :id_mesa) ", nativeQuery = true)
 	String crearReserva(@Param("id_reserva") int id_reserva, 
@@ -22,5 +23,11 @@ public interface ReservaRepository extends JpaRepository<Reserva, Integer>{
 			@Param("id_mesa") int id_mesa);	
 	
 	@Query(value = "select nextval('seq_id_reserva')", nativeQuery = true)
-	int nextValIdReserva();	
+	int nextValIdReserva();
+	
+	@Query(value = "select cancelar_reserva(:id_reserva)", nativeQuery = true)
+	String cancelarReserva(@Param("id_reserva") String id_reserva);	
+	
+	@Query(name = "obtenerReservaActivaPorIdMesa", nativeQuery = true)
+	List<Reserva> obtenerReservaActivaPorIdMesa(@Param("id_mesa") int id_mesa);	
 }

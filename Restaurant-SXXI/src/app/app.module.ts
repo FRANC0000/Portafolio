@@ -31,6 +31,7 @@ import { NzDividerModule } from 'ng-zorro-antd/divider';
 import { NzDescriptionsModule } from 'ng-zorro-antd/descriptions';
 import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
 import { NzResultModule } from 'ng-zorro-antd/result';
+import { MenuComponent } from './modulos/menu/menu.component';
 
 registerLocaleData(es);
 
@@ -42,7 +43,8 @@ registerLocaleData(es);
     BodegaComponent,
     FinanzasComponent,
     CocinaComponent,
-    ClienteComponent
+    ClienteComponent,
+    MenuComponent
   ],
   imports: [
     BrowserModule,

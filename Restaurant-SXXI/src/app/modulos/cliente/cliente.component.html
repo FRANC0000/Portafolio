@@ -1,1 +1,38 @@
-<p>cliente works!</p>
+<div *ngIf="mesaReservada == true">
+    <h1>Mesa nro. {{idMesaParam}}</h1>
+    <h1>Reserva nro. {{reservaObjectParam?.id_reserva}}</h1>
+    <h1>Rut cliente nro. {{clienteObjectParam?.rut_cliente}}</h1>
+    <h1>Hola {{clienteObjectParam?.nombre_cliente}}! haz un pedido.</h1>
+    
+    <button nz-button (click)="verMenu()"> Ver menú </button>
+    <button nz-button (click)="cancelarReserva()"> Cancelar reserva </button>
+    <button nz-button (click)="cerrarSesion()"> Cerrar sesión </button>
+</div>
+
+<div *ngIf="!mesaReservada">
+    <nz-result
+      nzTitle="Mesa no tiene reserva"
+      nzStatus="error"
+      nzSubTitle="Esta mesa se encuentra disponible"
+    >
+      <!-- <div nz-result-content>
+        <div class="desc">
+          <h4 nz-title>The content you submitted has the following error:</h4>
+          <p nz-paragraph>
+            <span nz-icon nzType="close-circle"></span>
+            Your account has been frozen
+            <a>Thaw immediately &gt;</a>
+          </p>
+          <p nz-paragraph>
+            <span nz-icon nzType="close-circle"></span>
+            Your account is not yet eligible to apply
+            <a>Apply immediately &gt;</a>
+          </p>
+        </div>
+      </div>
+      <div nz-result-extra>
+        <button nz-button nzType="primary">Go Console</button>
+        <button nz-button>Buy Again</button>
+      </div> -->
+    </nz-result>
+</div>

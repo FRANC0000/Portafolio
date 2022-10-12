@@ -9,5 +9,6 @@ import org.springframework.stereotype.Service;
 public interface ReservaService {
 	
 	public String ingresarReserva(Map<String, Object> ingresarReserva) throws ParseException;
-
+	public String cancelarReserva(Map<String, Object> cancelarReserva) throws ParseException;
+	public String obtenerReservaActivaPorIdMesa(Map<String, Object> idMesa) throws ParseException;
 }

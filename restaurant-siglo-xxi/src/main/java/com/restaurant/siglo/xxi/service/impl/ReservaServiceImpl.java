@@ -4,8 +4,12 @@ import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -66,6 +70,7 @@ public class ReservaServiceImpl implements ReservaService {
 			if (resp.contains("creada satisfactoriamente")) {
 				//Cambiar estado de mesa a 'Ocupado'
 				String consola = mesaRepository.modificarMesa(id_mesa, 2);
+				System.out.println("Respuesta modificarMesa(): " + consola);
 			}
 			
 			
@@ -76,6 +81,71 @@ public class ReservaServiceImpl implements ReservaService {
 		}
 		
 		return resp;
+	}
+
+	@Override
+	public String cancelarReserva(Map<String, Object> cancelarReserva) throws ParseException {
+		
+		String resp = "";
+		String id_reserva = cancelarReserva.get("id_reserva").toString();
+		Reserva reserva = reservaRepository.getById(id_reserva);
+	
+		try {
+			resp = reservaRepository.cancelarReserva(id_reserva);
+			
+			if (resp.contains("cancelada con éxito")) {
+				//Cambiar estado de mesa a 'Disponible'
+				String consola = mesaRepository.modificarMesa(reserva.getId_mesa().getId_mesa(), 1);
+				System.out.println("Respuesta modificarMesa(): " + consola);
+			}
+			
+		} catch (Exception e) {
+			// TODO: handle exception
+			resp = "Error al cancelar reserva \n"
+					+ "Mensaje: " +e.getMessage();
+		}
+		
+		return resp;
+	}
+
+	@Override
+	public String obtenerReservaActivaPorIdMesa(Map<String, Object> idMesa) throws ParseException {
+		String resp = "";
+		JSONObject listadoReservas = new JSONObject();
+		JSONArray arrayReserva = new JSONArray();
+		
+		try {
+			int id_mesa = Integer.parseInt(idMesa.get("id_mesa").toString());
+			List<Reserva> listReserva = reservaRepository.obtenerReservaActivaPorIdMesa(id_mesa);
+			if (listReserva.size() == 1) {
+				for (Reserva reserva : listReserva) {
+					JSONObject unaReserva = new JSONObject();
+					unaReserva.put("id_reserva", reserva.getId_reserva());
+					unaReserva.put("id_mesa", reserva.getId_mesa().getId_mesa());
+					unaReserva.put("hora_reserva", reserva.getHora_reserva());
+					unaReserva.put("fecha_reserva", reserva.getFecha_reserva());
+					unaReserva.put("id_estado_reserva", reserva.getEstado_reserva().getId_estado_reserva());
+					unaReserva.put("nombre_estado_reserva", reserva.getEstado_reserva().getNombre_estado_reserva());
+					unaReserva.put("comentario", reserva.getComentario());
+					unaReserva.put("rut_cliente", reserva.getCliente().getRut_cliente());
+					unaReserva.put("dv_cliente", reserva.getCliente().getDv_cliente());
+					unaReserva.put("nombre_cliente", reserva.getCliente().getNombre_cliente());
+					unaReserva.put("cant_consumidores", reserva.getCant_consumidores());
+					arrayReserva.put(unaReserva);
+				}
+				listadoReservas.put("arrayReserva", arrayReserva);
+			}
+			else {
+				listadoReservas.put("arrayReserva", arrayReserva);
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+			return "Error al obtener reserva \n"
+					+ "Mensaje: " +e.getMessage();		
+		}
+
+		
+		return listadoReservas.toString();
 	}
 
 }

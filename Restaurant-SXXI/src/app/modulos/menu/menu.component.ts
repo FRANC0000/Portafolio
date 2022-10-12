@@ -1,30 +1,25 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Plato } from 'src/app/interfaces/cocina';
-import { CocinaService } from './cocina.service';
+import { MenuService } from './menu.service';
 
 @Component({
-  selector: 'app-cocina',
-  templateUrl: './cocina.component.html',
-  styleUrls: ['./cocina.component.scss']
+  selector: 'app-menu',
+  templateUrl: './menu.component.html',
+  styleUrls: ['./menu.component.scss']
 })
-export class CocinaComponent implements OnInit {
-
-  constructor(private router: Router, private cocinaService : CocinaService) { }
+export class MenuComponent implements OnInit {
 
   listaPlatos : Plato[] = [];
+  constructor(private router: Router, private menuService : MenuService) { }
 
   ngOnInit() {
     this.obtenerPlatos();
   }
 
-  cerrarSesion(){
-    this.router.navigate(['/login'])
-  }
-
   obtenerPlatos(){
     this.listaPlatos = [];
-    this.cocinaService.obtenerPlatos().subscribe(resp => {
+    this.menuService.obtenerPlatos().subscribe(resp => {
       // console.log('resp', resp);
       for (let unPlato of resp["plato"]){
         // console.log('unPlato', unPlato);
@@ -41,6 +36,7 @@ export class CocinaComponent implements OnInit {
         // console.log('plato', plato);
         this.listaPlatos.push(plato);
         console.log('listaPlatos', this.listaPlatos);
+
         this.listaPlatos.sort(function(a,b){
           if(a.id_plato < b.id_plato){
             return -1
@@ -53,19 +49,6 @@ export class CocinaComponent implements OnInit {
       }
 
     })
-  }
-
-  crearPlato(){
-    console.log('crearPlato');
-    
-  }
-  crearReceta(){
-    console.log('crearReceta');
-    
-  }
-  verPlatos(){
-    console.log('verPlatos');
-    
   }
 
 }

@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -86,5 +87,29 @@ public class MesaServiceImpl implements MesaService{
 		}
 		
 		return resp;
+	}
+
+	@Override
+	public String obtenerUnaMesa(Map<String, Object> idMesa) {
+		JSONObject unaMesaJSON = new JSONObject();
+		
+		try {
+			int id_mesa = Integer.parseInt(idMesa.get("id_mesa").toString());		
+			Mesa unaMesa = mesaRepository.getById(id_mesa);
+			
+			unaMesaJSON.put("id_mesa", unaMesa.getId_mesa());
+			unaMesaJSON.put("id_estado_mesa", unaMesa.getId_estado_mesa().getId_estado_mesa());
+			unaMesaJSON.put("nombre_estado_mesa", unaMesa.getId_estado_mesa().getNombre_estado_mesa());
+			unaMesaJSON.put("id_tipo_mesa", unaMesa.getId_tipo_mesa().getId_tipo_mesa());
+			unaMesaJSON.put("nombre_tipo_mesa", unaMesa.getId_tipo_mesa().getNombre_tipo_mesa());
+			unaMesaJSON.put("cantidad_asientos", unaMesa.getId_tipo_mesa().getCantidad_asientos());
+			
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			return "Error al crear mesa \n"
+			+ "Mensaje: "+e.getMessage();
+		}
+		
+		return unaMesaJSON.toString();
 	}
 }

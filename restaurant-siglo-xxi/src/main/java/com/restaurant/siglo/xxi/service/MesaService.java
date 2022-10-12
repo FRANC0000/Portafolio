@@ -11,4 +11,5 @@ public interface MesaService {
 	
 	public String obtenerMesas();
 	public String crearMesa(Mesa mesa);
+	public String obtenerUnaMesa(Map<String, Object> idMesa);
 }

@@ -32,5 +32,33 @@ public class ReservaController {
 		
 		return resp;	
 	}
+	
+	@RequestMapping(value="/cancelarReserva")
+	public String cancelarReserva(@RequestBody Map<String, Object> cancelarReserva) {
+		
+		String resp = "";
+		try {
+			resp = reservaService.cancelarReserva(cancelarReserva);
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return resp;	
+	}
+	
+	@RequestMapping(value="/obtenerReservaActivaPorIdMesa")
+	public String obtenerReservaActivaPorIdMesa(@RequestBody Map<String, Object> idMesa) {
+		
+		String resp = "";
+		try {
+			resp = reservaService.obtenerReservaActivaPorIdMesa(idMesa);
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return resp;	
+	}
 
 }

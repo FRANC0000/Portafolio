@@ -150,5 +150,22 @@ public class UsuarioServiceImpl implements UsuarioService{
 		return resp.toString();
 	}
 	
+	 public String modificarUsuario(Map<String, Object> usuario) {
+
+	        String id_usuario = usuario.get("id_usuario").toString();
+	        int id_rol = Integer.parseInt(usuario.get("id_rol").toString());
+	        String nombre = usuario.get("nombre").toString();
+	        String apP  = usuario.get("apellido_paterno").toString();
+	        String apM  = usuario.get("apellido_materno").toString();
+	        int rut  = Integer.parseInt(usuario.get("rut").toString());
+	        String dv = usuario.get("dv").toString();
+	        String correo = usuario.get("correo").toString();
+	        String contrasena = usuario.get("contrasena").toString();
+
+	        String resp = usuarioRepository.modificarUsuario(id_usuario, id_rol, nombre, apP, apM, rut, dv, correo, contrasena); 
+
+	        return resp;
+	    }
+	
 
 }

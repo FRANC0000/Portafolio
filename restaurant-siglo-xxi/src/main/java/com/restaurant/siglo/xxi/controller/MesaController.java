@@ -1,5 +1,7 @@
 package com.restaurant.siglo.xxi.controller;
 
+import java.util.Map;
+
 import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -27,6 +29,12 @@ public class MesaController {
 	@RequestMapping(value="/crearMesa")
 	public String crearMesa(@RequestBody Mesa mesa) throws JSONException{
 		String resp = mesaService.crearMesa(mesa);
+		return resp;
+	}
+	
+	@RequestMapping(value="/obtenerUnaMesa")
+	public String obtenerUnaMesa(@RequestBody Map<String, Object> idMesa) throws JSONException{
+		String resp = mesaService.obtenerUnaMesa(idMesa);
 		return resp;
 	}
 }

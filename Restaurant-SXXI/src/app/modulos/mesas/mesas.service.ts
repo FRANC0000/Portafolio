@@ -2,7 +2,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { Subject } from 'rxjs';
-import { IngresarReserva, Mesa } from 'src/app/interfaces/mesa';
+import { CancelarReserva, IngresarReserva, Mesa } from 'src/app/interfaces/mesa';
 import { tap } from 'rxjs/operators'
 
 @Injectable({
@@ -54,6 +54,16 @@ export class MesasService {
   public ingresarReserva(ingresarReserva : IngresarReserva) {
     return this.http.post(
       'http://localhost:8085/restaurantSXXI/rest-rsxii/reserva/ingresarReserva', ingresarReserva, { responseType : 'text'}
+    ).pipe(
+      tap(() => {
+        this._refresh$.next;
+      })
+    );
+  }
+  
+  public cancelarReserva(cancelarReserva : CancelarReserva) {
+    return this.http.post(
+      'http://localhost:8085/restaurantSXXI/rest-rsxii/reserva/cancelarReserva', cancelarReserva, { responseType : 'text'}
     ).pipe(
       tap(() => {
         this._refresh$.next;
