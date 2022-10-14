@@ -1,0 +1,45 @@
+.plato-row{
+    background-color: white;
+}
+
+.plato-disponible {
+    background-color: white;
+    transition: background-color .5s;
+    padding: 16px 24px;
+}
+
+.plato-disponible:hover {
+    background-color: rgba(81, 0, 195, 0.319);
+}
+
+
+.plato-row-no-disponible{
+    background-color: #dcdcdc54;
+    cursor: not-allowed;
+    padding: 10px;
+    padding: 16px 24px;
+}
+
+.plato-title{
+    display: flex;
+    flex-direction: row;
+    align-items: baseline;
+}
+
+.plato-name{
+}
+
+.plato-tipo{
+    margin-left: 10px;
+}
+
+.plato-content{
+}
+
+::ng-deep .ant-drawer-body {
+    padding: 0;
+}
+
+::ng-deep.ant-divider-horizontal{
+    margin: 0;
+}

@@ -7,6 +7,61 @@
     <button nz-button (click)="verMenu()"> Ver menú </button>
     <button nz-button (click)="cancelarReserva()"> Cancelar reserva </button>
     <button nz-button (click)="cerrarSesion()"> Cerrar sesión </button>
+
+    <nz-drawer
+      [nzWidth] = "700"
+      [nzClosable]="true"
+      [nzVisible]="visibleMenu"
+      nzPlacement="right"
+      nzTitle="NUESTRO MENÚ"
+      (nzOnClose)="cerrarDrawerMenu()"
+    >
+      <ng-container>
+        <div *ngFor="let plato of listaPlatos">
+          <div *ngIf="plato.disponibilidad" class="plato-row" (click)="verDetallePlato(plato.id_plato)">
+            <div class="plato-disponible">
+              <div class="plato-title">
+                <h3 class="plato-name">{{plato.nombre_plato | uppercase}}</h3>
+                <h5 class="plato-tipo">{{plato.nombre_tipo_plato}} |  Recomendado para {{plato.cantidad_personas_recomendadas}} persona(s)</h5>
+                <br>
+              </div>
+              <div class="plato-content">
+                <h3 style="margin: 0px">${{plato.precio_plato}}</h3>
+                <p>{{plato.comentario}}</p>
+              </div>
+            </div>
+          </div>
+          <nz-divider></nz-divider>
+          <div *ngIf="!plato.disponibilidad" class="plato-row-no-disponible">
+            <div class="plato-no-disponible">
+              <div class="plato-title">
+                <h3 class="plato-name">{{plato.nombre_plato | uppercase}}</h3>
+                <h5 class="plato-tipo">{{plato.nombre_tipo_plato}} | Recomendado para {{plato.cantidad_personas_recomendadas}} persona(s)</h5>
+                <br>
+              </div>
+              <div class="plato-content">                
+                <h3 style="margin: 0px">${{plato.precio_plato}}</h3>
+                <p>{{plato.comentario}}</p>
+              </div>
+            </div>
+          </div>
+          <nz-divider></nz-divider>
+        </div>
+      </ng-container>
+    </nz-drawer>
+
+    <nz-drawer
+      [nzWidth] = "400"
+      [nzClosable]="true"
+      [nzVisible]="visibleDetallePlato"
+      nzPlacement="right"
+      nzTitle="Plato"
+      (nzOnClose)="cerrarDrawerMenu()"
+    >
+      <ng-container>
+        info de plato
+      </ng-container>
+    </nz-drawer>
 </div>
 
 <div *ngIf="!mesaReservada">
@@ -14,7 +69,7 @@
       nzTitle="Mesa no tiene reserva"
       nzStatus="error"
       nzSubTitle="Esta mesa se encuentra disponible"
-    >
+    >    
       <!-- <div nz-result-content>
         <div class="desc">
           <h4 nz-title>The content you submitted has the following error:</h4>

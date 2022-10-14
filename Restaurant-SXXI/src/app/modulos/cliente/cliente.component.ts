@@ -26,6 +26,10 @@ export class ClienteComponent implements OnInit {
   reservaObjectParam : Reserva;
   clienteObjectParam : Cliente;
   mesaReservada :boolean = false;
+  visibleMenu = false;
+  listaPlatos;
+  carritoDeCompras = [];
+  visibleDetallePlato = false;
 
   ngOnInit() {
     this.mesaReservada = false;
@@ -60,25 +64,27 @@ export class ClienteComponent implements OnInit {
   obtenerReservaActivaPorIdMesa(id_mesa){
     this.clienteService.obtenerReservaActivaPorIdMesa(id_mesa).subscribe(resp=>{
       // console.log('resp obtenerReservaActivaPorIdMesa', resp);
-      let reserva = Object(resp['arrayReserva'][0]);
+      let reserva = Object(resp['arrayReserva']);
+      // console.log('reserva', reserva);
+      
       if (reserva.length > 0){
         this.mesaReservada = true;
         this.reservaObjectParam = {
-          cant_consumidores : reserva.cant_consumidores,
-          comentario : reserva.comentario,
-          dv_cliente : reserva.dv_cliente,
-          fecha_reserva : reserva.fecha_reserva,
-          hora_reserva : reserva.hora_reserva,
-          id_estado_reserva : reserva.id_estado_reserva,
-          id_mesa : reserva.id_mesa,
-          id_reserva : reserva.id_reserva,
-          rut_cliente : reserva.rut_cliente
+          cant_consumidores : reserva[0].cant_consumidores,
+          comentario : reserva[0].comentario,
+          dv_cliente : reserva[0].dv_cliente,
+          fecha_reserva : reserva[0].fecha_reserva,
+          hora_reserva : reserva[0].hora_reserva,
+          id_estado_reserva : reserva[0].id_estado_reserva,
+          id_mesa : reserva[0].id_mesa,
+          id_reserva : reserva[0].id_reserva,
+          rut_cliente : reserva[0].rut_cliente
         }
         console.log('reservaObjectParam', this.reservaObjectParam);
         this.clienteObjectParam = {
-          dv_cliente : reserva.dv_cliente,
-          nombre_cliente : reserva.nombre_cliente,
-          rut_cliente : reserva.rut_cliente
+          dv_cliente : reserva[0].dv_cliente,
+          nombre_cliente : reserva[0].nombre_cliente,
+          rut_cliente : reserva[0].rut_cliente
         }
         console.log('clienteObjectParam', this.clienteObjectParam);
       }
@@ -91,6 +97,21 @@ export class ClienteComponent implements OnInit {
 
   verMenu(){
     console.log('aquí se mostrará el menú');
+    this.mostrarDrawerMenu();
+  }
+
+  mostrarDrawerMenu(): void {
+    this.visibleMenu = true;
+    this.clienteService.obtenerPlatos().subscribe(resp=>{
+      this.listaPlatos = resp['plato'];
+      console.log('listaPlatos', this.listaPlatos);
+      
+    });
+  }
+
+  cerrarDrawerMenu(): void {
+    this.visibleMenu = false;
+    this.visibleDetallePlato = false;
   }
 
   cancelarReserva(){
@@ -107,5 +128,17 @@ export class ClienteComponent implements OnInit {
 
   cerrarSesion(){
     this.router.navigate(['/login'])
+  }
+
+  verDetallePlato(idPlato){
+    this.visibleDetallePlato = true;
+  }
+
+  seleccionarPlato(idPlato){
+    console.log('idPlato', idPlato);
+  }
+
+  cerrarDrawerDetallePlato(){
+    this.visibleDetallePlato = false;
   }
 }

@@ -32,7 +32,7 @@ import { NzDescriptionsModule } from 'ng-zorro-antd/descriptions';
 import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
 import { NzResultModule } from 'ng-zorro-antd/result';
 import { MenuComponent } from './modulos/menu/menu.component';
-
+import { NzDrawerModule } from 'ng-zorro-antd/drawer';
 registerLocaleData(es);
 
 @NgModule({
@@ -66,7 +66,8 @@ registerLocaleData(es);
     NzDividerModule,
     NzDescriptionsModule,
     NzInputNumberModule,
-    NzResultModule
+    NzResultModule,
+    NzDrawerModule
   ],
   providers: [{ provide: NZ_I18N, useValue: es_ES }],
   bootstrap: [AppComponent]
