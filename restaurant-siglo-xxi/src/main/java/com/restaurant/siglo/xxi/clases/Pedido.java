@@ -28,7 +28,13 @@ public class Pedido {
 	@JoinColumn(name = "id_mesa")
 	private Mesa mesa;
 	
+	@ManyToOne
+	@JoinColumn(name = "id_boleta")
+	private Boleta boleta;
+	
 	Timestamp fecha_ingreso;
+	
+	private int subtotal;
 
 	public int getId_pedido() {
 		return id_pedido;
@@ -70,4 +76,19 @@ public class Pedido {
 		this.fecha_ingreso = fecha_ingreso;
 	}
 
+	public Boleta getBoleta() {
+		return boleta;
+	}
+
+	public void setBoleta(Boleta boleta) {
+		this.boleta = boleta;
+	}
+
+	public int getSubtotal() {
+		return subtotal;
+	}
+
+	public void setSubtotal(int subtotal) {
+		this.subtotal = subtotal;
+	}	
 }

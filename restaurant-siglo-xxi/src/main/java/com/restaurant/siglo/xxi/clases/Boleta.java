@@ -27,7 +27,7 @@ public class Boleta {
 	private TipoPago tipoPago;	
 	
 	Timestamp fecha_atencion;
-	Timestamp hora_atencion;
+	String hora_atencion;
 	String hora_emision;
 	int subtotal;
 	int total;
@@ -63,10 +63,10 @@ public class Boleta {
 	public void setFecha_atencion(Timestamp fecha_atencion) {
 		this.fecha_atencion = fecha_atencion;
 	}
-	public Timestamp getHora_atencion() {
+	public String getHora_atencion() {
 		return hora_atencion;
 	}
-	public void setHora_atencion(Timestamp hora_atencion) {
+	public void setHora_atencion(String hora_atencion) {
 		this.hora_atencion = hora_atencion;
 	}
 	public String getHora_emision() {

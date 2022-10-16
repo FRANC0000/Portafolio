@@ -37,4 +37,10 @@ export class ClienteService {
       'http://localhost:8085/restaurantSXXI/rest-rsxii/plato/obtenerPlatos'
     );
   }
+  
+  public obtenerProductos(){
+    return this.http.get(
+      'http://localhost:8085/restaurantSXXI/rest-rsxii/producto/obtenerProductos'
+    );
+  }
 }

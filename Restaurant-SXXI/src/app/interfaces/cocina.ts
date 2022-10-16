@@ -8,3 +8,15 @@ export interface Plato {
     comentario : string,
     disponibilidad : boolean
 }
+
+export interface Producto{
+    id_producto : number,
+    nombre_producto : string,
+    stock_producto : number,
+    medida_producto : string,
+    fecha_vencimiento : string,
+    valor_unitario: string,
+    id_tipo_producto: number,
+    comentario : string,
+    fecha_ingreso_producto : string
+}

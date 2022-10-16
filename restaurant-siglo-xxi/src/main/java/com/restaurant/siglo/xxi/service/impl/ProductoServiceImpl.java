@@ -26,30 +26,30 @@ public class ProductoServiceImpl implements ProductoService{
     public String obtenerProductos() throws JSONException {
         List<Producto> listado = productoRepository.findAll();
         JSONObject resp = new JSONObject();
-        JSONArray listPlatos = new JSONArray();
+        JSONArray listProductos = new JSONArray();
         
         listado.forEach((producto) -> {
             try {
                 JSONObject productos = new JSONObject();
-                productos.put("id_plato", producto.getId_producto());
+                productos.put("id_producto", producto.getId_producto());
                 productos.put("comentario", producto.getComentario());
                 productos.put("fecha_ingreso_producto", producto.getFecha_ingreso_producto());
                 productos.put("fecha_vencimiento", producto.getFecha_vencimiento());
                 productos.put("medida_producto", producto.getMedida_producto());
-                productos.put("descripcion_plato", producto.getNombre_producto());
+                productos.put("nombre_producto", producto.getNombre_producto());
                 productos.put("stock_producto", producto.getStock_producto());
                 productos.put("valor_unitario", producto.getValor_unitario());
                 productos.put("id_tipo_producto", producto.getTipoProducto().getId_tipo_producto());
                 productos.put("tipo_producto_comentario", producto.getTipoProducto().getComentario());
                 productos.put("nombre_tipo_producto", producto.getTipoProducto().getNombre_tipo_producto());
-                listPlatos.put(productos);
+                listProductos.put(productos);
             } catch (JSONException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
             }
         });
         
-        resp.put("plato", listPlatos);
+        resp.put("productos", listProductos);
         return  resp.toString();
     }
     

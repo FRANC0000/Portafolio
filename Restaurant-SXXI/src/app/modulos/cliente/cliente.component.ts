@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Routes, RouterModule, ActivatedRoute, Router} from '@angular/router';
+import { Pedido, ProductoEnCarro } from 'src/app/interfaces/carrito-compras';
+import { Plato, Producto } from 'src/app/interfaces/cocina';
 import { CancelarReserva, Cliente, EstadoMesa, Mesa, Reserva, TipoMesa } from 'src/app/interfaces/mesa';
 import { ClienteService } from './cliente.service';
 
@@ -26,10 +28,16 @@ export class ClienteComponent implements OnInit {
   reservaObjectParam : Reserva;
   clienteObjectParam : Cliente;
   mesaReservada :boolean = false;
-  visibleMenu = false;
   listaPlatos;
-  carritoDeCompras = [];
+  listaProductos;
+  carritoDeCompras : ProductoEnCarro[] = [];
   visibleDetallePlato = false;
+  visibleCarritoCompras = false;
+  platoSelected : Plato;
+  productoSelected : Producto;
+  cantidadProductoAgregarAlCarro = 1;
+  pedidoAIngresar : Pedido;
+  now : Date;
 
   ngOnInit() {
     this.mesaReservada = false;
@@ -38,6 +46,8 @@ export class ClienteComponent implements OnInit {
     }
     this.obtenerUnaMesa(id_mesa);
     this.obtenerReservaActivaPorIdMesa(id_mesa);
+    this.obtenerPlatos();
+    this.obtenerProductos();
   }
 
   obtenerUnaMesa(id_mesa){
@@ -95,13 +105,7 @@ export class ClienteComponent implements OnInit {
     })
   }
 
-  verMenu(){
-    console.log('aquí se mostrará el menú');
-    this.mostrarDrawerMenu();
-  }
-
-  mostrarDrawerMenu(): void {
-    this.visibleMenu = true;
+  obtenerPlatos(){
     this.clienteService.obtenerPlatos().subscribe(resp=>{
       this.listaPlatos = resp['plato'];
       console.log('listaPlatos', this.listaPlatos);
@@ -109,10 +113,13 @@ export class ClienteComponent implements OnInit {
     });
   }
 
-  cerrarDrawerMenu(): void {
-    this.visibleMenu = false;
-    this.visibleDetallePlato = false;
+  obtenerProductos(){
+    this.clienteService.obtenerProductos().subscribe(resp=>{
+      this.listaProductos = resp['productos'];
+      console.log('listaProductos', this.listaProductos);
+    })
   }
+
 
   cancelarReserva(){
     console.log('aquí se cancelará la reserva');
@@ -122,6 +129,10 @@ export class ClienteComponent implements OnInit {
 
     this.clienteService.cancelarReserva(cancelarReserva).subscribe(resp =>{
       console.log('resp cancelarReserva', resp);
+
+      if (resp.includes('cancelada con éxito')){
+        window.location.reload();
+      }
       
     })
   }
@@ -130,8 +141,10 @@ export class ClienteComponent implements OnInit {
     this.router.navigate(['/login'])
   }
 
-  verDetallePlato(idPlato){
+  verDetallePlato(plato){
     this.visibleDetallePlato = true;
+    this.platoSelected = plato;
+    console.log('platoSelected', this.platoSelected);
   }
 
   seleccionarPlato(idPlato){
@@ -140,5 +153,160 @@ export class ClienteComponent implements OnInit {
 
   cerrarDrawerDetallePlato(){
     this.visibleDetallePlato = false;
+  }
+
+  cerrarDrawerCarritoCompras(){
+    this.visibleCarritoCompras = false;
+  }
+
+  verCarrito(){
+    console.log('carritoDeCompras', this.carritoDeCompras);
+    if (this.carritoDeCompras.length > 0){
+      this.visibleCarritoCompras = true;
+    }
+    else{
+      alert('No hay productos en el carro')
+    }
+  }
+
+  agregarPlatoAlCarro(plato){
+    // console.log('plato', plato);
+    // console.log(arr.some(e => e.foo === 'bar')); // true
+    const existe = this.carritoDeCompras.some( p => {
+      if (p.plato != null && p.plato != undefined){
+        if (p.plato.id_plato === plato.id_plato){
+          return true;
+        }
+        else{
+          return false;
+        }
+      }
+      else {
+        return false;
+      }
+    })
+    console.log('existe', existe);
+
+    if (!existe){
+      // console.log('no existe, agregar');
+      const productoEnCarro : ProductoEnCarro = {
+      plato: plato,
+      cantidad : 1,
+      esPlato : true,
+      esProducto : false,
+      valorUnitario : plato.precio_plato
+      }
+      this.carritoDeCompras.push(productoEnCarro);
+    }
+    else{
+      // console.log('existe, sumar 1');
+      this.carritoDeCompras.find(p => {
+        if (p.plato != null && p.plato != undefined){
+          if (p.plato.id_plato === plato.id_plato){
+            p.cantidad +=1
+          }
+        }
+      })
+    }
+    console.log('carritoDeCompras', this.carritoDeCompras);
+    this.crearPedidoAIngresar();
+  }
+
+  quitarPlatoDelCarro(plato){
+    console.log('eliminar plato', plato);
+    this.carritoDeCompras.findIndex(p => {
+      if (p.plato.id_plato === plato.id_plato){
+        if (p.cantidad > 0){
+          p.cantidad -= 1;
+        }
+      }
+    })
+    console.log('carritoDeCompras', this.carritoDeCompras);
+    this.crearPedidoAIngresar();
+  }
+
+  agregarProductoAlCarro(producto){
+    // console.log('producto', producto);
+    // console.log(arr.some(e => e.foo === 'bar')); // true
+    const existe = this.carritoDeCompras.some( p => {
+      if (p.producto != null && p.producto != undefined){
+        if (p.producto.id_producto === producto.id_producto){
+          return true;
+        }
+        else{
+          return false;
+        }
+      }
+      else {
+        return false;
+      }
+    });
+    console.log('existe', existe);
+
+    if (!existe){
+      // console.log('no existe, agregar');
+      const productoEnCarro : ProductoEnCarro = {
+      producto: producto,
+      cantidad : 1,
+      esPlato : false,
+      esProducto : true,
+      valorUnitario : producto.valor_unitario
+      }
+      this.carritoDeCompras.push(productoEnCarro);
+    }
+    else{
+      // console.log('existe, sumar 1');
+      this.carritoDeCompras.find(p => {
+        if(p.producto != null && p.producto != undefined){
+          if (p.producto.id_producto === producto.id_producto){
+            p.cantidad +=1
+          }
+        }
+      })
+    }
+    console.log('carritoDeCompras', this.carritoDeCompras);
+    this.crearPedidoAIngresar();
+  }
+
+  quitarProductoDelCarro(producto){
+    console.log('eliminar producto', producto);
+    this.carritoDeCompras.findIndex(p => {
+      if (p.producto.id_producto === producto.id_producto){
+        if (p.cantidad > 0){
+          p.cantidad -= 1;
+        }
+      }
+    })
+    console.log('carritoDeCompras', this.carritoDeCompras);
+    this.crearPedidoAIngresar();
+  }
+
+  confirmarPedido(){
+    console.log('confirmarPedido');
+    console.log('pedidoAIngresar', this.pedidoAIngresar);
+    console.log('carritoDeCompras', this.carritoDeCompras);
+  }
+
+  crearPedidoAIngresar(){
+    let subtotal : number = 0;
+    this.now = new Date();
+
+    this.carritoDeCompras.forEach(p => {
+      // console.log('cantidad', p.cantidad);
+      // console.log('valor', p.valorUnitario);
+      let valorPorCantidad = p.cantidad * p.valorUnitario;
+      // console.log('valorPorCantidad',valorPorCantidad);
+      subtotal += valorPorCantidad;
+    });
+    console.log('subtotal', subtotal);
+    this.pedidoAIngresar = {
+      carritoProductos : this.carritoDeCompras,
+      fechaIngreso: this.now.toLocaleDateString()+' '+ this.now.toLocaleTimeString(),
+      idEstadoIinstancia : 1,
+      idMesa: this.mesaObjectParam.id_mesa,
+      rutCliente : this.clienteObjectParam.rut_cliente,
+      subtotal : subtotal
+    }
+    console.log('pedidoAIngresar', this.pedidoAIngresar);
   }
 }

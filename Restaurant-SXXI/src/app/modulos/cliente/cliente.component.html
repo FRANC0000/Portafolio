@@ -1,67 +1,225 @@
-<div *ngIf="mesaReservada == true">
-    <h1>Mesa nro. {{idMesaParam}}</h1>
-    <h1>Reserva nro. {{reservaObjectParam?.id_reserva}}</h1>
-    <h1>Rut cliente nro. {{clienteObjectParam?.rut_cliente}}</h1>
-    <h1>Hola {{clienteObjectParam?.nombre_cliente}}! haz un pedido.</h1>
-    
-    <button nz-button (click)="verMenu()"> Ver menú </button>
-    <button nz-button (click)="cancelarReserva()"> Cancelar reserva </button>
-    <button nz-button (click)="cerrarSesion()"> Cerrar sesión </button>
+<div *ngIf="mesaReservada == true" class="all-cliente">
+  <div class="datos-reserva">
+    <div>
+      <label>Mesa #{{idMesaParam}}</label>
+      <label>Reserva #{{reservaObjectParam?.id_reserva}}</label>
+      <label>Cliente #{{clienteObjectParam?.rut_cliente}}</label>
+      
+    </div>
+    <br>
+    <div class="btn-reserva">
+      <!-- <button nz-button (click)="verMenu()"> Ver menú </button> -->
+      <button nz-button (click)="verCarrito()"> Ver carrito </button>
+      <!-- <button nz-button nzType="danger" (click)="cerrarSesion()"> Cerrar sesión </button> -->
+      <button nz-button nzType="danger" (click)="cancelarReserva()"> Cancelar reserva </button>
+    </div>
+  </div>
 
-    <nz-drawer
-      [nzWidth] = "700"
-      [nzClosable]="true"
-      [nzVisible]="visibleMenu"
-      nzPlacement="right"
-      nzTitle="NUESTRO MENÚ"
-      (nzOnClose)="cerrarDrawerMenu()"
-    >
-      <ng-container>
-        <div *ngFor="let plato of listaPlatos">
-          <div *ngIf="plato.disponibilidad" class="plato-row" (click)="verDetallePlato(plato.id_plato)">
-            <div class="plato-disponible">
+  <div class="menu">
+    <div class="menu-header">
+      <h2>Hola {{clienteObjectParam?.nombre_cliente}}! aquí tienes nuestro menú.</h2>
+    </div>
+    <nz-divider></nz-divider>
+    <div class="menu-content">
+      <nz-tabset>
+        <nz-tab nzTitle="Platos" class="platos-tab">
+          <div *ngFor="let plato of listaPlatos; let i = index;">
+            <div *ngIf="plato.disponibilidad" class="plato-row">
+              <div class="img-plato">
+                <img src="assets/img-platos/cazuela_de_vacuno.jpg" alt="">
+              </div>
+              <div class="plato-disponible">
+                <div class="plato-title">
+                  <h3 class="plato-name">{{plato.nombre_plato | uppercase}}</h3>
+                  <h5 class="plato-tipo">{{plato.nombre_tipo_plato}} |  Recomendado para {{plato.cantidad_personas_recomendadas}} persona(s)</h5>
+                  <br>
+                </div>
+                <div class="plato-content">
+                  <h3 style="margin: 0px">${{plato.precio_plato}}</h3>
+                  <p>{{plato.comentario}}</p>
+                </div>
+                <div>
+                  <label for="">Cantidad agregada: X</label>
+                  <button nz-button (click)="agregarPlatoAlCarro(plato)" class="agregar-item"> Añadir </button>
+                  <button nz-button (click)="verDetallePlato(plato)"> Ver detalle </button>
+                </div>
+              </div>
+            </div>
+            <nz-divider></nz-divider>
+            <div *ngIf="!plato.disponibilidad" class="plato-row-no-disponible">
+              <div class="img-plato">
+                <img src="assets/img-platos/cazuela_de_vacuno.jpg" alt="">
+              </div>
+              <div class="plato-no-disponible">
+                <div class="plato-title">
+                  <h3 class="plato-name">{{plato.nombre_plato | uppercase}}</h3>
+                  <h5 class="plato-tipo">{{plato.nombre_tipo_plato}} | Recomendado para {{plato.cantidad_personas_recomendadas}} persona(s)</h5>
+                  <br>
+                </div>
+                <div class="plato-content">                
+                  <h3 style="margin: 0px">${{plato.precio_plato}}</h3>
+                  <p>{{plato.comentario}}</p>
+                </div>
+                <div>
+                  <label for="" style="color: red; font-weight: bold;">ARTÍCULO NO DISPONIBLE</label>
+                </div>
+              </div>
+            </div>
+            <nz-divider></nz-divider>
+          </div>
+        </nz-tab>
+        <nz-tab nzTitle="Productos">
+          <div *ngFor="let producto of listaProductos; let i = index;">
+            <div *ngIf="producto.stock_producto > 0" class="plato-row">
+              <div class="img-producto">
+                <img src="assets/img-platos/cazuela_de_vacuno.jpg" alt="">
+              </div>
+              <div class="plato-disponible">
+                <div class="plato-title">
+                  <h3 class="plato-name">{{producto.nombre_producto | uppercase}}</h3>
+                  <h5 class="plato-tipo">{{producto.nombre_tipo_producto}}</h5>
+                  <br>
+                </div>
+                <div class="plato-content">
+                  <h3 style="margin: 0px">${{producto.valor_unitario}}</h3>
+                  <p>{{producto.comentario}}</p>
+                </div>
+                <div>
+                  <label for="">Cantidad agregada: X</label>
+                  <button nz-button (click)="agregarProductoAlCarro(producto)" class="agregar-item"> Añadir </button>
+                  <!-- <button nz-button (click)="verDetallePlato(producto)"> Ver detalle </button> -->
+                </div>
+              </div>
+            </div>
+            <nz-divider></nz-divider>
+            <div *ngIf="!(producto.stock_producto > 0)" class="plato-row-no-disponible">
+              <div class="img-producto">
+                <img src="assets/img-platos/cazuela_de_vacuno.jpg" alt="">
+              </div>
+              <div class="plato-no-disponible">
+                <div class="plato-title">
+                  <h3 class="plato-name">{{producto.nombre_producto | uppercase}}</h3>
+                  <h5 class="plato-tipo">{{producto.nombre_tipo_producto}}</h5>
+                  <br>
+                </div>
+                <div class="plato-content">                
+                  <h3 style="margin: 0px">${{producto.valor_unitario}}</h3>
+                  <p>{{producto.comentario}}</p>
+                </div>
+                <div>
+                  <label for="" style="color: red; font-weight: bold;">ARTÍCULO NO DISPONIBLE</label>
+                </div>
+              </div>
+            </div>
+            <nz-divider></nz-divider>
+          </div>
+        </nz-tab>
+        <nz-tab nzTitle="Tab 3">Content of Tab Pane 3</nz-tab>
+      </nz-tabset>
+    </div>
+  </div>
+
+  <!-- DETALLE DEL PLATO -->
+  <nz-drawer
+    [nzWidth] = "550"
+    [nzClosable]="false"
+    [nzVisible]="visibleDetallePlato"
+    nzPlacement="right"
+    nzTitle="Detalle del plato"
+    (nzOnClose)="cerrarDrawerDetallePlato()"
+    style="background-color: rgba(81, 0, 195, 0.319);"
+  >
+    <ng-container>
+      <div class="all-detalle-plato">
+        <div class="img-detalle-plato">
+          <img src="assets/img-platos/cazuela_de_vacuno.jpg" alt=""
+          style="height: 300px; width: 100%;">
+        </div>
+        <div class="header-detalle-plato">
+          <div class="name-detalle-plato">
+            <h3>{{platoSelected?.nombre_plato | uppercase}}</h3>
+          </div>
+          <div class="desc-detalle-plato">
+            <h5>{{platoSelected?.descripcion_tipo_plato}}</h5>
+            <h5>Recomendado para {{platoSelected?.cantidad_personas_recomendadas}} persona(s) </h5>
+            <h5>{{platoSelected?.nombre_tipo_plato}}</h5>
+            <h5>$ {{platoSelected?.precio_plato}}</h5>
+          </div>  
+        </div>
+        <div class="detalles-plato">
+          <p>{{platoSelected?.descripcion_plato}}</p>
+          <br>
+          <p>{{platoSelected?.comentario}}</p>
+        </div>
+      </div>
+    </ng-container>
+  </nz-drawer>
+
+  <!-- VER CARRO DE COMPRAS -->
+  <nz-drawer
+    [nzWidth] = "700"
+    [nzClosable]="true"
+    [nzVisible]="visibleCarritoCompras"
+    nzPlacement="left"
+    nzTitle="Mi pedido"
+    (nzOnClose)="cerrarDrawerCarritoCompras()"
+    style="background-color: rgba(81, 0, 195, 0.319);"
+  >
+    <ng-container>
+      <div class="all-productos-carrito">
+        <div *ngFor="let item of carritoDeCompras; let i = index;">
+  
+          <!-- ES PLATO -->
+          <div *ngIf="item.esPlato" class="carrito-row">
+            <div class="img-plato-carrito">
+              <img src="assets/img-platos/cazuela_de_vacuno.jpg" alt="">
+            </div>
+            <div class="plato-carrito">
               <div class="plato-title">
-                <h3 class="plato-name">{{plato.nombre_plato | uppercase}}</h3>
-                <h5 class="plato-tipo">{{plato.nombre_tipo_plato}} |  Recomendado para {{plato.cantidad_personas_recomendadas}} persona(s)</h5>
+                <h3 class="plato-name">{{item.plato.nombre_plato | uppercase}}</h3>
+                <h5 class="plato-tipo">{{item.plato.nombre_tipo_plato}}</h5>
+                <h5 class="plato-tipo">[PLATO]</h5>
                 <br>
               </div>
               <div class="plato-content">
-                <h3 style="margin: 0px">${{plato.precio_plato}}</h3>
-                <p>{{plato.comentario}}</p>
+                <h3 style="margin: 0px">${{item.plato.precio_plato}}</h3>
+                <h3 style="margin: 0px">Cantidad: {{item.cantidad}}</h3>
+                <button nz-button (click)="quitarPlatoDelCarro(item.plato)"> Quitar </button>
+                <button nz-button (click)="agregarPlatoAlCarro(item.plato)" class="agregar-item"> Añadir </button>
               </div>
             </div>
           </div>
-          <nz-divider></nz-divider>
-          <div *ngIf="!plato.disponibilidad" class="plato-row-no-disponible">
-            <div class="plato-no-disponible">
+  
+          <!-- ES PRODUCTO -->
+          <div *ngIf="item.esProducto" class="carrito-row">
+            <div class="img-plato-carrito">
+              <img src="assets/img-platos/cazuela_de_vacuno.jpg" alt="">
+            </div>
+            <div class="plato-carrito">
               <div class="plato-title">
-                <h3 class="plato-name">{{plato.nombre_plato | uppercase}}</h3>
-                <h5 class="plato-tipo">{{plato.nombre_tipo_plato}} | Recomendado para {{plato.cantidad_personas_recomendadas}} persona(s)</h5>
+                <h3 class="plato-name">{{item.producto.nombre_producto | uppercase}}</h3>
+                <h5 class="plato-tipo">{{item.producto.nombre_tipo_producto}}</h5>
+                <h5 class="plato-tipo">[PRODUCTO]</h5>
                 <br>
               </div>
-              <div class="plato-content">                
-                <h3 style="margin: 0px">${{plato.precio_plato}}</h3>
-                <p>{{plato.comentario}}</p>
+              <div class="plato-content">
+                <h3 style="margin: 0px">${{item.producto.valor_unitario}}</h3>
+                <h3 style="margin: 0px">Cantidad: {{item.cantidad}}</h3>
+                <button nz-button (click)="quitarProductoDelCarro(item.producto)"> Quitar </button>
+                <button nz-button (click)="agregarProductoAlCarro(item.producto)" class="agregar-item"> Añadir </button>
               </div>
             </div>
           </div>
           <nz-divider></nz-divider>
         </div>
-      </ng-container>
-    </nz-drawer>
-
-    <nz-drawer
-      [nzWidth] = "400"
-      [nzClosable]="true"
-      [nzVisible]="visibleDetallePlato"
-      nzPlacement="right"
-      nzTitle="Plato"
-      (nzOnClose)="cerrarDrawerMenu()"
-    >
-      <ng-container>
-        info de plato
-      </ng-container>
-    </nz-drawer>
+      </div>
+      <div class="footer-carrito">
+        <h2>Subtotal : ${{pedidoAIngresar?.subtotal | currency:'CLP'}}</h2>
+        <br>
+        <button nz-button (click)="confirmarPedido()"> Confirmar pedido </button>
+      </div>
+    </ng-container>
+  </nz-drawer>
 </div>
 
 <div *ngIf="!mesaReservada">

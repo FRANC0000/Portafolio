@@ -33,6 +33,10 @@ import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
 import { NzResultModule } from 'ng-zorro-antd/result';
 import { MenuComponent } from './modulos/menu/menu.component';
 import { NzDrawerModule } from 'ng-zorro-antd/drawer';
+import { NzPopconfirmModule } from 'ng-zorro-antd/popconfirm';
+import { NzPopoverModule } from 'ng-zorro-antd/popover';
+import { NzTabsModule } from 'ng-zorro-antd/tabs';
+
 registerLocaleData(es);
 
 @NgModule({
@@ -67,7 +71,10 @@ registerLocaleData(es);
     NzDescriptionsModule,
     NzInputNumberModule,
     NzResultModule,
-    NzDrawerModule
+    NzDrawerModule,
+    NzPopconfirmModule,
+    NzPopoverModule,
+    NzTabsModule
   ],
   providers: [{ provide: NZ_I18N, useValue: es_ES }],
   bootstrap: [AppComponent]
