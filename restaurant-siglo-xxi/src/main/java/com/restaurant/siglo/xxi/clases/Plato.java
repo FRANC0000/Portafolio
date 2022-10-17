@@ -28,6 +28,7 @@ public class Plato {
 	String descripcion_plato;
 	String comentario;
 	Boolean disponibilidad;
+	Boolean eliminado;
 	
 	public int getId_plato() {
 		return id_plato;
@@ -83,4 +84,12 @@ public class Plato {
 	public void setDisponibilidad(Boolean disponibilidad) {
 		this.disponibilidad = disponibilidad;
 	}
+    public Boolean getEliminado() {
+        return eliminado;
+    }
+    public void setEliminado(Boolean eliminado) {
+        this.eliminado = eliminado;
+    }
+	
+	
 }

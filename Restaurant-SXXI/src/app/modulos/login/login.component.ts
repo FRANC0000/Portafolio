@@ -59,7 +59,7 @@ export class LoginComponent implements OnInit {
                 this.router.navigate(['/administrador'])
               }
               else if (resp['rol'] == 2){
-                this.router.navigate(['/bodedga'])
+                this.router.navigate(['/bodega'])
               }
               else if (resp['rol'] == 3){
                 this.router.navigate(['/cocina'])

@@ -54,4 +54,10 @@ public class PlatoController {
 		
 		return resp;	
 	}
+	
+	@RequestMapping(value="/obtenerTipoPlato")
+    public String obtenerTipoPlato() throws JSONException{
+        String listTipoPlato = platoService.obtenerTipoPlato();
+        return listTipoPlato;
+    }
 }

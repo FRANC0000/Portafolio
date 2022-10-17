@@ -28,7 +28,7 @@ export class ClienteComponent implements OnInit {
   mesaReservada :boolean = false;
 
   ngOnInit() {
-    this.mesaReservada = false;
+    // this.mesaReservada = false;
     const id_mesa = {
       id_mesa : this.idMesaParam
     }
@@ -60,8 +60,14 @@ export class ClienteComponent implements OnInit {
   obtenerReservaActivaPorIdMesa(id_mesa){
     this.clienteService.obtenerReservaActivaPorIdMesa(id_mesa).subscribe(resp=>{
       // console.log('resp obtenerReservaActivaPorIdMesa', resp);
-      let reserva = Object(resp['arrayReserva'][0]);
+      let reserva = Object(resp['arrayReserva']);
+      // console.log(reserva);
+      // console.log(reserva.length);
+      
       if (reserva.length > 0){
+        console.log('entro aki 1');
+        reserva = reserva[0]
+        
         this.mesaReservada = true;
         this.reservaObjectParam = {
           cant_consumidores : reserva.cant_consumidores,
@@ -84,6 +90,9 @@ export class ClienteComponent implements OnInit {
       }
       else{
         console.log('Esta mesa está disponible y no tiene una reserva activa');
+        console.log('entro aki 2');
+        console.log(this.mesaReservada);
+        
         this.mesaReservada = false;
       }
     })
@@ -101,7 +110,7 @@ export class ClienteComponent implements OnInit {
 
     this.clienteService.cancelarReserva(cancelarReserva).subscribe(resp =>{
       console.log('resp cancelarReserva', resp);
-      
+      window.location.reload();
     })
   }
 

@@ -2,37 +2,171 @@
     <div class="botones">
         <button nz-button (click)="cerrarSesion()"> Cerrar sesión </button>
         <button nz-button (click)="crearPlato()"> Crear plato </button>
+        <button nz-button (click)="eliminarPlato()"> Eliminar plato </button>
+        <button nz-button (click)="modificarPlato()"> Modificar plato </button>
         <button nz-button (click)="crearReceta()"> Crear receta </button>
     </div>
 </div>
 
-<div>
-    <h1>Menú</h1>
-    <div class="grid">   
-        <div *ngFor="let unPlato of listaPlatos" class="platos">
-            <div class="card" *ngIf="unPlato.disponibilidad">
-                <div class="title-card">
-                    Plato nro. {{unPlato.id_plato}} 
+
+<nz-modal nzTitle="Crear Plato" [nzWidth]="800" [nzContent]="crearPlatoContent" [(nzVisible)]="isVisibleCrearPlato" (nzOnOk)="guardarCrearPlato()" (nzOnCancel)="cerrarCrearPlato()">
+    <div>
+        <ng-container #crearPlatoContent>
+            <form nz-form [formGroup]="validateFormCrearPlato" id="validateFormCrearPlato" [nzLayout]="'inline'" (ngSubmit)="enviarFormularioCrearPlato()">
+
+                <div style="display: flex; justify-content: center;">
+
+                    <nz-form-item>
+                        <!-- SOLO 1 ITEM DEL FORMULARIO-->
+                        <nz-form-label nzRequired nzFor="id_plato">
+                            <!-- TITULO DEL ITEM-->
+                            Id plato
+                        </nz-form-label>
+                        <nz-form-control nzErrorTip="Por favor ingrese su nombre de usuario">
+                            <!-- ERROR QUE SALTA AL ENVIAR EL FORMULARIO-->
+                            <input nz-input type="text" name="id_plato" id="id_plato" placeholder="id_plato" formControlName="id_plato">
+                        </nz-form-control>
+                    </nz-form-item>
+
                 </div>
-                <div class="content-card">
-                    Nombre de plato: {{unPlato.nombre_plato}}
-                    <br>
-                    Recomendado para {{unPlato.cantidad_personas_recomendadas}} persona(s)
-                    <br>
-                    Precio: ${{unPlato.precio_plato}}
+
+                <br>
+
+                <div nz-row clas="form-usuario">
+                    <div nz-col nzSpan="12">
+
+                        <nz-form-item>
+                            <nz-form-label>
+                                Nombre
+                            </nz-form-label>
+                            <nz-form-control>
+                                <input nz-input type="text" name="nombre_plato" id="nombre_plato" placeholder="nombre plato" formControlName="nombre_plato">
+                            </nz-form-control>
+                        </nz-form-item>
+
+                        <nz-form-item>
+                            <nz-form-label>
+                                Personas recomendadas
+                            </nz-form-label>
+                            <nz-form-control>
+                                <input nz-input type="text" name="cantidad_personas_recomendadas" id="cantidad_personas_recomendadas" placeholder="Personas recomendadas" formControlName="cantidad_personas_recomendadas">
+                            </nz-form-control>
+                        </nz-form-item>
+
+                        <nz-form-item>
+                            <nz-form-label>
+                                Descripción
+                            </nz-form-label>
+                            <nz-form-control>
+                                <input nz-input type="text" name="descripcion_plato" id="descripcion_plato" placeholder="descripcion" formControlName="descripcion_plato">
+                            </nz-form-control>
+                        </nz-form-item>
+
+                        <nz-form-item>
+                            <nz-form-label>
+                                Precio
+                            </nz-form-label>
+                            <nz-form-control>
+                                <input nz-input type="text" name="precio_plato" id="precio_plato" placeholder="precio" formControlName="precio_plato">
+                            </nz-form-control>
+                        </nz-form-item>
+
+                    </div>
+
+                    <div nz-col nzSpan="12">
+
+                        <nz-form-item>
+                            <nz-form-label>
+                                Tipo de plato
+                            </nz-form-label>
+                            <nz-form-control style="width: 200px;">
+                                <nz-select [ngModel]="tipoPlatoSelected" nzPlaceHolder="Elegir tipo de plato" name="id_tipo_plato" formControlName="id_tipo_plato">
+                                    <ng-container *ngFor="let tipo of listaTipoPlato">
+                                        <nz-option [nzValue]="tipo.id_tipo_plato" [nzLabel]="tipo.nombre_tipo_plato"></nz-option>
+                                    </ng-container>
+                                </nz-select>
+                            </nz-form-control>
+                        </nz-form-item>
+
+                        <nz-form-item>
+                            <nz-form-label>
+                                Disponibilidad
+                            </nz-form-label>
+                            <nz-form-control style="width: 200px;">
+                                <nz-select [ngModel]="disponibilidadSelected" nzPlaceHolder="Elegir disponibilidad" name="disponibilidad" formControlName="disponibilidad">
+                                    <nz-option nzValue="true" nzLabel="Disponible"></nz-option>
+                                    <nz-option nzValue="false" nzLabel="No Disponible"></nz-option>
+                                </nz-select>
+                            </nz-form-control>
+                        </nz-form-item>
+
+                        <nz-form-item>
+                            <nz-form-label>
+                                Estado Eliminado
+                            </nz-form-label>
+                            <nz-form-control style="width: 200px;">
+                                <input nz-input ngModel="Activo" disabled type="text" name="eliminado" id="eliminado" formControlName="eliminado">
+                            </nz-form-control>
+                        </nz-form-item>
+
+                        <nz-form-item>
+                            <nz-form-label>
+                                Comentario
+                            </nz-form-label>
+                            <nz-form-control>
+                                <input nz-input type="text" name="comentario" id="comentario" placeholder="Agregar comentario" formControlName="comentario">
+                            </nz-form-control>
+                        </nz-form-item>
+
+                    </div>
+
                 </div>
+            </form>
+        </ng-container>
+    </div>
+</nz-modal>
+
+<nz-modal nzTitle="Eliminar plato" [nzWidth]="800" [nzContent]="eliminarPlatoContent" [(nzVisible)]="isVisibleEliminarPlato" (nzOnOk)="guardarEliminarPlato()" (nzOnCancel)="cerrarEliminarPlato()">
+    <ng-container #eliminarMesaContent>
+        <form nz-form [formGroup]="validateFormEliminarPlato" id="validateFormEliminarPlato" [nzLayout]="'inline'" (ngSubmit)="guardarEliminarPlato()">
+            <div style="display: flex; justify-content: center;">
+                <nz-form-item>
+                    <nz-form-label nzRequired nzFor="id_plato">
+                        ID plato
+                    </nz-form-label>
+                    <br>
+                    <nz-form-control nzErrorTip="Ingrese ID de plato que desee eliminar">
+                        <input nz-input type="number" min="1" name="id_plato" id="id_plato" placeholder="Ingrese id plato" formControlName="id_plato">
+                    </nz-form-control>
+                </nz-form-item>
             </div>
-            <div class="card-no-disponible" *ngIf="!unPlato.disponibilidad">
-                <div class="title-card">
-                    Plato nro. {{unPlato.id_plato}} 
-                </div>
-                <div class="content-card">
-                    Nombre de plato: {{unPlato.nombre_plato}}
-                    <br>
-                    Recomendado para {{unPlato.cantidad_personas_recomendadas}} persona(s)
-                    <br>
-                    Precio: ${{unPlato.precio_plato}}
-                </div>
+        </form>
+    </ng-container>
+</nz-modal>
+
+
+<h1>Platos</h1>
+<div class="grid">
+    <div *ngFor="let unPlato of listaPlatos">
+        <div class="card" *ngIf="unPlato.disponibilidad">
+            <div class="title-card">
+                Plato nro. {{unPlato.id_plato}}
+            </div>
+            <div class="content-card">
+                Nombre de plato: {{unPlato.nombre_plato}}
+                <br> Recomendado para {{unPlato.cantidad_personas_recomendadas}} persona(s)
+                <br> Precio: ${{unPlato.precio_plato}}
+            </div>
+        </div>
+
+        <div class="card-no-disponible" *ngIf="!unPlato.disponibilidad">
+            <div class="title-card">
+                Plato nro. {{unPlato.id_plato}}
+            </div>
+            <div class="content-card">
+                Nombre de plato: {{unPlato.nombre_plato}}
+                <br> Recomendado para {{unPlato.cantidad_personas_recomendadas}} persona(s)
+                <br> Precio: ${{unPlato.precio_plato}}
             </div>
         </div>
     </div>

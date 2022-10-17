@@ -31,7 +31,8 @@ export class MenuComponent implements OnInit {
           cantidad_personas_recomendadas : unPlato.cantidad_personas_recomendadas,
           descripcion_plato : unPlato.descripcion_plato,
           comentario : unPlato.comentario,
-          disponibilidad : unPlato.disponibilidad
+          disponibilidad : unPlato.disponibilidad,
+          eliminado: unPlato.eliminado
         }
         // console.log('plato', plato);
         this.listaPlatos.push(plato);

@@ -10,7 +10,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.restaurant.siglo.xxi.clases.Plato;
+import com.restaurant.siglo.xxi.clases.Rol;
+import com.restaurant.siglo.xxi.clases.TipoPlato;
 import com.restaurant.siglo.xxi.repository.PlatoRepository;
+import com.restaurant.siglo.xxi.repository.TipoPlatoRepository;
 import com.restaurant.siglo.xxi.service.PlatoService;
 
 @Service
@@ -18,6 +21,9 @@ public class PlatoServiceImpl implements PlatoService{
 	
 	@Autowired
     PlatoRepository platoRepository;
+	
+	@Autowired
+    TipoPlatoRepository tipoPlatoRepository;
     
     @Override
     public String obtenerPlatos() throws JSONException {
@@ -28,17 +34,21 @@ public class PlatoServiceImpl implements PlatoService{
         listado.forEach((plato) -> {
             try {
                 JSONObject platos = new JSONObject();
-                platos.put("id_plato", plato.getId_plato());
-                platos.put("cantidad_personas_recomendadas", plato.getCantidad_personas_recomendadas());
-                platos.put("nombre_plato", plato.getNombre_plato());
-                platos.put("precio_plato", plato.getPrecio_plato());
-                platos.put("comentario", plato.getComentario());
-                platos.put("descripcion_plato", plato.getDescripcion_plato());
-                platos.put("disponibilidad", plato.getDisponibilidad());
-                platos.put("id_tipo_plato", plato.getTipo_plato().getId_tipo_plato());
-                platos.put("nombre_tipo_plato", plato.getTipo_plato().getNombre_tipo_plato());
-                platos.put("descripcion_tipo_plato", plato.getTipo_plato().getDescripcion());
-                listPlatos.put(platos);
+                if (plato.getEliminado()==false) {
+                    platos.put("id_plato", plato.getId_plato());
+                    platos.put("cantidad_personas_recomendadas", plato.getCantidad_personas_recomendadas());
+                    platos.put("nombre_plato", plato.getNombre_plato());
+                    platos.put("precio_plato", plato.getPrecio_plato());
+                    platos.put("comentario", plato.getComentario());
+                    platos.put("descripcion_plato", plato.getDescripcion_plato());
+                    platos.put("disponibilidad", plato.getDisponibilidad());
+                    platos.put("id_tipo_plato", plato.getTipo_plato().getId_tipo_plato());
+                    platos.put("nombre_tipo_plato", plato.getTipo_plato().getNombre_tipo_plato());
+                    platos.put("descripcion_tipo_plato", plato.getTipo_plato().getDescripcion());
+                    platos.put("eliminado", plato.getEliminado());
+                    listPlatos.put(platos);
+                }
+                
             } catch (JSONException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
@@ -62,13 +72,15 @@ public class PlatoServiceImpl implements PlatoService{
 			String nombre_plato  = plato.get("nombre_plato").toString();
 			int precio_plato = Integer.parseInt(plato.get("precio_plato").toString());
 			int id_tipo_plato = Integer.parseInt(plato.get("id_tipo_plato").toString());
+			boolean eliminado = Boolean.parseBoolean(plato.get("eliminado").toString());
 			
 			resp = platoRepository.crearPlato(id_plato, cantidad_personas_recomendadas, comentario,
 					descripcion_plato, disponibilidad, nombre_plato,
-					precio_plato, id_tipo_plato); 
+					precio_plato, id_tipo_plato, eliminado); 
 		} catch (Exception e) {
 			return "Error al crear plato. \n"
-					+ "Mensaje de error: "+ e.getMessage();
+					+ "Mensaje de error: \n"
+			        + e.getMessage();
 		}
 		
 		return resp;
@@ -143,5 +155,27 @@ public class PlatoServiceImpl implements PlatoService{
 		
 		return resp;
 	}
+
+    @Override
+    public String obtenerTipoPlato() throws JSONException {
+        
+        List<TipoPlato> tipos = tipoPlatoRepository.findAll();
+        JSONObject resp = new JSONObject();
+        JSONArray listTipoPlato = new JSONArray();
+        
+        for (TipoPlato tipo : tipos) {
+            try {
+                JSONObject unTipoPlato = new JSONObject();
+                unTipoPlato.put("id_tipo_plato", tipo.getId_tipo_plato());
+                unTipoPlato.put("nombre_tipo_plato", tipo.getNombre_tipo_plato());
+                listTipoPlato.put(unTipoPlato);
+            } catch (Exception e) {
+                // TODO: handle exception
+            }
+        }
+        resp.put("list_tipoplato", listTipoPlato);
+        
+        return resp.toString();
+    }
 
 }

@@ -13,5 +13,6 @@ public interface PlatoService {
 	public String obtenerUnPlato(Map<String, Object> plato);
 	public String eliminarPlato(Map<String, Object> plato);
 	public String modificarPlato(Map<String, Object> plato);
+	public String obtenerTipoPlato() throws JSONException;
 
 }
