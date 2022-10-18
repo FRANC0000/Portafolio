@@ -1,17 +1,17 @@
 <div *ngIf="mesaReservada == true" class="all-cliente">
   <div class="datos-reserva">
-    <div>
+    <div class="title-datos-reserva">
       <label>Mesa #{{idMesaParam}}</label>
       <label>Reserva #{{reservaObjectParam?.id_reserva}}</label>
       <label>Cliente #{{clienteObjectParam?.rut_cliente}}</label>
-      
+      <label *ngIf="boletaAIngresar != null">Boleta #{{boletaAIngresar?.id_boleta}}</label>      
     </div>
-    <br>
     <div class="btn-reserva">
       <!-- <button nz-button (click)="verMenu()"> Ver menú </button> -->
       <button nz-button (click)="verCarrito()"> Ver carrito </button>
       <!-- <button nz-button nzType="danger" (click)="cerrarSesion()"> Cerrar sesión </button> -->
-      <button nz-button nzType="danger" (click)="cancelarReserva()"> Cancelar reserva </button>
+      <button *ngIf="boletaAIngresar == null" nz-button nzType="danger" (click)="cancelarReserva()"> Cancelar reserva </button>
+      <button *ngIf="pedidoEnBoleta != null && boletaAIngresar != null" nz-button (click)="mostrarPedidosEnBoleta()"> Ver boleta </button>
     </div>
   </div>
 
@@ -35,11 +35,11 @@
                   <br>
                 </div>
                 <div class="plato-content">
-                  <h3 style="margin: 0px">${{plato.precio_plato}}</h3>
+                  <h3 style="margin-bottom: 5px">${{plato.precio_plato}}</h3>
                   <p>{{plato.comentario}}</p>
                 </div>
                 <div>
-                  <label for="">Cantidad agregada: X</label>
+                  <label for="" style="margin-right: 10px;">Cantidad agregada: X</label>
                   <button nz-button (click)="agregarPlatoAlCarro(plato)" class="agregar-item"> Añadir </button>
                   <button nz-button (click)="verDetallePlato(plato)"> Ver detalle </button>
                 </div>
@@ -57,7 +57,7 @@
                   <br>
                 </div>
                 <div class="plato-content">                
-                  <h3 style="margin: 0px">${{plato.precio_plato}}</h3>
+                  <h3 style="margin-bottom: 5px">${{plato.precio_plato}}</h3>
                   <p>{{plato.comentario}}</p>
                 </div>
                 <div>
@@ -81,11 +81,11 @@
                   <br>
                 </div>
                 <div class="plato-content">
-                  <h3 style="margin: 0px">${{producto.valor_unitario}}</h3>
+                  <h3 style="margin: 5px">${{producto.valor_unitario}}</h3>
                   <p>{{producto.comentario}}</p>
                 </div>
                 <div>
-                  <label for="">Cantidad agregada: X</label>
+                  <label for="" style="margin-right: 10px;">Cantidad agregada: X</label>
                   <button nz-button (click)="agregarProductoAlCarro(producto)" class="agregar-item"> Añadir </button>
                   <!-- <button nz-button (click)="verDetallePlato(producto)"> Ver detalle </button> -->
                 </div>
@@ -103,7 +103,7 @@
                   <br>
                 </div>
                 <div class="plato-content">                
-                  <h3 style="margin: 0px">${{producto.valor_unitario}}</h3>
+                  <h3 style="margin-bottom: 5px">${{producto.valor_unitario}}</h3>
                   <p>{{producto.comentario}}</p>
                 </div>
                 <div>
@@ -177,15 +177,13 @@
             <div class="plato-carrito">
               <div class="plato-title">
                 <h3 class="plato-name">{{item.plato.nombre_plato | uppercase}}</h3>
-                <h5 class="plato-tipo">{{item.plato.nombre_tipo_plato}}</h5>
-                <h5 class="plato-tipo">[PLATO]</h5>
+                <h5 class="plato-tipo">{{item.plato.nombre_tipo_plato}} [PLATO]</h5>
                 <br>
               </div>
               <div class="plato-content">
-                <h3 style="margin: 0px">${{item.plato.precio_plato}}</h3>
-                <h3 style="margin: 0px">Cantidad: {{item.cantidad}}</h3>
-                <button nz-button (click)="quitarPlatoDelCarro(item.plato)"> Quitar </button>
+                <h3 style="margin-bottom: 5px">${{item.plato.precio_plato}} (x{{item.cantidad}})</h3>
                 <button nz-button (click)="agregarPlatoAlCarro(item.plato)" class="agregar-item"> Añadir </button>
+                <button nz-button (click)="quitarPlatoDelCarro(item.plato)"> Quitar </button>
               </div>
             </div>
           </div>
@@ -198,15 +196,13 @@
             <div class="plato-carrito">
               <div class="plato-title">
                 <h3 class="plato-name">{{item.producto.nombre_producto | uppercase}}</h3>
-                <h5 class="plato-tipo">{{item.producto.nombre_tipo_producto}}</h5>
-                <h5 class="plato-tipo">[PRODUCTO]</h5>
+                <h5 class="plato-tipo">{{item.producto.nombre_tipo_producto}} [PRODUCTO]</h5>
                 <br>
               </div>
               <div class="plato-content">
-                <h3 style="margin: 0px">${{item.producto.valor_unitario}}</h3>
-                <h3 style="margin: 0px">Cantidad: {{item.cantidad}}</h3>
-                <button nz-button (click)="quitarProductoDelCarro(item.producto)"> Quitar </button>
+                <h3 style="margin-bottom: 5px">${{item.producto.valor_unitario}} (x{{item.cantidad}})</h3>
                 <button nz-button (click)="agregarProductoAlCarro(item.producto)" class="agregar-item"> Añadir </button>
+                <button nz-button (click)="quitarProductoDelCarro(item.producto)"> Quitar </button>
               </div>
             </div>
           </div>
@@ -216,7 +212,66 @@
       <div class="footer-carrito">
         <h2>Subtotal : ${{pedidoAIngresar?.subtotal | currency:'CLP'}}</h2>
         <br>
-        <button nz-button (click)="confirmarPedido()"> Confirmar pedido </button>
+        <button nz-button 
+        nz-popconfirm
+        nzPopconfirmTitle="¿Seguro que confirmas tu pedido?"
+        nzPopconfirmPlacement="top"
+        (nzOnConfirm)="confirmarPedido()"> 
+          Confirmar pedido 
+        </button>
+      </div>
+    </ng-container>
+  </nz-drawer>
+
+  <!-- VER BOLETA -->
+  <nz-drawer
+    [nzWidth] = "700"
+    [nzClosable]="true"
+    [nzVisible]="visibleBoleta"
+    nzPlacement="right"
+    nzTitle="Mi boleta #{{boletaAIngresar?.id_boleta}}"
+    (nzOnClose)="cerrarDrawerVerBoleta()"
+    style="background-color: rgba(81, 0, 195, 0.319);"
+  >
+    <ng-container>
+      <div class="all-productos-carrito">
+        <div class="pedido-row">
+          <nz-collapse nzAccordion>
+            <nz-collapse-panel *ngFor="let item of pedidoEnBoleta; let i = index;"
+              nzHeader="Pedido #{{item.idPedido}} | ${{item.subtotal | currency:'CLP'}} | Estado: {{item.nombreEstadoInstancia}}">
+            <div class="pedido-content-row">
+              <div class="pedido-info">
+                Fecha de ingreso : {{item.fechaIngreso | date: 'dd/MM/yyyy HH:mm:ss'}} | {{item.nombreEstadoInstancia}}
+                <br><br>
+                <label for=""> Productos de este pedido: </label>
+              </div>
+              <div *ngFor="let itemDelCarro of item.carritoProductos; let i = index"
+              class="carrito-de-un-pedido">
+                <h5 *ngIf="itemDelCarro.esPlato == true">
+                  <label for="" class="itemDelCarro-nombre">{{itemDelCarro.plato?.nombre_plato | uppercase}} </label>
+                  <label for="" class="itemDelCarro-valor-cantidad">${{itemDelCarro.valorUnitario | currency:'CLP'}} (x{{itemDelCarro.cantidad}})</label>
+                </h5>
+                <h5 *ngIf="itemDelCarro.esProducto == true">
+                  <label for="" class="itemDelCarro-nombre">{{itemDelCarro.producto?.nombre_producto | uppercase}} </label>
+                  <label for="" class="itemDelCarro-valor-cantidad">${{itemDelCarro.valorUnitario | currency:'CLP'}} (x{{itemDelCarro.cantidad}})</label>
+                </h5>
+              </div>
+            </div>
+            </nz-collapse-panel>
+          </nz-collapse>
+        </div>
+        <nz-divider></nz-divider>
+      </div>
+      <div class="footer-carrito">
+        <h2>Subtotal : ${{boletaAIngresar?.subtotal | currency:'CLP'}}</h2>
+        <br>
+        <button nz-button 
+        nz-popconfirm
+        nzPopconfirmTitle="¿Seguro que quieres pagar?"
+        nzPopconfirmPlacement="top"
+        (nzOnConfirm)="confirmarPago()">
+          Pagar cuenta
+        </button>
       </div>
     </ng-container>
   </nz-drawer>

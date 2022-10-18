@@ -6,25 +6,41 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
 @Entity
 @Table (name="boleta")
+@NamedQueries(
+		{
+			@NamedQuery(
+					name = "obtenerBoletaEnProcesoPorIdCliente", 
+					query = " select b from Boleta b "
+							+ "where b.cliente.rut_cliente = :id_cliente "
+							+ "and b.estadoBoleta.id_estado_boleta = 1 "
+							+ "order by 4 desc "
+			)
+		})
 public class Boleta {
 	@Id
 	int id_boleta;
 	
 	@ManyToOne
 	@JoinColumn(name = "id_cliente")
-	private Cliente cliente;	
+	private Cliente cliente;
 	
 	@ManyToOne
 	@JoinColumn(name = "id_usuario")
-	private Usuario usuario;	
+	private Usuario usuario;
 	
 	@ManyToOne
 	@JoinColumn(name = "id_tipo_pago")
-	private TipoPago tipoPago;	
+	private TipoPago tipoPago;
+	
+	@ManyToOne
+	@JoinColumn(name = "id_estado_boleta")
+	private EstadoBoleta estadoBoleta;
 	
 	Timestamp fecha_atencion;
 	String hora_atencion;
@@ -99,4 +115,11 @@ public class Boleta {
 	public void setExtras(int extras) {
 		this.extras = extras;
 	}
+	public EstadoBoleta getEstadoBoleta() {
+		return estadoBoleta;
+	}
+	public void setEstadoBoleta(EstadoBoleta estadoBoleta) {
+		this.estadoBoleta = estadoBoleta;
+	}
+	
 }

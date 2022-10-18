@@ -36,6 +36,8 @@ import { NzDrawerModule } from 'ng-zorro-antd/drawer';
 import { NzPopconfirmModule } from 'ng-zorro-antd/popconfirm';
 import { NzPopoverModule } from 'ng-zorro-antd/popover';
 import { NzTabsModule } from 'ng-zorro-antd/tabs';
+import { NzCollapseModule } from 'ng-zorro-antd/collapse';
+import { NzMessageModule } from 'ng-zorro-antd/message';
 
 registerLocaleData(es);
 
@@ -74,7 +76,9 @@ registerLocaleData(es);
     NzDrawerModule,
     NzPopconfirmModule,
     NzPopoverModule,
-    NzTabsModule
+    NzTabsModule,
+    NzCollapseModule,
+    NzMessageModule
   ],
   providers: [{ provide: NZ_I18N, useValue: es_ES }],
   bootstrap: [AppComponent]

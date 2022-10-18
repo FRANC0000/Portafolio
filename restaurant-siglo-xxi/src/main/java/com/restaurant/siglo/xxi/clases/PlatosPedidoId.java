@@ -16,7 +16,7 @@ public class PlatosPedidoId implements Serializable{
 	@Column(name="id_pedido")
 	private int id_pedido;
 
-	@Column(name="id_producto")
+	@Column(name="id_plato")
 	private int id_plato;
 
 	public int getId_pedido() {

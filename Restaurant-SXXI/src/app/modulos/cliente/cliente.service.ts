@@ -1,5 +1,6 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { InstanciarBoleta, InstanciarPedido } from 'src/app/interfaces/carrito-compras';
 import { CancelarReserva } from 'src/app/interfaces/mesa';
 
 @Injectable({
@@ -41,6 +42,30 @@ export class ClienteService {
   public obtenerProductos(){
     return this.http.get(
       'http://localhost:8085/restaurantSXXI/rest-rsxii/producto/obtenerProductos'
+    );
+  }
+
+  public instanciarBoleta(instanciarBoleta : InstanciarBoleta){
+    return this.http.post(
+      'http://localhost:8085/restaurantSXXI/rest-rsxii/boleta/instanciarBoleta', instanciarBoleta, {responseType : 'text'}
+    );
+  }
+
+  public instanciarPedido(instanciarPedido : InstanciarPedido){
+    return this.http.post(
+      'http://localhost:8085/restaurantSXXI/rest-rsxii/pedido/ingresarPedido', instanciarPedido, {responseType : 'text'}
+    );
+  }
+
+  public obtenerBoletaEnProcesoPorIdCliente(id_cliente){
+    return this.http.post(
+      'http://localhost:8085/restaurantSXXI/rest-rsxii/boleta/obtenerBoletaEnProcesoPorIdCliente', id_cliente, {headers : this.headers}
+    );
+  }
+
+  public obtenerPedidosPorIdBoleta(id_boleta){
+    return this.http.post(
+      'http://localhost:8085/restaurantSXXI/rest-rsxii/pedido/obtenerPedidosPorIdBoleta', id_boleta, {headers : this.headers}
     );
   }
 }

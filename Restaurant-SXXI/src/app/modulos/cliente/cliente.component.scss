@@ -10,13 +10,14 @@
     align-items: center;
     justify-content: center;
     flex-direction: column;
-    width: 100%;
-    padding: 16px 20px 80px;
+    width: calc(100% - 40px);
+    padding: 16px 20px 100px;
     background-color: rgba(81, 0, 195, 0.319);
     border-radius: 0px 0px 20px 20px;
     font-weight: bold;
     color: white;
     font-size: 20px;
+    margin: 0px 20px;
     
     label{
         margin: 0px 10px;
@@ -27,6 +28,10 @@
             margin: 0px 10px;
         }
     }
+
+    .title-datos-reserva{
+        margin-bottom: 10px;
+    }
 }
 
 
@@ -34,7 +39,7 @@
 .menu{
     background-color: white;
     position: relative;
-    top: -65px;
+    top: -80px;
     width: calc(100% - 100px);
     height: fit-content;
     left: 50px;
@@ -56,10 +61,18 @@
 
 .plato-disponible {
     padding: 16px 24px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
 .plato-no-disponible{
     padding: 16px 24px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
 .plato-row-no-disponible{
@@ -78,10 +91,14 @@
     display: flex;
     flex-direction: row;
     align-items: baseline;
+    h3, h5{
+        margin-bottom: 0;
+    }
 }
 
 .plato-tipo{
     margin-left: 10px;
+    font-style: italic;
 }
 
 ::ng-deep .ant-drawer-body {
@@ -148,6 +165,9 @@
 .plato-carrito{
     width: 100%;
     padding: 16px 24px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
 .img-plato-carrito{
@@ -173,14 +193,23 @@
 }
 
 .all-productos-carrito{
-    overflow: overlay;
-    max-height: 760px;
+    overflow: auto;
+    position: absolute;
+    height: calc(100% - 155px);
+    width: 100%;
 }
 
 /*Carrito de compras*/
 
 .agregar-item{
-    margin: 0px 10px;
+    margin: 0px 10px 0px 0px;
+    background-color: rgba(81, 0, 195, 0.319);
+    transition: 0.5s;
+}
+
+.agregar-item:hover{
+    color: rgb(81, 0, 195) !important;
+    background-color: white !important;
 }
 
 
@@ -195,4 +224,62 @@
 
 ::ng-deep .ant-tabs-nav .ant-tabs-tab:hover {
     color: rgba(81, 0, 195, 0.644);
+}
+
+::ng-deep .ant-btn:focus, .ant-btn:hover {
+    color: white;
+    background-color: rgba(81, 0, 195, 0.247);
+    border-color: rgba(81, 0, 195, 0.644);
+}
+
+::ng-deep .ant-collapse-header:hover{
+    background-color: rgba(81, 0, 195, 0.247);
+}
+
+/* Boleta */
+.carrito-de-un-pedido{
+    background-color: rgba(220, 220, 220, 0.233);
+    margin: 5px 0;
+    padding: 5px;
+    h5{
+        margin: 0;
+    }
+}
+
+.pedido-info{
+    color: #999999;
+    font-weight: bold;
+    margin-bottom: 5px;
+    font-style: italic;
+
+    label{
+        color: black;
+        font-style: initial;
+        font-weight: 600;
+        padding: 0px 5px;
+    }
+}
+
+.pedido-content-row{
+    background-color: white;
+    padding: 16px;
+    transition: 0.5s;
+}
+
+.pedido-content-row:hover{
+    background-color: #b3b3b369;
+}
+
+.itemDelCarro-nombre{
+    font-weight: bold;
+}
+
+.itemDelCarro-valor-cantidad{
+    font-style: italic;
+}
+
+/* Boleta */
+
+::ng-deep .ant-collapse-content>.ant-collapse-content-box{
+    padding: 0;
 }

@@ -5,10 +5,20 @@ import java.io.Serializable;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
 @Entity
 @Table (name="productos_pedido")
+@NamedQueries(
+		{
+			@NamedQuery(
+					name = "obtenerProductosPorIdPedido", 
+					query = " select pp from ProductosPedido pp "
+							+ " where pp.productosPedidoId.id_pedido = :id_pedido "				
+			)
+		})
 public class ProductosPedido implements Serializable{
 	
 	/**

@@ -7,11 +7,19 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
 @Entity
 @Table (name="pedido")
-
+@NamedQueries(
+		{
+			@NamedQuery(
+					name = "obtenerPedidosPorIdBoleta", 
+					query = " select p from Pedido p where p.boleta.id_boleta = :id_boleta order by 2 asc "
+			)
+		})
 public class Pedido {
 	@Id
 	int id_pedido;

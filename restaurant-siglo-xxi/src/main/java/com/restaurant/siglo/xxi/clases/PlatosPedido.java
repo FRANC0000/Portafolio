@@ -5,10 +5,26 @@ import java.io.Serializable;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
 @Entity
 @Table (name="platos_pedido")
+@NamedQueries(
+		{
+			@NamedQuery(
+					name = "obtenerPlatosPedidoPorIdCompuesto", 
+					query = " select pp from PlatosPedido pp "
+							+ " where pp.platosPedidoId.id_pedido = :id_pedido "
+							+ " and pp.platosPedidoId.id_plato = :id_plato "				
+			),
+			@NamedQuery(
+					name = "obtenerPlatosPorIdPedido", 
+					query = " select pp from PlatosPedido pp "
+							+ " where pp.platosPedidoId.id_pedido = :id_pedido "				
+			)
+		})
 public class PlatosPedido implements Serializable{
 	
 	/**
