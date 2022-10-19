@@ -35,7 +35,7 @@
                   <br>
                 </div>
                 <div class="plato-content">
-                  <h3 style="margin-bottom: 5px">${{plato.precio_plato}}</h3>
+                  <h3 style="margin-bottom: 5px">${{plato.precio_plato |  currency:'CLP'}}</h3>
                   <p>{{plato.comentario}}</p>
                 </div>
                 <div>
@@ -57,7 +57,7 @@
                   <br>
                 </div>
                 <div class="plato-content">                
-                  <h3 style="margin-bottom: 5px">${{plato.precio_plato}}</h3>
+                  <h3 style="margin-bottom: 5px">${{plato.precio_plato | currency:'CLP'}}</h3>
                   <p>{{plato.comentario}}</p>
                 </div>
                 <div>
@@ -262,7 +262,7 @@
         </div>
         <nz-divider></nz-divider>
       </div>
-      <div class="footer-carrito">
+      <div class="footer-carrito-boleta">
         <h2>Subtotal : ${{boletaAIngresar?.subtotal | currency:'CLP'}}</h2>
         <br>
         <button nz-button 

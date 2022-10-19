@@ -10,6 +10,7 @@ public interface BoletaService {
 	
 	public String instanciarBoleta(Map<String, Object> boletaAIngresar) throws ParseException;
 	public String obtenerBoletaEnProcesoPorIdCliente(Map<String, Object> idCliente) throws ParseException;
+	public String boletaAModificar(Map<String, Object> boletaAModificar) throws ParseException;
 	
 	
 }

@@ -145,7 +145,7 @@
 }
 
 /*Carrito de compras*/
-.footer-carrito{
+.footer-carrito, .footer-carrito-boleta{
     position: absolute;
     left: 0;
     bottom: 0;
@@ -155,12 +155,16 @@
     text-align: center;
     height: 100px;
     font-weight: bold;
-
+    transition: 0.5s;
     h2{
         color: white;
         margin: 0px;
     }
 }
+
+// .footer-carrito-boleta:hover{
+//     background-color: rgba(81, 0, 195, 0.527);
+// }
 
 .plato-carrito{
     width: 100%;

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Routes, RouterModule, ActivatedRoute, Router} from '@angular/router';
-import { NzTreeHigherOrderServiceToken } from 'ng-zorro-antd';
+import { NzNotificationService, NzTreeHigherOrderServiceToken } from 'ng-zorro-antd';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { Boleta, InstanciarBoleta, InstanciarPedido, Pedido, ProductoEnCarro } from 'src/app/interfaces/carrito-compras';
 import { Plato, Producto } from 'src/app/interfaces/cocina';
@@ -18,7 +18,8 @@ export class ClienteComponent implements OnInit {
     private ruta: ActivatedRoute,
     private clienteService : ClienteService,
     private router: Router,
-    private nzMessageService: NzMessageService
+    private nzMessageService: NzMessageService,
+    private nzNotificacionService : NzNotificationService
   ) { 
     this.ruta.params.subscribe(params => {
       console.log('idMesa: ', params['idMesa']);
@@ -45,6 +46,7 @@ export class ClienteComponent implements OnInit {
   now : Date;
   pedidoEnBoleta : Pedido[] = [];
   boletaAIngresar : Boleta;
+  clicksEnCarrito : number = 0;
 
   ngOnInit() {
     this.mesaReservada = false;
@@ -301,9 +303,18 @@ export class ClienteComponent implements OnInit {
     console.log('carritoDeCompras', this.carritoDeCompras);
     if (this.carritoDeCompras.length > 0){
       this.visibleCarritoCompras = true;
+      setTimeout(() => {
+        this.clicksEnCarrito = 0;
+      }, 10000);
     }
     else{
-      alert('No hay productos en el carro')
+      this.clicksEnCarrito + 1;
+      if (this.clicksEnCarrito! > 2){
+        this.nzNotificacionService.create(
+          'warning', 'Problemas para autenticar', 'No fue posible autenticar sus credenciales, lo sentimos :('
+        );
+      }
+
     }
   }
 
@@ -433,7 +444,32 @@ export class ClienteComponent implements OnInit {
 
   confirmarPago(){
     console.log('confirmarPago');
-    console.log('boletaAIngresar', this.boletaAIngresar);    
+    this.now = new Date();
+    //calcular los boletaAIngresar <---------------
+    //descuentos
+    //extras
+    //idBoleta
+    //idTipoPago
+    //total
+    //horaEmision
+    this.boletaAIngresar.descuentos = 0;
+    this.boletaAIngresar.extras = (this.boletaAIngresar.subtotal * 0.1);
+    this.boletaAIngresar.total = this.boletaAIngresar.subtotal + this.boletaAIngresar.extras;
+    this.boletaAIngresar.horaEmision = this.now.toLocaleTimeString();
+    this.boletaAIngresar.idEstadoBoleta = 3
+    //AQUI FALTA AGREGAR UN MÉTODO DE PAGO
+    this.boletaAIngresar.idTipoPago = 1
+
+    console.log('boletaAIngresar', this.boletaAIngresar);
+    //SERVICIO PARA MODIFICAR BOLETA
+    const boleta = {
+      "boleta" : this.boletaAIngresar
+    }
+    this.clienteService.modificarBoleta(boleta).subscribe(resp =>{
+      console.log('resp modificarBoleta', resp);
+      this.cancelarReserva();
+      window.location.reload();
+    })
   }
 
   crearPedidoAIngresar(){

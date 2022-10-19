@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { Plato } from 'src/app/interfaces/cocina';
+import { Plato, Producto } from 'src/app/interfaces/cocina';
 import { CocinaService } from './cocina.service';
 
 @Component({
@@ -13,46 +13,54 @@ export class CocinaComponent implements OnInit {
   constructor(private router: Router, private cocinaService : CocinaService) { }
 
   listaPlatos : Plato[] = [];
+  listaProductos : Producto[] = [];
+  visibleDetallePlato = false;
+  visibleDetalleProdcuto = false;
+  platoSelected : Plato;
+  productoSelected : Producto;
 
   ngOnInit() {
     this.obtenerPlatos();
+    this.obtenerProductos();
   }
 
   cerrarSesion(){
     this.router.navigate(['/login'])
   }
-
+  
   obtenerPlatos(){
-    this.listaPlatos = [];
-    this.cocinaService.obtenerPlatos().subscribe(resp => {
-      // console.log('resp', resp);
-      for (let unPlato of resp["plato"]){
-        // console.log('unPlato', unPlato);
-        const plato : Plato = {
-          id_plato : unPlato.id_plato,
-          id_tipo_plato : unPlato.id_tipo_plato,
-          nombre_plato : unPlato.nombre_plato,
-          precio_plato : unPlato.precio_plato,
-          cantidad_personas_recomendadas : unPlato.cantidad_personas_recomendadas,
-          descripcion_plato : unPlato.descripcion_plato,
-          comentario : unPlato.comentario,
-          disponibilidad : unPlato.disponibilidad
-        }
-        // console.log('plato', plato);
-        this.listaPlatos.push(plato);
-        console.log('listaPlatos', this.listaPlatos);
-        this.listaPlatos.sort(function(a,b){
-          if(a.id_plato < b.id_plato){
-            return -1
-          }
-          if (a.id_plato > b.id_plato){
-            return 1
-          }
-          return 0;
-        })
-      }
+    this.cocinaService.obtenerPlatos().subscribe(resp=>{
+      this.listaPlatos = resp['plato'];
+      console.log('listaPlatos', this.listaPlatos);
+      
+    });
+  }
 
+  obtenerProductos(){
+    this.cocinaService.obtenerProductos().subscribe(resp=>{
+      this.listaProductos = resp['productos'];
+      console.log('listaProductos', this.listaProductos);
     })
+  }
+
+  verDetallePlato(plato){
+    this.visibleDetallePlato = true;
+    this.platoSelected = plato;
+    console.log('platoSelected', this.platoSelected);
+  }
+
+  verDetalleProducto(producto){
+    this.visibleDetalleProdcuto = true;
+    this.productoSelected = producto;
+    console.log('productoSelected', this.productoSelected);
+  }
+
+  cerrarDrawerDetalleProducto(){
+    this.visibleDetalleProdcuto = false;
+  }
+
+  cerrarDrawerDetallePlato(){
+    this.visibleDetallePlato = false;
   }
 
   crearPlato(){

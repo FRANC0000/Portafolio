@@ -41,3 +41,161 @@
     display: grid;
     grid-template-rows: 1fr; 
 }
+
+.datos-sesion{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    width: calc(100% - 40px);
+    padding: 16px 20px 100px;
+    background-color: rgba(81, 0, 195, 0.319);
+    border-radius: 0px 0px 20px 20px;
+    font-weight: bold;
+    color: white;
+    font-size: 20px;
+    margin: 0px 20px;
+    
+    label{
+        margin: 0px 10px;
+    }
+
+    .btn-reserva{
+        button{ 
+            margin: 0px 10px;
+        }
+    }
+
+    .title-datos-sesion{
+        margin-bottom: 10px;
+    }
+}
+
+::ng-deep .ant-btn:focus, .ant-btn:hover {
+    color: white;
+    background-color: rgba(81, 0, 195, 0.247);
+    border-color: rgba(81, 0, 195, 0.644);
+}
+
+.menu{
+    background-color: white;
+    position: relative;
+    top: -80px;
+    width: calc(100% - 100px);
+    height: fit-content;
+    left: 50px;
+    border-radius: 20px 20px 0px 0px;
+    padding: 16px 20px;
+}
+
+.plato-row{
+    background-color: white;
+    display: flex;
+    transition: background-color .5s;
+    height: 180px;
+}
+
+.plato-row:hover {
+    background-color: rgba(81, 0, 195, 0.319);
+}
+
+.plato-disponible {
+    padding: 16px 24px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.plato-no-disponible{
+    padding: 16px 24px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.plato-row-no-disponible{
+    background-color: #dcdcdcaf;
+    display: flex;
+    cursor: not-allowed;
+    transition: background-color .5s;
+    height: 180px;
+}
+
+.plato-row-no-disponible:hover{
+    background-color: #b3b3b3;
+}
+
+.plato-title{
+    display: flex;
+    flex-direction: row;
+    align-items: baseline;
+    h3, h5{
+        margin-bottom: 0;
+    }
+}
+
+.plato-tipo{
+    margin-left: 10px;
+    font-style: italic;
+}
+
+.all-detalle-plato{
+    padding: 20px;
+}
+
+.all-cocina{
+    background-color: rgb(228, 228, 228);
+    width: 100%;
+    height: fit-content;
+    min-height: 100%;
+}
+
+.header-detalle-plato{
+    margin: 16px 0px;
+}
+
+.img-plato{
+    img{
+        max-width: 200px;
+        height: -webkit-fill-available;
+        padding: 20px 0 20px 20px;
+        object-fit: cover;
+        object-position: center;
+    }
+}
+
+.img-producto{
+    img{
+        max-width: 200px;
+        height: -webkit-fill-available;
+        padding: 20px 0 20px 20px;
+        object-fit: cover;
+        object-position: center;
+    }
+}
+
+.img-detalle-plato{
+    height: 300px;
+    width: 100%;
+    object-fit: cover;
+    object-position: center;
+}
+
+::ng-deep.ant-divider-horizontal{
+    margin: 0;
+}
+
+::ng-deep .ant-tabs-ink-bar {
+    background-color: rgb(81, 0, 195);
+}
+
+::ng-deep.ant-tabs-nav .ant-tabs-tab-active {
+    color: rgb(81, 0, 195);
+    font-weight: 500;
+}
+
+::ng-deep .ant-tabs-nav .ant-tabs-tab:hover {
+    color: rgba(81, 0, 195, 0.644);
+}

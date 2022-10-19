@@ -46,5 +46,19 @@ public class BoletaController {
 		
 		return resp;	
 	}
+	
+	@RequestMapping(value="/boletaAModificar")
+	public String boletaAModificar(@RequestBody Map<String, Object> boletaAModificar) {
+		
+		String resp = "";
+		try {
+			resp = boletaService.boletaAModificar(boletaAModificar);
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return resp;	
+	}
 
 }

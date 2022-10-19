@@ -3,6 +3,7 @@ package com.restaurant.siglo.xxi.service.impl;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -80,6 +81,7 @@ public class BoletaServiceImpl implements BoletaService{
 		
 		String resp = "";
 		JSONObject objetoResp = new JSONObject();
+		SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 		JSONArray arrayResp = new JSONArray();
 		try {
 			int id_cliente = Integer.parseInt(idCliente.get("id_cliente").toString());
@@ -87,13 +89,15 @@ public class BoletaServiceImpl implements BoletaService{
 			List<Boleta> listBoletas = boletaRepository.obtenerBoletaEnProcesoPorIdCliente(id_cliente);
 			
 			for (Boleta boleta : listBoletas) {
-				JSONObject unaBoleta= new JSONObject();				
+				JSONObject unaBoleta= new JSONObject();			
+				Date fecha_date = boleta.getFecha_atencion(); 
+				String fecha_atencion_formateada =  formatter.format(fecha_date);
 				unaBoleta.put("id_boleta", boleta.getId_boleta());
 				unaBoleta.put("id_cliente", id_cliente);
 				unaBoleta.put("id_usuario", boleta.getUsuario().getId_usuario());
 				unaBoleta.put("id_tipo_pago", boleta.getTipoPago().getId_tipo_pago());
 				unaBoleta.put("nombre_tipo_pago", boleta.getTipoPago().getNombre_tipo_pago());
-				unaBoleta.put("fecha_atencion", boleta.getFecha_atencion());
+				unaBoleta.put("fecha_atencion", fecha_atencion_formateada);
 				unaBoleta.put("hora_atencion", boleta.getHora_atencion());
 				unaBoleta.put("hora_emision", boleta.getHora_emision());
 				unaBoleta.put("subtotal", boleta.getSubtotal());
@@ -115,6 +119,40 @@ public class BoletaServiceImpl implements BoletaService{
 		
 		
 		
+		return resp;
+	}
+	
+	@Override
+	public String boletaAModificar(Map<String, Object> boletaAModificar) throws ParseException {
+		String resp = "";
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+		int id_boleta = -1;
+		try {
+			//MODIFICAR BOLETA
+			Map<String, Object> boleta = (Map<String, Object>) boletaAModificar.get("boleta");
+			if (boleta.get("id_boleta") != null) {
+				id_boleta = Integer.parseInt(boleta.get("id_boleta").toString());
+				int subtotal = Integer.parseInt(boleta.get("subtotal").toString());
+				int descuentos = Integer.parseInt(boleta.get("descuentos").toString());
+				int extras = Integer.parseInt(boleta.get("extras").toString());
+				String fecha_atencion = boleta.get("fechaAtencion").toString();
+				Timestamp fecha_atencion_formateada =  new Timestamp(sdf.parse(fecha_atencion).getTime());
+				String hora_atencion = boleta.get("horaAtencion").toString();
+				String hora_emision = boleta.get("horaEmision").toString();
+				int total = Integer.parseInt(boleta.get("total").toString());
+				int id_cliente = Integer.parseInt(boleta.get("rutCliente").toString());
+				int id_estado_boleta = Integer.parseInt(boleta.get("idEstadoBoleta").toString());
+				int id_tipo_pago = Integer.parseInt(boleta.get("idTipoPago").toString());
+				String id_usuario = boleta.get("idUsuario").toString();
+				boletaRepository.modificarBoleta(id_boleta, descuentos, extras, fecha_atencion_formateada, hora_atencion, hora_emision, subtotal, total, id_cliente, id_estado_boleta, id_tipo_pago, id_usuario);
+			}			
+			resp = ""+id_boleta;
+			
+		} catch (Exception e) {
+			// TODO: handle exception
+			resp = "Error al modificar boleta \n"
+					+ "Mensaje: "+ e.getMessage();
+		}		
 		return resp;
 	}
 

@@ -68,4 +68,10 @@ export class ClienteService {
       'http://localhost:8085/restaurantSXXI/rest-rsxii/pedido/obtenerPedidosPorIdBoleta', id_boleta, {headers : this.headers}
     );
   }
+
+  public modificarBoleta(boleta){
+    return this.http.post(
+      'http://localhost:8085/restaurantSXXI/rest-rsxii/boleta/boletaAModificar', boleta, {headers : this.headers}
+    );
+  }
 }
