@@ -71,5 +71,23 @@ export class MesasService {
     );
   }
 
-  
+  public eliminarMesa(mesa) {
+    return this.http.post(
+      'http://localhost:8085/restaurantSXXI/rest-rsxii/mesa/eliminarMesa', mesa, { responseType : 'text'}
+    ).pipe(
+      tap(() => {
+        this._refresh$.next;
+      })
+    );
+  }  
+
+  public actualizarMesa(mesa : Mesa) {
+    return this.http.post(
+      'http://localhost:8085/restaurantSXXI/rest-rsxii/mesa/modificarMesa', mesa, { responseType : 'text'}
+    ).pipe(
+      tap(() => {
+        this._refresh$.next;
+      })
+    );
+  }
 }

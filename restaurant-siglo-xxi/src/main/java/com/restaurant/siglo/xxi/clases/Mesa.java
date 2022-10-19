@@ -26,6 +26,8 @@ public class Mesa implements Serializable {
 	@ManyToOne
 	@JoinColumn(name = "id_tipo_mesa")
 	private TipoMesa id_tipo_mesa;
+	
+	private boolean eliminado;
 
 	public int getId_mesa() {
 		return id_mesa;
@@ -50,5 +52,14 @@ public class Mesa implements Serializable {
 	public void setId_tipo_mesa(TipoMesa id_tipo_mesa) {
 		this.id_tipo_mesa = id_tipo_mesa;
 	}
+	
+	public boolean isEliminado() {
+		return eliminado;
+	}
+
+	public void setEliminado(boolean eliminado) {
+		this.eliminado = eliminado;
+	}
+
 
 }

@@ -15,6 +15,7 @@ public class Receta {
 	String comentario;
 	int tiempo_preparacion;
 	String complejidad;
+	boolean eliminado;
 	
 //	@OneToOne
 //	@JoinColumn(name = "id_plato")
@@ -60,4 +61,11 @@ public class Receta {
 //		this.plato = plato;
 //	}
 //	
+	public boolean isEliminado() {
+        return eliminado;
+    }
+
+    public void setEliminado(boolean eliminado) {
+        this.eliminado = eliminado;
+    }
 }

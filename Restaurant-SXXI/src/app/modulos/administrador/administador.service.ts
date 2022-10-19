@@ -31,4 +31,16 @@ export class AdministadorService {
       'http://localhost:8085/restaurantSXXI/rest-rsxii/usuario/obtenerRoles', { headers: this.headers }
     );
   }
+
+  public modificarUsuario(usuarioAModificar) {
+    return this.http.post(
+      'http://localhost:8085/restaurantSXXI/rest-rsxii/usuario/modificarUsuario', usuarioAModificar, { responseType : 'text'}
+    );
+  }
+
+  public eliminarUsuario(usuarioAEliminar) {
+    return this.http.post(
+      'http://localhost:8085/restaurantSXXI/rest-rsxii/usuario/eliminarUsuario', usuarioAEliminar, { responseType : 'text'}
+    );
+  }
 }

@@ -34,6 +34,10 @@ export class MesasComponent implements OnInit, OnDestroy{
   mostrarReservaRealizada : boolean = false;
   now : Date;
   sub :Subscription;
+  isVisibleEliminarMesa = false;
+  isVisibleActualizarMesa = false;
+  validateFormEliminarMesa: FormGroup;
+  validateFormActualizarMesa : FormGroup;
 
   ngOnDestroy(){
     this.sub.unsubscribe();
@@ -72,6 +76,18 @@ export class MesasComponent implements OnInit, OnDestroy{
       comentario: new FormControl,
       id_estado_reserva: new FormControl
     })
+
+    this.validateFormEliminarMesa = new FormGroup({
+      id_mesa : new FormControl
+    })
+
+    this.validateFormActualizarMesa = new FormGroup({
+      id_mesa : new FormControl,
+      id_estado_mesa: new FormControl,
+      id_tipo_mesa: new FormControl,
+      eliminado : new FormControl
+    })
+
   }
 
   obtenerMesas(){
@@ -340,5 +356,119 @@ export class MesasComponent implements OnInit, OnDestroy{
       }
     })
     
+  }
+
+  eliminarMesa(){
+    this.isVisibleEliminarMesa = true;
+    this.validateFormEliminarMesa = this.fb.group({
+      id_mesa : [null, [Validators.required]],
+    })
+  }
+
+  actualizarMesa(){
+    this.isVisibleActualizarMesa = true;
+    this.validateFormActualizarMesa = this.fb.group({
+      id_mesa : [null, [Validators.required]],
+      id_estado_mesa: [null, [Validators.required]],
+      id_tipo_mesa: [null, [Validators.required]],
+      eliminado: [null, [Validators.required]]
+    })
+  }
+
+  guardarEliminarMesa(){
+    // this.isVisibleEliminarMesa = false;
+    console.log('validateFormEliminarMesa', this.validateFormEliminarMesa.value);
+    if (this.validateFormEliminarMesa.valid){
+      console.log('Formulario válido');
+      var valores = this.validateFormEliminarMesa.value;
+
+      var mesaAEliminar = {
+        id_mesa : valores.id_mesa
+      }
+      // Validación mesa reservada: obtener reserva activa por Id_mesa
+      this.mesasService.eliminarMesa(mesaAEliminar).subscribe(resp =>{
+        console.log('resp', resp);
+        if (resp.includes('No se puede eliminar esta mesa')){
+          this.notification.create(
+            'error', 'Error al eliminar mesa', resp
+          )
+        }
+        else if (resp.includes('Se eliminó la mesa correctamente')){
+          this.notification.create(
+            'success', 'Mesa eliminada', resp
+          )
+          this.obtenerMesas();
+          this.isVisibleEliminarMesa = false;
+        }
+      });
+    }
+    else{
+      console.log('Formulario no válido', this.validateFormEliminarMesa.value);
+
+      this.notification.create(
+        'error', 'Error al eliminar mesa', 'Debes rellenar todos los campos'
+      )
+    }
+  }
+
+  cerrarEliminarMesa(){
+    this.isVisibleEliminarMesa = false;
+  }
+
+  guardarActualizarMesa(){
+    console.log('validateFormActualizarMesa', this.validateFormActualizarMesa.value);
+    if (this.validateFormActualizarMesa.valid){
+      console.log('Formulario válido');
+      var valores = this.validateFormActualizarMesa.value;
+
+      var tM = this.listadoTiposMesas.find(i => i.id_tipo_mesa === parseInt(this.tipoMesaSeleccionado));
+
+      var tipoMesaActualizar: TipoMesa = {
+        id_tipo_mesa: tM.id_tipo_mesa,
+        cantidad_asientos: tM.cantidad_asientos,
+        nombre_tipo_mesa : tM.nombre_tipo_mesa
+      }
+
+      var eM = this.listadoEstadosMesas.find(i => i.id_estado_mesa === parseInt(this.estadoMesaSeleccionado));
+
+      var estadoMesaActualizar: EstadoMesa = {
+        id_estado_mesa : eM.id_estado_mesa,
+        nombre_estado_mesa : eM.nombre_estado_mesa
+      }
+
+      var mesaAActualizar : Mesa = {
+        id_mesa : valores.id_mesa,
+        id_tipo_mesa: tipoMesaActualizar,
+        id_estado_mesa: estadoMesaActualizar,
+        eliminado : valores.eliminado
+      }
+
+      this.mesasService.actualizarMesa(mesaAActualizar).subscribe(resp =>{
+        console.log('resp', resp);
+        if (resp.includes('No existe mesa asociada a este ID')){
+          this.notification.create(
+            'error', 'Error al actualizar mesa', resp
+          )
+        }
+        else if (resp.includes('actualizada satisfactoriamente')){
+          this.notification.create(
+            'success', 'Mesa actualizada', resp
+          )
+          this.obtenerMesas();
+          this.isVisibleActualizarMesa = false;
+        }
+      });
+    }
+    else{
+      console.log('Formulario no válido', this.validateFormActualizarMesa.value);
+      
+      this.notification.create(
+        'error', 'Error al actualizar mesa', 'Debes rellenar todos los campos'
+      )
+    }
+  }
+
+  cerrarActualizarMesa(){
+    this.isVisibleActualizarMesa = false;
   }
 }

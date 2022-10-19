@@ -15,8 +15,12 @@ public interface MesaRepository extends JpaRepository<Mesa, Integer>{
 			@Param("id_tipo_mesa") int id_tipo_mesa,
 			@Param("id_estado_mesa") int id_estado_mesa);
 	
-	@Query(value = "select modificar_mesa(:id_mesa, :id_estado_mesa)", nativeQuery = true)
+	@Query(value = "select modificar_mesa(:id_mesa, :id_tipo_mesa, :id_estado_mesa, :eliminado)", nativeQuery = true)
 	String modificarMesa(@Param("id_mesa") int id_mesa, 
-			@Param("id_estado_mesa") int id_estado_mesa);
-
+			@Param("id_tipo_mesa") int id_tipo_mesa,
+			@Param("id_estado_mesa") int id_estado_mesa,
+			@Param("eliminado") boolean eliminado);
+	
+	@Query(value = "select eliminar_mesa(:id_mesa)", nativeQuery = true)
+	String eliminarMesa(@Param("id_mesa") int id_mesa);
 }

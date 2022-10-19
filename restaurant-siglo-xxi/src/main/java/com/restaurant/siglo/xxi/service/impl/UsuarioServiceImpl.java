@@ -82,8 +82,9 @@ public class UsuarioServiceImpl implements UsuarioService{
 		String dv = usuario.get("dv").toString();
 		String correo = usuario.get("correo").toString();
 		String contrasena = usuario.get("contrasena").toString();
+		boolean eliminado = Boolean.parseBoolean(usuario.get("eliminado").toString());
 
-		String resp = usuarioRepository.crearUsuario(id_usuario, nombre, apP, apM, rut, dv, rol, correo, contrasena); 
+		String resp = usuarioRepository.crearUsuario(id_usuario, nombre, apP, apM, rut, dv, rol, correo, contrasena, eliminado); 
 		
 		return resp;
 	}
@@ -161,11 +162,29 @@ public class UsuarioServiceImpl implements UsuarioService{
 	        String dv = usuario.get("dv").toString();
 	        String correo = usuario.get("correo").toString();
 	        String contrasena = usuario.get("contrasena").toString();
+	        boolean eliminado = Boolean.parseBoolean(usuario.get("eliminado").toString());
 
-	        String resp = usuarioRepository.modificarUsuario(id_usuario, id_rol, nombre, apP, apM, rut, dv, correo, contrasena); 
+	        String resp = usuarioRepository.modificarUsuario(id_usuario, nombre, apP, apM, rut, dv,id_rol, correo, contrasena, eliminado);  
 
 	        return resp;
 	    }
+	 
+	 @Override
+	    public String eliminarUsuario(Map<String, Object> usuario) {
+	        String id_usuario = (usuario.get("id_usuario").toString());
+	        String resp = "";
+	        
+	        
+	        try {           
+	           usuarioRepository.eliminarUsuario(id_usuario);
+	           resp = "Se elimino el usuario correctamente";
+	        } catch (Exception e) {
+	            return "Usuario no existe. \n"
+	                    + "Mensaje de error: "+ e.getMessage();
+	        }
+	        
+	        return resp;
+		}
 	
 
 }

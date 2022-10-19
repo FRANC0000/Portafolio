@@ -1,5 +1,6 @@
 package com.restaurant.siglo.xxi.controller;
 
+import java.text.ParseException;
 import java.util.Map;
 
 import org.json.JSONException;
@@ -35,6 +36,18 @@ public class MesaController {
 	@RequestMapping(value="/obtenerUnaMesa")
 	public String obtenerUnaMesa(@RequestBody Map<String, Object> idMesa) throws JSONException{
 		String resp = mesaService.obtenerUnaMesa(idMesa);
+		return resp;
+	}
+	
+	@RequestMapping(value="/modificarMesa")
+	public String modificarMesa(@RequestBody Mesa mesa) throws JSONException{
+		String resp = mesaService.modificarMesa(mesa);
+		return resp;
+	}
+	
+	@RequestMapping(value="/eliminarMesa")
+	public String eliminarMesa(@RequestBody Map<String, Object> mesa) throws JSONException, ParseException{
+		String resp = mesaService.eliminarMesa(mesa);
 		return resp;
 	}
 }

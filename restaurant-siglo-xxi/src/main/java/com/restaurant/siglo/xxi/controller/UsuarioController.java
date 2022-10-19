@@ -62,4 +62,12 @@ public class UsuarioController {
 
         return resp;
     }
+	
+	@RequestMapping(value="/eliminarUsuario")
+    public String eliminarUsuario(@RequestBody Map<String, Object> usuario) throws JSONException {
+        
+        String resp = usuarioService.eliminarUsuario(usuario);
+        
+        return resp; 
+    }
 }

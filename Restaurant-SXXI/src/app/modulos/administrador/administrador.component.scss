@@ -37,4 +37,51 @@ tr:nth-child(even) {
 
 ::ng-deep nz-form-control{
   width: 230px;
-} 
+}
+
+.all-administrador{
+  background-color: rgb(228, 228, 228);
+  width: 100%;
+  height: fit-content;
+  min-height: 100%;
+}
+
+.datos-sesion{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  width: calc(100% - 40px);
+  padding: 16px 20px 100px;
+  background-color: rgba(81, 0, 195, 0.319);
+  border-radius: 0px 0px 20px 20px;
+  font-weight: bold;
+  color: white;
+  font-size: 20px;
+  margin: 0px 20px;
+  
+  label{
+      margin: 0px 10px;
+  }
+
+  .btn-reserva{
+      button{ 
+          margin: 0px 10px;
+      }
+  }
+
+  .title-datos-sesion{
+      margin-bottom: 10px;
+  }
+}
+
+.menu{
+  background-color: white;
+  position: relative;
+  top: -80px;
+  width: calc(100% - 100px);
+  height: fit-content;
+  left: 50px;
+  border-radius: 20px 20px 0px 0px;
+  padding: 16px 20px;
+}

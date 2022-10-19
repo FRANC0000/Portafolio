@@ -1,0 +1,6 @@
+CREATE SEQUENCE seq_id_mesa
+AS int
+MINVALUE 0 --1
+MAXVALUE 100
+
+OWNED BY mesa.id_mesa;

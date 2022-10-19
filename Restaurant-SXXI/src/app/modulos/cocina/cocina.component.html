@@ -6,6 +6,10 @@
           <div class="btn-reserva">
               <button nz-button (click)="crearPlato()"> Crear plato </button>
               <button nz-button (click)="crearReceta()"> Crear receta </button>
+              <button nz-button (click)="eliminarPlato()"> Eliminar plato </button>
+              <button nz-button (click)="actualizarPlato()"> Modificar plato </button>
+              <button nz-button (click)="modificarReceta()"> Modificar receta </button>
+              <button nz-button (click)="eliminarReceta()"> Eliminar receta </button>
               <button nz-button nzType="danger" (click)="cerrarSesion()"> Cerrar sesión </button>
           </div>
     </div>
@@ -180,4 +184,390 @@
         </div>
         </ng-container>
     </nz-drawer>
+
+    <!-- CREAR RECETA -->
+    <nz-modal nzTitle="Crear receta" [nzWidth]="800" [nzContent]="crearRecetaContent" [(nzVisible)]="isVisibleCrearReceta"
+        (nzOnOk)="guardarCrearReceta()" (nzOnCancel)="cerrarCrearReceta()">
+        <ng-container #crearRecetaContent>
+            <form nz-form [formGroup]="validateFormCrearReceta" id="validateFormCrearReceta" [nzLayout]="'inline'"
+                (ngSubmit)="(guardarCrearReceta)">
+                <div style="display: flex; justify-content: center;">
+                    <nz-form-item>
+                        <nz-form-label nzRequired nzFor="id_receta">
+                            Id receta
+                        </nz-form-label>
+                        <nz-form-control nzErrorTip="Por favor ingrese el nombre  dela receta">
+                            <input nz-input type="text" name="id_receta" id="id_receta" placeholder="id_receta"
+                                formControlName="id_receta">
+                        </nz-form-control>
+                    </nz-form-item>
+                    <nz-form-item>
+                        <nz-form-label nzRequired nzFor="comentario">
+                            comentario
+                        </nz-form-label>
+                        <nz-form-control nzErrorTip="Por favor ingrese un comentario">
+                            <input nz-input type="text" name="comentario" id="comentario" placeholder="comentario"
+                                formControlName="comentario">
+                        </nz-form-control>
+                    </nz-form-item>
+                    <nz-form-item>
+                        <nz-form-label nzRequired nzFor="complejidad">
+                            complejidad
+                        </nz-form-label>
+                        <nz-form-control nzErrorTip="Por favor ingrese la complejidad de la receta">
+                            <input nz-input type="text" name="complejidad" id="complejidad" placeholder="complejidad"
+                                formControlName="complejidad">
+                        </nz-form-control>
+                    </nz-form-item>
+                    <nz-form-item>
+                        <nz-form-label nzRequired nzFor="tiempo_preparacion">
+                            tiempo preparacion
+                        </nz-form-label>
+                        <nz-form-control nzErrorTip="Por favor ingrese el tiempo de preparacion">
+                            <input nz-input type="text" name="tiempo_preparacion" id="tiempo_preparacion"
+                                placeholder="tiempo_preparacion" formControlName="tiempo_preparacion">
+                        </nz-form-control>
+                    </nz-form-item>
+                </div>
+            </form>
+        </ng-container>
+    </nz-modal>
+
+    <!-- MODIFICAR RECETA -->
+    <nz-modal nzTitle="Modificar receta" [nzWidth]="800" [nzContent]="modificarRecetaContent"
+        [(nzVisible)]="isVisibleModificarReceta" (nzOnOk)="guardarModificarReceta()" (nzOnCancel)="cerrarModificarReceta()">
+        <ng-container #modificarRecetaContent>
+            <form nz-form [formGroup]="validateFormModificarReceta" id="validateFormModificarReceta" [nzLayout]="'inline'"
+                (ngSubmit)="(guardarModificarReceta)">
+                <div style="display: flex; justify-content: center;">
+                    <nz-form-item>
+                        <nz-form-label nzRequired nzFor="id_receta">
+                            Id receta
+                        </nz-form-label>
+                        <nz-form-control nzErrorTip="Por favor ingrese la nuevo id de receta">
+                            <input nz-input type="text" name="id_receta" id="id_receta" placeholder="id_receta"
+                                formControlName="id_receta">
+                        </nz-form-control>
+                    </nz-form-item>
+                    <nz-form-item>
+                        <nz-form-label nzRequired nzFor="comentario">
+                            comentario
+                        </nz-form-label>
+                        <nz-form-control nzErrorTip="Por favor ingrese un nuevo comentario">
+                            <input nz-input type="text" name="comentario" id="comentario" placeholder="comentario"
+                                formControlName="comentario">
+                        </nz-form-control>
+                    </nz-form-item>
+                    <nz-form-item>
+                        <nz-form-label nzRequired nzFor="complejidad">
+                            complejidad
+                        </nz-form-label>
+                        <nz-form-control nzErrorTip="Por favor indique la nueva complejidad">
+                            <input nz-input type="text" name="complejidad" id="complejidad" placeholder="complejidad"
+                                formControlName="complejidad">
+                        </nz-form-control>
+                    </nz-form-item>
+                    <nz-form-item>
+                        <nz-form-label nzRequired nzFor="tiempo_preparacion">
+                            tiempo preparacion
+                        </nz-form-label>
+                        <nz-form-control nzErrorTip="Por favor ingrese el tiepo de tiempo de preparacion">
+                            <input nz-input type="text" name="tiempo_preparacion" id="tiempo_preparacion"
+                                placeholder="tiempo_preparacion" formControlName="tiempo_preparacion">
+                        </nz-form-control>
+                    </nz-form-item>
+                    <nz-form-item>
+                        <nz-form-label nzRequired nzFor="tiempo_preparacion">
+                            eliminado
+                        </nz-form-label>
+                        <nz-form-control style="width: 100%;">
+                            <nz-select nzAllowClear nzPlaceHolder="Estado" formControlName="eliminado">
+                                <nz-option nzLabel="Eliminada " nzValue="true"></nz-option>
+                                <nz-option nzLabel="No eliminada" nzValue="false"></nz-option>
+                            </nz-select>
+                        </nz-form-control>
+                    </nz-form-item>
+                </div>
+            </form>
+        </ng-container>
+    </nz-modal>
+
+    <!-- ELIMINAR RECETA -->
+    <nz-modal nzTitle="Eliminar receta" [nzWidth]="800" [nzContent]="EliminarRecetaContent"
+        [(nzVisible)]="isVisibleEliminarReceta" (nzOnOk)="guardarEliminarReceta()" (nzOnCancel)="cerrarEliminarReceta()">
+        <ng-container #eliminarRecetaContent>
+            <form nz-form [formGroup]="validateFormEliminarReceta" id="validateFormEliminarReceta" [nzLayout]="'inline'"
+                (ngSubmit)="guardarEliminarReceta()">
+                <div style="display: flex; justify-content: center;">
+                    <nz-form-item>
+                        <nz-form-label nzRequired nzFor="id_receta">
+                            Id receta
+                        </nz-form-label>
+                        <nz-form-control nzErrorTip="Por favor ingrese la nuevo id de receta para eliminar">
+                            <input nz-input type="text" name="id_receta" id="id_receta" placeholder="id_receta"
+                                formControlName="id_receta">
+                        </nz-form-control>
+                    </nz-form-item>
+                </div>
+            </form>
+        </ng-container>
+    </nz-modal>
+    
+    <!-- CREAR PLATO -->
+    <nz-modal nzTitle="Crear Plato" [nzWidth]="800" [nzContent]="crearPlatoContent" [(nzVisible)]="isVisibleCrearPlato"
+        (nzOnOk)="guardarCrearPlato()" (nzOnCancel)="cerrarCrearPlato()">
+        <div>
+            <ng-container #crearPlatoContent>
+                <form nz-form [formGroup]="validateFormCrearPlato" id="validateFormCrearPlato" [nzLayout]="'inline'" (ngSubmit)="enviarFormularioCrearPlato()">
+    
+                    <div style="display: flex; justify-content: center;">
+    
+                        <nz-form-item>
+                            <!-- SOLO 1 ITEM DEL FORMULARIO-->
+                            <nz-form-label nzRequired nzFor="id_plato">
+                                <!-- TITULO DEL ITEM-->
+                                Id plato
+                            </nz-form-label>
+                            <nz-form-control nzErrorTip="Por favor ingrese su nombre de usuario">
+                                <!-- ERROR QUE SALTA AL ENVIAR EL FORMULARIO-->
+                                <input nz-input type="number" min="1" name="id_plato" id="id_plato" placeholder="id_plato" formControlName="id_plato">
+                            </nz-form-control>
+                        </nz-form-item>
+    
+                    </div>
+    
+                    <br>
+    
+                    <div nz-row clas="form-usuario">
+                        <div nz-col nzSpan="12">
+    
+                            <nz-form-item>
+                                <nz-form-label>
+                                    Nombre
+                                </nz-form-label>
+                                <nz-form-control>
+                                    <input nz-input type="text" name="nombre_plato" id="nombre_plato" placeholder="nombre plato" formControlName="nombre_plato">
+                                </nz-form-control>
+                            </nz-form-item>
+    
+                            <nz-form-item>
+                                <nz-form-label>
+                                    Personas recomendadas
+                                </nz-form-label>
+                                <nz-form-control>
+                                    <input nz-input type="number" name="cantidad_personas_recomendadas" id="cantidad_personas_recomendadas" placeholder="Personas recomendadas" formControlName="cantidad_personas_recomendadas">
+                                </nz-form-control>
+                            </nz-form-item>
+    
+                            <nz-form-item>
+                                <nz-form-label>
+                                    Descripción
+                                </nz-form-label>
+                                <nz-form-control>
+                                    <input nz-input type="text" name="descripcion_plato" id="descripcion_plato" placeholder="descripcion" formControlName="descripcion_plato">
+                                </nz-form-control>
+                            </nz-form-item>
+    
+                            <nz-form-item>
+                                <nz-form-label>
+                                    Precio
+                                </nz-form-label>
+                                <nz-form-control>
+                                    <input nz-input type="number" name="precio_plato" id="precio_plato" placeholder="precio" formControlName="precio_plato">
+                                </nz-form-control>
+                            </nz-form-item>
+    
+                        </div>
+    
+                        <div nz-col nzSpan="12">
+    
+                            <nz-form-item>
+                                <nz-form-label>
+                                    Tipo de plato
+                                </nz-form-label>
+                                <nz-form-control style="width: 200px;">
+                                    <nz-select [ngModel]="tipoPlatoSelected" nzPlaceHolder="Elegir tipo de plato" name="id_tipo_plato" formControlName="id_tipo_plato">
+                                        <ng-container *ngFor="let tipo of listaTipoPlato">
+                                            <nz-option [nzValue]="tipo.id_tipo_plato" [nzLabel]="tipo.nombre_tipo_plato"></nz-option>
+                                        </ng-container>
+                                    </nz-select>
+                                </nz-form-control>
+                            </nz-form-item>
+    
+                            <nz-form-item>
+                                <nz-form-label>
+                                    Disponibilidad
+                                </nz-form-label>
+                                <nz-form-control style="width: 200px;">
+                                    <nz-select [ngModel]="disponibilidadSelected" nzPlaceHolder="Elegir disponibilidad" name="disponibilidad" formControlName="disponibilidad">
+                                        <nz-option nzValue="true" nzLabel="Disponible"></nz-option>
+                                        <nz-option nzValue="false" nzLabel="No Disponible"></nz-option>
+                                    </nz-select>
+                                </nz-form-control>
+                            </nz-form-item>
+    
+                            <nz-form-item>
+                                <nz-form-label>
+                                    Estado Eliminado
+                                </nz-form-label>
+                                <nz-form-control style="width: 200px;">
+                                    <input nz-input ngModel="Activo" disabled type="text" name="eliminado" id="eliminado" formControlName="eliminado">
+                                </nz-form-control>
+                            </nz-form-item>
+    
+                            <nz-form-item>
+                                <nz-form-label>
+                                    Comentario
+                                </nz-form-label>
+                                <nz-form-control>
+                                    <input nz-input type="text" name="comentario" id="comentario" placeholder="Agregar comentario" formControlName="comentario">
+                                </nz-form-control>
+                            </nz-form-item>
+    
+                        </div>
+    
+                    </div>
+                </form>
+            </ng-container>
+        </div>
+    </nz-modal>
+
+    <!-- ELIMINAR PLATO -->
+    <nz-modal nzTitle="Eliminar plato" [nzWidth]="800" [nzContent]="eliminarPlatoContent"
+        [(nzVisible)]="isVisibleEliminarPlato" (nzOnOk)="guardarEliminarPlato()" (nzOnCancel)="cerrarEliminarPlato()">
+        <ng-container #eliminarMesaContent>
+            <form nz-form [formGroup]="validateFormEliminarPlato" id="validateFormEliminarPlato" [nzLayout]="'inline'"
+                (ngSubmit)="guardarEliminarPlato()">
+                <div style="display: flex; justify-content: center;">
+                    <nz-form-item>
+                        <nz-form-label nzRequired nzFor="id_plato">
+                            ID plato
+                        </nz-form-label>
+                        <br>
+                        <nz-form-control nzErrorTip="Ingrese ID de plato que desee eliminar">
+                            <input nz-input type="number" min="1" name="id_plato" id="id_plato"
+                                placeholder="Ingrese id plato" formControlName="id_plato">
+                        </nz-form-control>
+                    </nz-form-item>
+                </div>
+            </form>
+        </ng-container>
+    </nz-modal>
+
+    <!-- MODIFICAR PLATO -->
+    <nz-modal nzTitle="Modificar Plato" [nzWidth]="800" [nzContent]="modificarPlatoContent" [(nzVisible)]="isVisibleModificarPlato" (nzOnOk)="guardarModificarPlato()" (nzOnCancel)="cerrarModificarPlato()">
+        <div>
+            <ng-container #ModificarPlatoContent>
+                <form nz-form [formGroup]="validateFormModificarPlato" id="validateFormModificarPlato" [nzLayout]="'inline'" (ngSubmit)="enviarFormularioModificarPlato()">
+    
+                    <div style="display: flex; justify-content: center;">
+    
+                        <nz-form-item>
+                            <!-- SOLO 1 ITEM DEL FORMULARIO-->
+                            <nz-form-label nzRequired nzFor="id_plato">
+                                <!-- TITULO DEL ITEM-->
+                                Id plato
+                            </nz-form-label>
+                            <nz-form-control nzErrorTip="Por favor ingrese el id del plato">
+                                <!-- ERROR QUE SALTA AL ENVIAR EL FORMULARIO-->
+                                <input nz-input type="number" name="id_plato" id="id_plato" placeholder="id_plato" formControlName="id_plato" value="unPlato.id_plato">
+                            </nz-form-control>
+                        </nz-form-item>
+    
+                    </div>
+    
+                    <br>
+    
+                    <div nz-row clas="form-plato">
+                        <div nz-col nzSpan="12">
+                            <nz-form-item>
+                                <nz-form-label>
+                                    Nombre
+                                </nz-form-label>
+                                <nz-form-control>
+                                    <input nz-input type="text" name="nombre_plato" id="nombre_plato" placeholder="nombre plato" formControlName="nombre_plato">
+                                </nz-form-control>
+                            </nz-form-item>
+    
+                            <nz-form-item>
+                                <nz-form-label>
+                                    Personas recomendadas
+                                </nz-form-label>
+                                <nz-form-control>
+                                    <input nz-input type="number" name="cantidad_personas_recomendadas" id="cantidad_personas_recomendadas" placeholder="Personas recomendadas" formControlName="cantidad_personas_recomendadas">
+                                </nz-form-control>
+                            </nz-form-item>
+    
+                            <nz-form-item>
+                                <nz-form-label>
+                                    Descripción
+                                </nz-form-label>
+                                <nz-form-control>
+                                    <input nz-input type="text" name="descripcion_plato" id="descripcion_plato" placeholder="descripcion" formControlName="descripcion_plato">
+                                </nz-form-control>
+                            </nz-form-item>
+    
+                            <nz-form-item>
+                                <nz-form-label>
+                                    Precio
+                                </nz-form-label>
+                                <nz-form-control>
+                                    <input nz-input type="number" name="precio_plato" id="precio_plato" placeholder="precio" formControlName="precio_plato">
+                                </nz-form-control>
+                            </nz-form-item>
+    
+                        </div>
+    
+                        <div nz-col nzSpan="12">
+    
+                            <nz-form-item>
+                                <nz-form-label>
+                                    Tipo de plato
+                                </nz-form-label>
+                                <nz-form-control style="width: 200px;">
+                                    <nz-select [(ngModel)]="tipoPlatoSelected" nzPlaceHolder="Elegir tipo de plato" name="id_tipo_plato" formControlName="id_tipo_plato">
+                                        <ng-container *ngFor="let tipo of listaTipoPlato">
+                                            <nz-option [nzValue]="tipo.id_tipo_plato" [nzLabel]="tipo.nombre_tipo_plato"></nz-option>
+                                        </ng-container>
+                                    </nz-select>
+                                </nz-form-control>
+                            </nz-form-item>
+    
+                            <nz-form-item>
+                                <nz-form-label>
+                                    Disponibilidad
+                                </nz-form-label>
+                                <nz-form-control style="width: 200px;">
+                                    <nz-select [ngModel]="disponibilidadSelected" nzPlaceHolder="Elegir disponibilidad" name="disponibilidad" formControlName="disponibilidad">
+                                        <nz-option nzValue="true" nzLabel="Disponible"></nz-option>
+                                        <nz-option nzValue="false" nzLabel="No Disponible"></nz-option>
+                                    </nz-select>
+                                </nz-form-control>
+                            </nz-form-item>
+    
+                            <nz-form-item>
+                                <nz-form-label>
+                                    Estado Eliminado
+                                </nz-form-label>
+                                <nz-form-control style="width: 200px;">
+                                    <input nz-input ngModel="Activo" disabled type="text" name="eliminado" id="eliminado" formControlName="eliminado">
+                                </nz-form-control>
+                            </nz-form-item>
+    
+                            <nz-form-item>
+                                <nz-form-label>
+                                    Comentario
+                                </nz-form-label>
+                                <nz-form-control>
+                                    <input nz-input type="text" name="comentario" id="comentario" placeholder="Agregar comentario" formControlName="comentario">
+                                </nz-form-control>
+                            </nz-form-item>
+    
+                        </div>
+    
+                    </div>
+                </form>
+            </ng-container>
+        </div>
+    </nz-modal>
 </div>

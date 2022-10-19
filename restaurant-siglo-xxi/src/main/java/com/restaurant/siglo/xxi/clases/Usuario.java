@@ -1,5 +1,6 @@
 package com.restaurant.siglo.xxi.clases;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -29,6 +30,9 @@ public class Usuario {
 	String dv;
 	String correo;
 	String contrasena;
+	
+	@Column(nullable = true)
+	boolean eliminado;
 	
 	public String getId_usuario() {
 		return id_usuario;
@@ -84,6 +88,12 @@ public class Usuario {
 	public void setContrasena(String contrasena) {
 		this.contrasena = contrasena;
 	}
-
+	public boolean isEliminado() {
+		return eliminado;
+	}
+	public void setEliminado(boolean eliminado) {
+		this.eliminado = eliminado;
+	}
+	
 	
 }

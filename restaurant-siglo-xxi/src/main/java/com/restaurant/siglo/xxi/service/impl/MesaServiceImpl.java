@@ -42,13 +42,15 @@ public class MesaServiceImpl implements MesaService{
 		try {
 			for (Mesa mesa : mesas) {
 				JSONObject m = new JSONObject();
-				m.put("id_mesa", mesa.getId_mesa());
-				m.put("id_estado_mesa", mesa.getId_estado_mesa().getId_estado_mesa());
-				m.put("nombre_estado_mesa", mesa.getId_estado_mesa().getNombre_estado_mesa());
-				m.put("id_tipo_mesa", mesa.getId_tipo_mesa().getId_tipo_mesa());
-				m.put("nombre_tipo_mesa", mesa.getId_tipo_mesa().getNombre_tipo_mesa());
-				m.put("cantidad_asientos", mesa.getId_tipo_mesa().getCantidad_asientos());
-				listMesas.put(m);
+				if (mesa.isEliminado() == false) {					
+					m.put("id_mesa", mesa.getId_mesa());
+					m.put("id_estado_mesa", mesa.getId_estado_mesa().getId_estado_mesa());
+					m.put("nombre_estado_mesa", mesa.getId_estado_mesa().getNombre_estado_mesa());
+					m.put("id_tipo_mesa", mesa.getId_tipo_mesa().getId_tipo_mesa());
+					m.put("nombre_tipo_mesa", mesa.getId_tipo_mesa().getNombre_tipo_mesa());
+					m.put("cantidad_asientos", mesa.getId_tipo_mesa().getCantidad_asientos());
+					listMesas.put(m);
+				}
 			}
 			listadoMesas.put("listado_mesas", listMesas);
 			resp = listadoMesas.toString();
@@ -111,5 +113,59 @@ public class MesaServiceImpl implements MesaService{
 		}
 		
 		return unaMesaJSON.toString();
+	}
+	
+	@Override
+	public String modificarMesa(Mesa mesa) {
+		
+		String resp = "";
+		int id_mesa = mesa.getId_mesa();
+		int id_estado_mesa = mesa.getId_estado_mesa().getId_estado_mesa();
+		int id_tipo_mesa = mesa.getId_tipo_mesa().getId_tipo_mesa();		
+		boolean existeMesa = mesaRepository.existsById(id_mesa);
+		//boolean existeEstadoMesa = estadoMesaRepository.existsById(id_estado_mesa);
+		//boolean existeTipoMesa = tipoMesaRepository.existsById(id_tipo_mesa);
+		boolean eliminado = mesa.isEliminado();
+		
+		if (!existeMesa) {
+			resp =  "No existe mesa asociada a este ID";
+		}
+		else {
+			System.out.println("Modificar mesa");
+			try {
+				resp = mesaRepository.modificarMesa(id_mesa, id_tipo_mesa, id_estado_mesa, eliminado);
+			
+		
+			} catch (Exception e) {
+				// TODO: handle exception
+				return "Error al modificar mesa \n"
+				+ "Mensaje: "+e.getMessage();
+			}
+		}
+		
+		return resp;
+	}
+	
+	@Override
+	public String eliminarMesa(Map<String, Object> mesa) {
+		String resp = "";
+		int id_mesa = Integer.parseInt(mesa.get("id_mesa").toString());
+		boolean existeMesa = mesaRepository.existsById(id_mesa);
+		
+		if (!existeMesa) {
+			resp =  "No se puede eliminar esta mesa";
+		}
+		else {
+			System.out.println("Eliminar mesa");
+			try {
+				mesaRepository.eliminarMesa(id_mesa);
+				resp =  "Se eliminó la mesa correctamente";
+			} catch (Exception e) {
+				return "Error al eliminar mesa \n"
+				+ "Mensaje: "+e.getMessage();
+			}
+		}
+		
+		return resp;
 	}
 }

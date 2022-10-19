@@ -1,9 +1,19 @@
-<div class="all">
-  <div class="botones">
-    <button nz-button (click)="crearUsuario()" > Crear un usuario </button>
-    <button nz-button (click)="obtenerUsuarios()"> Mostrar listado de usuarios </button>
-    <button nz-button (click)="cerrarSesion()"> Cerrar sesión </button>
-  </div>
+<div class="all-administrador">
+  <div class="datos-sesion">
+        <div class="title-datos-sesion">
+            <label>MÓDULO ADMINISTRADOR </label>
+          </div>
+          <div class="btn-reserva">
+            <button nz-button (click)="crearUsuario()"> Crear un usuario </button>
+            <button nz-button (click)="obtenerUsuarios()"> Mostrar listado de usuarios </button>
+            <button nz-button (click)="modificarUsuario()"> Modificar usuario </button>
+            <button nz-button (click)="eliminarUsuario()"> Eliminar usuario </button>
+            <button nz-button (click)="cerrarSesion()"> Cerrar sesión </button>
+          </div>
+    </div>
+    <div class="menu">
+      
+    </div>
 </div>
 
 <nz-modal nzTitle="Crear usuario"
@@ -99,6 +109,14 @@
               <input nz-input type="password" name="contraseña" id="contraseña" formControlName="contrasena">
             </nz-form-control>
           </nz-form-item>
+          <nz-form-item>
+            <nz-form-label>
+              Estado Eliminado
+            </nz-form-label>
+            <nz-form-control style="width: 200px;">
+              <input nz-input ngModel="Activo" disabled type="text" name="eliminado" id="eliminado" formControlName="eliminado">
+            </nz-form-control>
+          </nz-form-item>
         </div>
       </div>
     </form>
@@ -134,4 +152,115 @@
     </div>
   </ng-container>
 
+</nz-modal>
+
+<!-- MODIFICAR USAURIO -->
+<nz-modal nzTitle="Modificar usuario" [nzWidth]="800" [nzContent]="modificarUsuarioContent"
+  [(nzVisible)]="isVisibleModificarUsuario" (nzOnOk)="guardarModificarUsuario()"
+  (nzOnCancel)="cerrarModificarUsuario()">
+  <ng-container #modificarUsuarioContent>
+    <form nz-form [formGroup]="validateFormModificarUsuario" id="validateFormModificarUsuario" [nzLayout]="'inline'"
+      (ngSubmit)="guardarModificarUsuario()">
+      <div style="display: flex; justify-content: center;">
+        <nz-form-item>
+          <nz-form-label nzRequired nzFor="id_usuario">
+            Id usuario
+          </nz-form-label>
+          <nz-form-control nzErrorTip="Por favor ingrese el nombre a remplazar">
+            <input nz-input type="text" name="id_usuario" id="id_usuario" placeholder="id_usuario"
+              formControlName="id_usuario">
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <br>
+      <div nz-row clas="form-usuario">
+        <div nz-col nzSpan="12">
+          <nz-form-item>
+            <nz-form-label>
+              Rut
+            </nz-form-label>
+            <nz-form-control>
+              <input nz-input type="text" name="rut_usuario" id="rut_usuario" placeholder="11111111" maxlength="8"
+                formControlName="rut_usuario" style="width: calc(100% - 40%);">
+              -
+              <input nz-input type="text" name="dv_usuario" id="dv_usuario" placeholder="1" maxlength="1"
+                formControlName="dv_usuario" style="width: 33px;">
+            </nz-form-control>
+          </nz-form-item>
+          <nz-form-item>
+            <nz-form-label>
+              Nombre
+            </nz-form-label>
+            <nz-form-control>
+              <input nz-input type="text" name="nombre" id="nombre" placeholder="nombre" formControlName="nombre">
+            </nz-form-control>
+          </nz-form-item>
+          <nz-form-item>
+            <nz-form-label>
+              Apellido paterno
+            </nz-form-label>
+            <nz-form-control>
+              <input nz-input type="text" name="apellido_paterno" id="apellido_paterno" placeholder="apellido paterno"
+                formControlName="apellido_paterno">
+            </nz-form-control>
+          </nz-form-item>
+          <nz-form-item>
+            <nz-form-label>
+              Apellido materno
+            </nz-form-label>
+            <nz-form-control>
+              <input nz-input type="text" name="apellido_materno" id="apellido_materno" placeholder="apellido materno"
+                formControlName="apellido_materno">
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+        <div nz-col nzSpan="12">
+          <nz-form-item>
+            <nz-form-label>
+              Rol
+            </nz-form-label>
+            <nz-form-control>
+              <nz-select [ngModel]="rolSelected" nzPlaceHolder="Elegir rol" name="rol" formControlName="rol">
+                <ng-container *ngFor="let rol of listRoles">
+                  <nz-option [nzValue]="rol.id_rol" [nzLabel]="rol.nombre_rol"></nz-option>
+                </ng-container>
+              </nz-select>
+            </nz-form-control>
+          </nz-form-item>
+          <nz-form-item>
+            <nz-form-label>
+              Correo
+            </nz-form-label>
+            <nz-form-control>
+              <input nz-input type="email" name="correo" id="correo" placeholder="mail@mail.com"
+                formControlName="correo">
+            </nz-form-control>
+          </nz-form-item>
+          <nz-form-item>
+            <nz-form-label>
+              Constraseña
+            </nz-form-label>
+            <nz-form-control>
+              <input nz-input type="password" name="contraseña" id="contraseña" formControlName="contrasena">
+            </nz-form-control>
+          </nz-form-item>
+
+          <nz-form-item style="width: 120px;">
+            <nz-form-label>
+              Estado eliminado
+            </nz-form-label>
+            <br>
+            <nz-form-control style="width: 100%;">
+              <nz-select nzAllowClear nzPlaceHolder="Estado" [(ngModel)]="tipoEstadoEliminado"
+                formControlName="eliminado">
+                <nz-option nzLabel="Eliminada " nzValue="true"></nz-option>
+                <nz-option nzLabel="No eliminada" nzValue="false"></nz-option>
+              </nz-select>
+            </nz-form-control>
+          </nz-form-item>
+
+        </div>
+      </div>
+    </form>
+  </ng-container>
 </nz-modal>

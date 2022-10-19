@@ -122,7 +122,7 @@ public class PedidoServiceImpl implements PedidoService {
 					unPlato.put("precio_plato", objetoPlato.getPrecio_plato());
 					unPlato.put("comentario_plato", objetoPlato.getComentario());
 					unPlato.put("descripcion_plato", objetoPlato.getDescripcion_plato());
-					unPlato.put("disponibilidad_plato", objetoPlato.getDisponibilidad());
+					unPlato.put("disponibilidad_plato", objetoPlato.isDisponibilidad());
 					unPlato.put("nombre_plato", objetoPlato.getNombre_plato());
 					unPlato.put("id_tipo_plato", objetoPlato.getTipo_plato().getId_tipo_plato());
 					unPlato.put("nombre_tipo_plato", objetoPlato.getTipo_plato().getNombre_tipo_plato());

@@ -8,7 +8,7 @@ DECLARE
 BEGIN
 
   -- insert into
-  insert into mesa (id_mesa, id_tipo_mesa, id_estado_mesa) values (v_idMesa, v_idTipoMesa, v_idEstadoMesa);
+  insert into mesa (id_mesa, id_tipo_mesa, id_estado_mesa, eliminado) values (v_idMesa, v_idTipoMesa, v_idEstadoMesa, false);
 
   RETURN 'Mesa ¨'||v_idMesa ||'¨ creada satisfactoriamente';
 
@@ -16,4 +16,4 @@ END;
 $BODY$
 LANGUAGE plpgsql VOLATILE COST 100
 
-select crear_mesa(24, 1,1);
+select crear_mesa(201, 1, 1);

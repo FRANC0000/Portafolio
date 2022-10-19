@@ -31,7 +31,25 @@ export class AdministradorComponent implements OnInit {
       rol: new FormControl,
       correo: new FormControl,
       contrasena: new FormControl,
+      eliminado: new FormControl
     })
+
+    this.validateFormModificarUsuario = new FormGroup({
+      id_usuario : new FormControl,
+      rut_usuario: new FormControl,
+      dv_usuario : new FormControl,
+      nombre: new FormControl,
+      apellido_paterno: new FormControl,
+      apellido_materno: new FormControl,
+      rol: new FormControl,
+      correo: new FormControl,
+      contrasena: new FormControl,
+      eliminado: new FormControl,
+    })
+
+    this.validateFormEliminarUsuario = new FormGroup({
+      id_usuario : new FormControl,
+      })
   }
 
   title = 'Restaurant-SXXI';
@@ -41,6 +59,10 @@ export class AdministradorComponent implements OnInit {
   isVisibleListadoUsuarios = false;
   rolSelected = '';
   listRoles: rol[] = [];
+  isVisibleModificarUsuario = false;
+  validateFormEliminarUsuario: FormGroup;
+  validateFormModificarUsuario: FormGroup;
+  isVisibleEliminarUsuario = false;
 
   //Formulario Crear Usuario
   validateFormCrearUsuario!: FormGroup;
@@ -176,5 +198,110 @@ export class AdministradorComponent implements OnInit {
 
   cerrarSesion(){
     this.router.navigate(['/login'])
+  }
+  
+  guardarModificarUsuario(){
+    console.log('guardarModificarUsuario');
+    console.log('valid ', this.validateFormModificarUsuario.valid);
+    if (this.validateFormModificarUsuario.valid){
+      console.log('formulario válido, usa el servicio de modificar Receta');
+       const unUsuario = ({
+        id_usuario : this.validateFormModificarUsuario.value.id_usuario,
+        rut: this.validateFormModificarUsuario.value.rut_usuario,
+        dv : this.validateFormModificarUsuario.value.dv_usuario,
+        nombre : this.validateFormModificarUsuario.value.nombre,
+        apellido_paterno : this.validateFormModificarUsuario.value.apellido_paterno,
+        apellido_materno : this.validateFormModificarUsuario.value.apellido_materno,
+        id_rol : this.validateFormModificarUsuario.value.rol,
+        correo : this.validateFormModificarUsuario.value.correo,
+        contrasena : this.validateFormModificarUsuario.value.contrasena,
+        eliminado : this.validateFormModificarUsuario.value.eliminado
+       })
+      
+       console.log('UnUsuario', unUsuario);
+      this.administadorService.modificarUsuario(unUsuario).subscribe(resp => {
+        console.log('respuesta a mi servicio modificarReceta', resp);
+        this.isVisibleModificarUsuario = false;
+      })
+      
+      
+    }
+    else{
+      console.log('formulario no válido.');
+      
+    }
+    
+  }
+
+  cerrarModificarUsuario(){
+    this.isVisibleModificarUsuario = false;
+  }
+
+  guardarEliminarUsuario(){
+    // this.isVisibleCrearMesa = false;
+   console.log('validateFormEliminarUsuario', this.validateFormEliminarUsuario.value);
+   if (this.validateFormEliminarUsuario.valid){
+     console.log('Formulario válido');
+     var valores = this.validateFormEliminarUsuario.value;
+
+     var usuarioAEliminar = {
+       id_usuario : valores.id_usuario
+       
+     }
+
+     this.administadorService.eliminarUsuario(usuarioAEliminar).subscribe(resp =>{
+       console.log('resp', resp);
+       if (resp.includes('No se puede eliminar el usuario')){
+         this.notification.create(
+           'error', 'Error al eliminar el usuario', resp
+         )
+       }
+       else if (resp.includes('eliminado satisfactoriamente')){
+         this.notification.create(
+           'success', 'Usuario eliminado', resp
+         )
+         this.isVisibleEliminarUsuario = false;
+       }
+     
+    });
+   }
+   else{
+     console.log('Usuario no eliminado', this.validateFormEliminarUsuario.value);
+
+     this.notification.create(
+       'error', 'Error al eliminar el usuario', 'Debes rellenar todos los campos'
+     )
+   }
+
+ }
+ cerrarEliminarUsuario(){
+     this.isVisibleEliminarUsuario = false;
+
+ }
+
+  modificarUsuario() {
+    console.log('modificarUsuario');
+    this.isVisibleModificarUsuario = true;
+    this.validateFormModificarUsuario = this.fb.group({
+      id_usuario: [null, [Validators.required]],
+      rut_usuario: [null, [Validators.required]],
+      dv_usuario: [null, [Validators.required]],
+      nombre: [null, [Validators.required]],
+      apellido_paterno: [null, [Validators.required]],
+      apellido_materno: [null, [Validators.required]],
+      rol: [null, [Validators.required]],
+      correo: [null, [Validators.email, Validators.required]],
+      contrasena: [null, [Validators.required]],
+      eliminado: [null, [Validators.required]]
+    })
+  }
+
+  eliminarUsuario() {
+    console.log('eliminarUsuario');
+    this.isVisibleEliminarUsuario = true;
+    this.validateFormEliminarUsuario = this.fb.group({
+      id_usuario: [null, [Validators.required]],
+
+    })
   }
 }

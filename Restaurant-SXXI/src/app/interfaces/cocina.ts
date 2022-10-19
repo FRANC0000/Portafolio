@@ -6,7 +6,8 @@ export interface Plato {
     cantidad_personas_recomendadas : number,
     descripcion_plato : string,
     comentario : string,
-    disponibilidad : boolean
+    disponibilidad : boolean,
+    eliminado? : boolean
 }
 
 export interface Producto{
@@ -19,4 +20,18 @@ export interface Producto{
     id_tipo_producto: number,
     comentario : string,
     fecha_ingreso_producto : string
+}
+
+export interface Receta {
+    id_receta : number,
+    comentario : string,
+    complejidad : string,
+    tiempoPreparacion : number,
+    eliminado : boolean
+}
+
+export interface TipoPlato {
+    id_tipo_plato : number,
+    descripcion_tipo_plato : string,
+    nombre_tipo_plato : string
 }

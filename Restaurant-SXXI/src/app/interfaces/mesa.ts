@@ -12,7 +12,8 @@ export interface TipoMesa {
 export interface Mesa {
     id_mesa : number,
     id_tipo_mesa: TipoMesa,
-    id_estado_mesa: EstadoMesa
+    id_estado_mesa: EstadoMesa,
+    eliminado? : boolean
 }
 
 export interface Cliente {
