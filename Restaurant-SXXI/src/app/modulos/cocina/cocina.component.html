@@ -24,7 +24,7 @@
                         </nz-form-label>
                         <nz-form-control nzErrorTip="Por favor ingrese su nombre de usuario">
                             <!-- ERROR QUE SALTA AL ENVIAR EL FORMULARIO-->
-                            <input nz-input type="text" name="id_plato" id="id_plato" placeholder="id_plato" formControlName="id_plato">
+                            <input nz-input type="number" min="1" name="id_plato" id="id_plato" placeholder="id_plato" formControlName="id_plato">
                         </nz-form-control>
                     </nz-form-item>
 
@@ -49,7 +49,7 @@
                                 Personas recomendadas
                             </nz-form-label>
                             <nz-form-control>
-                                <input nz-input type="text" name="cantidad_personas_recomendadas" id="cantidad_personas_recomendadas" placeholder="Personas recomendadas" formControlName="cantidad_personas_recomendadas">
+                                <input nz-input type="number" name="cantidad_personas_recomendadas" id="cantidad_personas_recomendadas" placeholder="Personas recomendadas" formControlName="cantidad_personas_recomendadas">
                             </nz-form-control>
                         </nz-form-item>
 
@@ -67,7 +67,7 @@
                                 Precio
                             </nz-form-label>
                             <nz-form-control>
-                                <input nz-input type="text" name="precio_plato" id="precio_plato" placeholder="precio" formControlName="precio_plato">
+                                <input nz-input type="number" name="precio_plato" id="precio_plato" placeholder="precio" formControlName="precio_plato">
                             </nz-form-control>
                         </nz-form-item>
 

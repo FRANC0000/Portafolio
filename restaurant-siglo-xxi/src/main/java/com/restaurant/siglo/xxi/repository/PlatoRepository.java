@@ -13,11 +13,11 @@ public interface PlatoRepository extends JpaRepository<Plato, Integer>{
 			@Param("cantidad_personas_recomendadas") int cantidad_personas_recomendadas,
 			@Param("comentario") String comentario,
 			@Param("descripcion_plato") String descripcion_plato,
-			@Param("disponibilidad") Boolean disponibilidad,
+			@Param("disponibilidad") boolean disponibilidad,
 			@Param("nombre_plato") String nombre_plato,
 			@Param("precio_plato") int precio_plato,
 			@Param("id_tipo_plato") int id_tipo_plato,
-	        @Param("eliminado") Boolean eliminado);
+	        @Param("eliminado") boolean eliminado);
 
 	@Query(value = "select eliminar_plato(:id_plato)", nativeQuery = true)
 		String eliminarPlato(@Param("id_plato") int id_plato);
@@ -28,7 +28,7 @@ public interface PlatoRepository extends JpaRepository<Plato, Integer>{
 			@Param("cantidad_personas_recomendadas") int cantidad_personas_recomendadas,
 			@Param("comentario") String comentario,
 			@Param("descripcion_plato") String descripcion_plato,
-			@Param("disponibilidad") Boolean disponibilidad,
+			@Param("disponibilidad") boolean disponibilidad,
 			@Param("nombre_plato") String nombre_plato,
 			@Param("precio_plato") int precio_plato,
 			@Param("id_tipo_plato") int id_tipo_plato);

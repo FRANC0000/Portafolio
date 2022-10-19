@@ -1,0 +1,241 @@
+// .all-cliente {
+//     background-color: rgb(228, 228, 228);
+//     width: 100%;
+//     height: fit-content;
+//     min-height: 100%;
+// }
+// .datos-reserva {
+//     display: flex;
+//     align-items: center;
+//     justify-content: center;
+//     flex-direction: column;
+//     width: calc(100% - 40px);
+//     padding: 16px 20px 100px;
+//     background-color: rgba(81, 0, 195, 0.319);
+//     border-radius: 0px 0px 20px 20px;
+//     font-weight: bold;
+//     color: white;
+//     font-size: 20px;
+//     margin: 0px 20px;
+//     label {
+//         margin: 0px 10px;
+//     }
+//     .btn-reserva {
+//         button {
+//             margin: 0px 10px;
+//         }
+//     }
+//     .title-datos-reserva {
+//         margin-bottom: 10px;
+//     }
+// }
+// /* MENU CONTAINER*/
+// .menu {
+//     background-color: white;
+//     position: relative;
+//     top: -80px;
+//     width: calc(100% - 100px);
+//     height: fit-content;
+//     left: 50px;
+//     border-radius: 20px 20px 0px 0px;
+//     padding: 16px 20px;
+// }
+// /* MENU CONTAINER*/
+// .plato-row {
+//     background-color: white;
+//     display: flex;
+//     transition: background-color .5s;
+//     height: 180px;
+// }
+// .plato-row:hover {
+//     background-color: rgba(81, 0, 195, 0.319);
+// }
+// .plato-disponible {
+//     padding: 16px 24px;
+//     width: 100%;
+//     display: flex;
+//     flex-direction: column;
+//     justify-content: center;
+// }
+// .plato-no-disponible {
+//     padding: 16px 24px;
+//     width: 100%;
+//     display: flex;
+//     flex-direction: column;
+//     justify-content: center;
+// }
+// .plato-row-no-disponible {
+//     background-color: #dcdcdcaf;
+//     display: flex;
+//     cursor: not-allowed;
+//     transition: background-color .5s;
+//     height: 180px;
+// }
+// .plato-row-no-disponible:hover {
+//     background-color: #b3b3b3;
+// }
+// .plato-title {
+//     display: flex;
+//     flex-direction: row;
+//     align-items: baseline;
+//     h3,
+//     h5 {
+//         margin-bottom: 0;
+//     }
+// }
+// .plato-tipo {
+//     margin-left: 10px;
+//     font-style: italic;
+// }
+// ::ng-deep .ant-drawer-body {
+//     padding: 0;
+// }
+// ::ng-deep.ant-divider-horizontal {
+//     margin: 0;
+// }
+// .all-detalle-plato {
+//     padding: 20px;
+// }
+// .header-detalle-plato {
+//     margin: 16px 0px;
+// }
+// .img-plato {
+//     img {
+//         max-width: 200px;
+//         height: -webkit-fill-available;
+//         padding: 20px 0 20px 20px;
+//         object-fit: cover;
+//         object-position: center;
+//     }
+// }
+// .img-producto {
+//     img {
+//         max-width: 200px;
+//         height: -webkit-fill-available;
+//         padding: 20px 0 20px 20px;
+//         object-fit: cover;
+//         object-position: center;
+//     }
+// }
+// .img-detalle-plato {
+//     height: 300px;
+//     width: 100%;
+//     object-fit: cover;
+//     object-position: center;
+// }
+// /*Carrito de compras*/
+// .footer-carrito {
+//     position: absolute;
+//     left: 0;
+//     bottom: 0;
+//     width: 100%;
+//     background-color: rgba(81, 0, 195, 0.319);
+//     color: white;
+//     text-align: center;
+//     height: 100px;
+//     font-weight: bold;
+//     h2 {
+//         color: white;
+//         margin: 0px;
+//     }
+// }
+// .plato-carrito {
+//     width: 100%;
+//     padding: 16px 24px;
+//     display: flex;
+//     flex-direction: column;
+//     justify-content: center;
+// }
+// .img-plato-carrito {
+//     width: 200px;
+//     img {
+//         max-width: 100%;
+//         height: -webkit-fill-available;
+//         padding: 20px 0px 20px 20px;
+//         object-fit: cover;
+//         object-position: center;
+//     }
+// }
+// .carrito-row {
+//     background-color: white;
+//     display: flex;
+//     transition: background-color .5s;
+//     height: 150px;
+// }
+// .carrito-row:hover {
+//     background-color: rgba(81, 0, 195, 0.319);
+// }
+// .all-productos-carrito {
+//     overflow: auto;
+//     position: absolute;
+//     height: calc(100% - 155px);
+//     width: 100%;
+// }
+// /*Carrito de compras*/
+// .agregar-item {
+//     margin: 0px 10px 0px 0px;
+//     background-color: rgba(81, 0, 195, 0.319);
+//     transition: 0.5s;
+// }
+// .agregar-item:hover {
+//     color: rgb(81, 0, 195) !important;
+//     background-color: white !important;
+// }
+// ::ng-deep .ant-tabs-ink-bar {
+//     background-color: rgb(81, 0, 195);
+// }
+// ::ng-deep.ant-tabs-nav .ant-tabs-tab-active {
+//     color: rgb(81, 0, 195);
+//     font-weight: 500;
+// }
+// ::ng-deep .ant-tabs-nav .ant-tabs-tab:hover {
+//     color: rgba(81, 0, 195, 0.644);
+// }
+// ::ng-deep .ant-btn:focus,
+// .ant-btn:hover {
+//     color: white;
+//     background-color: rgba(81, 0, 195, 0.247);
+//     border-color: rgba(81, 0, 195, 0.644);
+// }
+// ::ng-deep .ant-collapse-header:hover {
+//     background-color: rgba(81, 0, 195, 0.247);
+// }
+// /* Boleta */
+// .carrito-de-un-pedido {
+//     background-color: rgba(220, 220, 220, 0.233);
+//     margin: 5px 0;
+//     padding: 5px;
+//     h5 {
+//         margin: 0;
+//     }
+// }
+// .pedido-info {
+//     color: #999999;
+//     font-weight: bold;
+//     margin-bottom: 5px;
+//     font-style: italic;
+//     label {
+//         color: black;
+//         font-style: initial;
+//         font-weight: 600;
+//         padding: 0px 5px;
+//     }
+// }
+// .pedido-content-row {
+//     background-color: white;
+//     padding: 16px;
+//     transition: 0.5s;
+// }
+// .pedido-content-row:hover {
+//     background-color: #b3b3b369;
+// }
+// .itemDelCarro-nombre {
+//     font-weight: bold;
+// }
+// .itemDelCarro-valor-cantidad {
+//     font-style: italic;
+// }
+// /* Boleta */
+// ::ng-deep .ant-collapse-content>.ant-collapse-content-box {
+//     padding: 0;
+// }

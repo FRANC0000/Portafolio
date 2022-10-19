@@ -27,8 +27,8 @@ public class Plato {
 	int cantidad_personas_recomendadas;
 	String descripcion_plato;
 	String comentario;
-	Boolean disponibilidad;
-	Boolean eliminado;
+	boolean disponibilidad;
+	boolean eliminado;
 	
 	public int getId_plato() {
 		return id_plato;
@@ -78,16 +78,16 @@ public class Plato {
 	public void setComentario(String comentario) {
 		this.comentario = comentario;
 	}
-	public Boolean getDisponibilidad() {
+	public boolean getDisponibilidad() {
 		return disponibilidad;
 	}
-	public void setDisponibilidad(Boolean disponibilidad) {
+	public void setDisponibilidad(boolean disponibilidad) {
 		this.disponibilidad = disponibilidad;
 	}
-    public Boolean getEliminado() {
+    public boolean getEliminado() {
         return eliminado;
     }
-    public void setEliminado(Boolean eliminado) {
+    public void setEliminado(boolean eliminado) {
         this.eliminado = eliminado;
     }
 	
