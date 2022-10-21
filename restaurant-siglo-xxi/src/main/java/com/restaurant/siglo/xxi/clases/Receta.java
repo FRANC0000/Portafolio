@@ -1,8 +1,10 @@
 package com.restaurant.siglo.xxi.clases;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
@@ -17,9 +19,9 @@ public class Receta {
 	String complejidad;
 	boolean eliminado;
 	
-//	@OneToOne
-//	@JoinColumn(name = "id_plato")
-//	private Plato plato;
+	@ManyToOne
+	@JoinColumn(name = "id_plato", nullable = true)
+	private Plato plato;
 
 	public int getId_receta() {
 		return id_receta;
@@ -53,14 +55,14 @@ public class Receta {
 		this.complejidad = complejidad;
 	}
 
-//	public Plato getPlato() {
-//		return plato;
-//	}
-//
-//	public void setPlato(Plato plato) {
-//		this.plato = plato;
-//	}
-//	
+	public Plato getPlato() {
+		return plato;
+	}
+
+	public void setPlato(Plato plato) {
+		this.plato = plato;
+	}
+	
 	public boolean isEliminado() {
         return eliminado;
     }

@@ -24,4 +24,7 @@ public interface PedidoRepository extends JpaRepository<Pedido, Integer>{
 	
 	@Query(name = "obtenerPedidosPorIdBoleta", nativeQuery = true)
 	List<Pedido> obtenerPedidosPorIdBoleta(@Param("id_boleta") int id_boleta);
+	
+	@Query(name = "obtenerPedidosEnCola", nativeQuery = true)
+	List<Pedido> obtenerPedidosEnCola();
 }

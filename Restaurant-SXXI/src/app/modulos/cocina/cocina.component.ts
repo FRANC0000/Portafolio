@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NzNotificationService } from 'ng-zorro-antd';
+import { Pedido, ProductoEnCarro } from 'src/app/interfaces/carrito-compras';
 import { Plato, Producto, Receta, TipoPlato } from 'src/app/interfaces/cocina';
 import { CocinaService } from './cocina.service';
 
@@ -39,11 +40,14 @@ export class CocinaComponent implements OnInit {
   validateFormModificarPlato!: FormGroup;
   isVisibleModificarPlato = false;
   tipoPlatoSelected: number;
+  listaPedidosEnCola : Pedido[] = [];
 
   ngOnInit() {
     this.obtenerPlatos();
     this.obtenerProductos();
     this.obtenerTipoPlato();
+    this.obtenerPedidosEnCola();
+
     this.validateFormCrearReceta = new FormGroup({
       id_receta: new FormControl,
       comentario: new FormControl,
@@ -511,4 +515,86 @@ export class CocinaComponent implements OnInit {
     this.isVisibleModificarPlato = false;
   }
 
+  obtenerPedidosEnCola(){
+    this.cocinaService.obtenerPedidosEnCola().subscribe(resp =>{
+      // console.log('resp', resp);
+      let listaPedidosResp = resp['pedidos']
+      // console.log('listaPedidosResp', listaPedidosResp);
+
+      listaPedidosResp.forEach(pedido => {
+        let carritoDeUnPedido : ProductoEnCarro[] = [];
+
+        pedido.platos_del_pedido.forEach(plato => {
+          const unPlatoPedido : Plato = {
+            cantidad_personas_recomendadas : plato.cantidad_personas_recomendadas,
+            comentario : plato.comentario_plato,
+            descripcion_plato : plato.descripcion_plato,
+            disponibilidad : plato.disponibilidad_plato,
+            id_plato : plato.id_plato,
+            id_tipo_plato : plato.id_tipo_plato,
+            nombre_plato : plato.nombre_plato,
+            precio_plato : plato.precio_plato
+          }
+
+          const platoEnCarro : ProductoEnCarro = {
+            cantidad : plato.cantidad_platos_en_pedido,
+            esPlato : true,
+            esProducto : false,
+            valorUnitario : plato.precio_plato,
+            plato : unPlatoPedido
+          }
+
+          carritoDeUnPedido.push(platoEnCarro);
+        })
+
+        pedido.productos_del_pedido.forEach(producto => {
+          const unProductoPedido : Producto = {
+            comentario : producto.comentario_producto,
+            fecha_ingreso_producto : producto.fecha_ingreso_producto,
+            fecha_vencimiento : producto.fecha_vencimiento_producto,
+            id_producto : producto.id_producto,
+            id_tipo_producto : producto.id_tipo_producto,
+            medida_producto : producto.medida_producto,
+            nombre_producto : producto.nombre_producto,
+            stock_producto : producto.stock_producto,
+            valor_unitario : producto.valor_unitario_producto
+          }
+
+          const productoEnCarro : ProductoEnCarro = {
+            cantidad: producto.cantidad_productos_en_pedido,
+            esPlato : false,
+            esProducto : true,
+            valorUnitario : producto.valor_unitario_producto,
+            producto : unProductoPedido
+          }
+          carritoDeUnPedido.push(productoEnCarro);
+        })
+
+        const unPedido : Pedido ={
+          fechaIngreso : pedido.fecha_ingreso,
+          idEstadoIinstancia: pedido.id_estado_instancia,
+          idMesa: pedido.id_mesa,
+          rutCliente : pedido.id_cliente,
+          idBoleta : pedido.id_boleta,
+          idPedido : pedido.id_pedido,
+          nombreEstadoInstancia : pedido.nombre_estado_instancia,
+          subtotal : pedido.subtotal,
+          carritoProductos : carritoDeUnPedido
+        }
+
+        // console.log('unPedido', unPedido);
+        this.listaPedidosEnCola.push(unPedido);
+      });
+      console.log('listaPedidosEnCola', this.listaPedidosEnCola);
+    })
+  }
+
+  verDetallePedidoEnCola(pedido){
+    console.log('pedido verDetallePedidoEnCola', pedido);
+    
+  }
+
+  moverPedidoAEnPreparacion(pedido){
+    console.log('pedido moverPedidoAEnPreparacion', pedido);
+  }
 }

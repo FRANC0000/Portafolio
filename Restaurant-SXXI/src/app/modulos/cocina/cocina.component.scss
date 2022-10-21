@@ -199,3 +199,31 @@
 ::ng-deep .ant-tabs-nav .ant-tabs-tab:hover {
     color: rgba(81, 0, 195, 0.644);
 }
+
+.pedidos-row{
+    display: flex;
+    overflow-x: scroll;
+}
+
+::ng-deep .ant-card-head{
+    background-color: rgba(81, 0, 195, 0.319);
+    color: white;
+    font-weight: bold;
+}
+
+.agregar-item{
+    margin: 0px 10px 0px 0px;
+    background-color: rgba(81, 0, 195, 0.319);
+    transition: 0.5s;
+}
+
+.agregar-item:hover{
+    color: rgb(81, 0, 195) !important;
+    background-color: white !important;
+}
+
+.botones-pedidos{
+    button{
+        margin: 2px 0px;
+    }
+}

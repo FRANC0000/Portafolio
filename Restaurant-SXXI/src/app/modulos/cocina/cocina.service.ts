@@ -75,4 +75,10 @@ export class CocinaService {
     );
   }
 
+  public obtenerPedidosEnCola() {
+    return this.http.get(
+      'http://localhost:8085/restaurantSXXI/rest-rsxii/pedido/obtenerPedidosEnCola', { headers: this.headers }
+    );
+  }
+
 }

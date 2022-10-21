@@ -48,4 +48,14 @@ public class PedidoController {
 		return resp;	
 	}
 	
+	@RequestMapping(value="/obtenerPedidosEnCola")
+	public String obtenerPedidosEnCola() {
+		
+		String resp = "";
+		resp = pedidoService.obtenerPedidosEnCola();
+
+		
+		return resp;	
+	}
+	
 }

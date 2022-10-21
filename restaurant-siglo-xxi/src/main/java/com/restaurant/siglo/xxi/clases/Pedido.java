@@ -18,6 +18,10 @@ import javax.persistence.Table;
 			@NamedQuery(
 					name = "obtenerPedidosPorIdBoleta", 
 					query = " select p from Pedido p where p.boleta.id_boleta = :id_boleta order by 2 asc "
+			),
+			@NamedQuery(
+					name = "obtenerPedidosEnCola", 
+					query = " select p from Pedido p where p.estadoInstancia.id_estado_instancia = 1 order by 2 asc "
 			)
 		})
 public class Pedido {

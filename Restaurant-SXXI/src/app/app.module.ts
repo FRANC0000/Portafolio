@@ -38,6 +38,7 @@ import { NzPopoverModule } from 'ng-zorro-antd/popover';
 import { NzTabsModule } from 'ng-zorro-antd/tabs';
 import { NzCollapseModule } from 'ng-zorro-antd/collapse';
 import { NzMessageModule } from 'ng-zorro-antd/message';
+import { NzCardModule } from 'ng-zorro-antd/card';
 
 registerLocaleData(es);
 
@@ -78,7 +79,8 @@ registerLocaleData(es);
     NzPopoverModule,
     NzTabsModule,
     NzCollapseModule,
-    NzMessageModule
+    NzMessageModule,
+    NzCardModule
   ],
   providers: [{ provide: NZ_I18N, useValue: es_ES }],
   bootstrap: [AppComponent]

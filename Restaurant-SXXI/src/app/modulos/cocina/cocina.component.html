@@ -5,15 +5,62 @@
           </div>
           <div class="btn-reserva">
               <button nz-button (click)="crearPlato()"> Crear plato </button>
-              <button nz-button (click)="crearReceta()"> Crear receta </button>
               <button nz-button (click)="eliminarPlato()"> Eliminar plato </button>
               <button nz-button (click)="actualizarPlato()"> Modificar plato </button>
+              <button nz-button (click)="crearReceta()"> Crear receta </button>
               <button nz-button (click)="modificarReceta()"> Modificar receta </button>
               <button nz-button (click)="eliminarReceta()"> Eliminar receta </button>
               <button nz-button nzType="danger" (click)="cerrarSesion()"> Cerrar sesión </button>
           </div>
     </div>
     <div class="menu">
+        <div class="menu-header">
+            PEDIDOS
+        </div>
+        <div>
+            <nz-tabset>
+                <nz-tab nzTitle="En cola">
+                    <div class="pedidos-row">
+                        <div *ngFor="let pedido of listaPedidosEnCola">
+                            <nz-card style="width:300px; margin: 0px 2px; margin-bottom: 10px;" nzTitle="Pedido #{{pedido.idPedido}}">
+                                <div>
+                                    <label for=""> Mesa #{{pedido.idMesa}}</label>
+                                    <br>
+                                    <label for=""> {{pedido.fechaIngreso | date: 'dd/MM/yyyy HH:mm:ss'}}</label>
+                                </div>
+                                <br>
+                                <div class="botones-pedidos">
+                                    <button nz-button (click)="verDetallePedidoEnCola(pedido)"
+                                     style="width: 100%;">
+                                        Ver detalle del pedido
+                                    </button>
+                                    <button nz-button (click)="moverPedidoAEnPreparacion(pedido)"
+                                     style="width: 100%;" class="agregar-item">
+                                        Mover a 'En preparación'
+                                    </button>
+                                </div>
+                            </nz-card>
+                        </div>
+                    </div>
+                </nz-tab>
+                <nz-tab nzTitle="En preparación">
+                    <div>
+                        
+                    </div>
+                </nz-tab>
+                <nz-tab nzTitle="Para entregar">
+                    <div>
+                        
+                    </div>
+                </nz-tab>
+                <nz-tab nzTitle="Entregado">
+                    <div>
+                        
+                    </div>
+                </nz-tab>
+            </nz-tabset>
+        </div>
+        <br><br><br><br>
         <div class="menu-header">
             <h2>Nuestro menú.</h2>
         </div>
