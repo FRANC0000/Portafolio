@@ -269,6 +269,7 @@ export class ClienteComponent implements OnInit {
 
   mostrarPedidosEnBoleta(){
     console.log('mostrarPedidosEnBoleta');
+    this.obtenerPedidosPorIdBoleta(this.boletaAIngresar.id_boleta);
     console.log('pedidoEnBoleta', this.pedidoEnBoleta);
     this.visibleBoleta = true;
   }

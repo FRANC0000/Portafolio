@@ -27,6 +27,7 @@ public class Mesa implements Serializable {
 	@JoinColumn(name = "id_tipo_mesa")
 	private TipoMesa id_tipo_mesa;
 	
+	@Column(nullable = true)
 	private boolean eliminado;
 
 	public int getId_mesa() {

@@ -58,4 +58,49 @@ public class PedidoController {
 		return resp;	
 	}
 	
+	@RequestMapping(value="/modificarInstanciaPedido")
+	public String modificarInstanciaPedido(@RequestBody Map<String, Object> modificarInstanciaPedido) {
+		
+		String resp = "";
+		try {
+			resp = pedidoService.modificarInstanciaPedido(modificarInstanciaPedido);
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return resp;	
+	}
+	
+	@RequestMapping(value="/obtenerPedidosEnPreparacion")
+	public String obtenerPedidosEnPreparacion() {
+		
+		String resp = "";
+		resp = pedidoService.obtenerPedidosEnPreparacion();
+
+		
+		return resp;	
+	}	
+	
+	@RequestMapping(value="/obtenerPedidosParaEntregar")
+	public String obtenerPedidosParaEntregar() {
+		
+		String resp = "";
+		resp = pedidoService.obtenerPedidosParaEntregar();
+
+		
+		return resp;	
+	}	
+	
+	@RequestMapping(value="/obtenerPedidosEntregadosHoy")
+	public String obtenerPedidosEntregadosHoy() {
+		
+		String resp = "";
+		resp = pedidoService.obtenerPedidosEntregadosHoy();
+
+		
+		return resp;	
+	}	
+	
+	
 }

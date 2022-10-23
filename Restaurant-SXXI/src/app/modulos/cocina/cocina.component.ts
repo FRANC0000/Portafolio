@@ -41,12 +41,16 @@ export class CocinaComponent implements OnInit {
   isVisibleModificarPlato = false;
   tipoPlatoSelected: number;
   listaPedidosEnCola : Pedido[] = [];
+  listaPedidosEnPreparacion : Pedido[] = [];
+  listaPedidosParaEntregar : Pedido[] = [];
+  listaPedidosEntregadosHoy : Pedido[] = [];
 
   ngOnInit() {
     this.obtenerPlatos();
     this.obtenerProductos();
     this.obtenerTipoPlato();
-    this.obtenerPedidosEnCola();
+
+    this.actualizarPedidos();
 
     this.validateFormCrearReceta = new FormGroup({
       id_receta: new FormControl,
@@ -516,6 +520,7 @@ export class CocinaComponent implements OnInit {
   }
 
   obtenerPedidosEnCola(){
+    this.listaPedidosEnCola = []
     this.cocinaService.obtenerPedidosEnCola().subscribe(resp =>{
       // console.log('resp', resp);
       let listaPedidosResp = resp['pedidos']
@@ -596,5 +601,275 @@ export class CocinaComponent implements OnInit {
 
   moverPedidoAEnPreparacion(pedido){
     console.log('pedido moverPedidoAEnPreparacion', pedido);
+    const modificarInstanciaPedido = {
+      "id_pedido" : pedido.idPedido,
+      "id_estado_instancia" : 2
+    }
+    this.cocinaService.modificarInstanciaPedido(modificarInstanciaPedido).subscribe(resp => {
+      console.log('resp', resp);
+      if (resp.includes('actualizada satisfactoriamente')){
+        this.actualizarPedidos();
+      }
+    })
+  }
+  
+  moverPedidoAParaEntregar(pedido){
+    console.log('pedido moverPedidoAParaEntregar', pedido);
+    const modificarInstanciaPedido = {
+      "id_pedido" : pedido.idPedido,
+      "id_estado_instancia" : 3
+    }
+    this.cocinaService.modificarInstanciaPedido(modificarInstanciaPedido).subscribe(resp => {
+      console.log('resp', resp);
+      if (resp.includes('actualizada satisfactoriamente')){
+        this.actualizarPedidos();
+      }
+    })
+  }
+
+  moverPedidoAEntregado(pedido){
+    console.log('pedido moverPedidoAEntregado', pedido);
+    const modificarInstanciaPedido = {
+      "id_pedido" : pedido.idPedido,
+      "id_estado_instancia" : 4
+    }
+    this.cocinaService.modificarInstanciaPedido(modificarInstanciaPedido).subscribe(resp => {
+      console.log('resp', resp);
+      if (resp.includes('actualizada satisfactoriamente')){
+        this.actualizarPedidos();
+      }
+    })
+  }
+
+  actualizarPedidos(){
+    this.obtenerPedidosEnCola();
+    this.obtenerPedidosEnPreparacion();
+    this.obtenerPedidosParaEntregar();
+    this.obtenerPedidosEntregadosHoy();
+  }
+
+  obtenerPedidosEnPreparacion(){
+    this.listaPedidosEnPreparacion = []
+    this.cocinaService.obtenerPedidosEnPreparacion().subscribe(resp =>{
+      // console.log('resp', resp);
+      let listaPedidosResp = resp['pedidos']
+      // console.log('listaPedidosResp', listaPedidosResp);
+
+      listaPedidosResp.forEach(pedido => {
+        let carritoDeUnPedido : ProductoEnCarro[] = [];
+
+        pedido.platos_del_pedido.forEach(plato => {
+          const unPlatoPedido : Plato = {
+            cantidad_personas_recomendadas : plato.cantidad_personas_recomendadas,
+            comentario : plato.comentario_plato,
+            descripcion_plato : plato.descripcion_plato,
+            disponibilidad : plato.disponibilidad_plato,
+            id_plato : plato.id_plato,
+            id_tipo_plato : plato.id_tipo_plato,
+            nombre_plato : plato.nombre_plato,
+            precio_plato : plato.precio_plato
+          }
+
+          const platoEnCarro : ProductoEnCarro = {
+            cantidad : plato.cantidad_platos_en_pedido,
+            esPlato : true,
+            esProducto : false,
+            valorUnitario : plato.precio_plato,
+            plato : unPlatoPedido
+          }
+
+          carritoDeUnPedido.push(platoEnCarro);
+        })
+
+        pedido.productos_del_pedido.forEach(producto => {
+          const unProductoPedido : Producto = {
+            comentario : producto.comentario_producto,
+            fecha_ingreso_producto : producto.fecha_ingreso_producto,
+            fecha_vencimiento : producto.fecha_vencimiento_producto,
+            id_producto : producto.id_producto,
+            id_tipo_producto : producto.id_tipo_producto,
+            medida_producto : producto.medida_producto,
+            nombre_producto : producto.nombre_producto,
+            stock_producto : producto.stock_producto,
+            valor_unitario : producto.valor_unitario_producto
+          }
+
+          const productoEnCarro : ProductoEnCarro = {
+            cantidad: producto.cantidad_productos_en_pedido,
+            esPlato : false,
+            esProducto : true,
+            valorUnitario : producto.valor_unitario_producto,
+            producto : unProductoPedido
+          }
+          carritoDeUnPedido.push(productoEnCarro);
+        })
+
+        const unPedido : Pedido ={
+          fechaIngreso : pedido.fecha_ingreso,
+          idEstadoIinstancia: pedido.id_estado_instancia,
+          idMesa: pedido.id_mesa,
+          rutCliente : pedido.id_cliente,
+          idBoleta : pedido.id_boleta,
+          idPedido : pedido.id_pedido,
+          nombreEstadoInstancia : pedido.nombre_estado_instancia,
+          subtotal : pedido.subtotal,
+          carritoProductos : carritoDeUnPedido
+        }
+
+        // console.log('unPedido', unPedido);
+        this.listaPedidosEnPreparacion.push(unPedido);
+      });
+      console.log('listaPedidosEnPreparacion', this.listaPedidosEnPreparacion);
+    })
+  }
+
+  obtenerPedidosParaEntregar(){
+    this.listaPedidosParaEntregar = []
+    this.cocinaService.obtenerPedidosParaEntregar().subscribe(resp =>{
+      // console.log('resp', resp);
+      let listaPedidosResp = resp['pedidos']
+      // console.log('listaPedidosResp', listaPedidosResp);
+
+      listaPedidosResp.forEach(pedido => {
+        let carritoDeUnPedido : ProductoEnCarro[] = [];
+
+        pedido.platos_del_pedido.forEach(plato => {
+          const unPlatoPedido : Plato = {
+            cantidad_personas_recomendadas : plato.cantidad_personas_recomendadas,
+            comentario : plato.comentario_plato,
+            descripcion_plato : plato.descripcion_plato,
+            disponibilidad : plato.disponibilidad_plato,
+            id_plato : plato.id_plato,
+            id_tipo_plato : plato.id_tipo_plato,
+            nombre_plato : plato.nombre_plato,
+            precio_plato : plato.precio_plato
+          }
+
+          const platoEnCarro : ProductoEnCarro = {
+            cantidad : plato.cantidad_platos_en_pedido,
+            esPlato : true,
+            esProducto : false,
+            valorUnitario : plato.precio_plato,
+            plato : unPlatoPedido
+          }
+
+          carritoDeUnPedido.push(platoEnCarro);
+        })
+
+        pedido.productos_del_pedido.forEach(producto => {
+          const unProductoPedido : Producto = {
+            comentario : producto.comentario_producto,
+            fecha_ingreso_producto : producto.fecha_ingreso_producto,
+            fecha_vencimiento : producto.fecha_vencimiento_producto,
+            id_producto : producto.id_producto,
+            id_tipo_producto : producto.id_tipo_producto,
+            medida_producto : producto.medida_producto,
+            nombre_producto : producto.nombre_producto,
+            stock_producto : producto.stock_producto,
+            valor_unitario : producto.valor_unitario_producto
+          }
+
+          const productoEnCarro : ProductoEnCarro = {
+            cantidad: producto.cantidad_productos_en_pedido,
+            esPlato : false,
+            esProducto : true,
+            valorUnitario : producto.valor_unitario_producto,
+            producto : unProductoPedido
+          }
+          carritoDeUnPedido.push(productoEnCarro);
+        })
+
+        const unPedido : Pedido ={
+          fechaIngreso : pedido.fecha_ingreso,
+          idEstadoIinstancia: pedido.id_estado_instancia,
+          idMesa: pedido.id_mesa,
+          rutCliente : pedido.id_cliente,
+          idBoleta : pedido.id_boleta,
+          idPedido : pedido.id_pedido,
+          nombreEstadoInstancia : pedido.nombre_estado_instancia,
+          subtotal : pedido.subtotal,
+          carritoProductos : carritoDeUnPedido
+        }
+
+        // console.log('unPedido', unPedido);
+        this.listaPedidosParaEntregar.push(unPedido);
+      });
+      console.log('listaPedidosParaEntregar', this.listaPedidosParaEntregar);
+    })
+  }
+
+  obtenerPedidosEntregadosHoy(){
+    this.listaPedidosEntregadosHoy = []
+    this.cocinaService.obtenerPedidosEntregadosHoy().subscribe(resp =>{
+      // console.log('resp', resp);
+      let listaPedidosResp = resp['pedidos']
+      // console.log('listaPedidosResp', listaPedidosResp);
+
+      listaPedidosResp.forEach(pedido => {
+        let carritoDeUnPedido : ProductoEnCarro[] = [];
+
+        pedido.platos_del_pedido.forEach(plato => {
+          const unPlatoPedido : Plato = {
+            cantidad_personas_recomendadas : plato.cantidad_personas_recomendadas,
+            comentario : plato.comentario_plato,
+            descripcion_plato : plato.descripcion_plato,
+            disponibilidad : plato.disponibilidad_plato,
+            id_plato : plato.id_plato,
+            id_tipo_plato : plato.id_tipo_plato,
+            nombre_plato : plato.nombre_plato,
+            precio_plato : plato.precio_plato
+          }
+
+          const platoEnCarro : ProductoEnCarro = {
+            cantidad : plato.cantidad_platos_en_pedido,
+            esPlato : true,
+            esProducto : false,
+            valorUnitario : plato.precio_plato,
+            plato : unPlatoPedido
+          }
+
+          carritoDeUnPedido.push(platoEnCarro);
+        })
+
+        pedido.productos_del_pedido.forEach(producto => {
+          const unProductoPedido : Producto = {
+            comentario : producto.comentario_producto,
+            fecha_ingreso_producto : producto.fecha_ingreso_producto,
+            fecha_vencimiento : producto.fecha_vencimiento_producto,
+            id_producto : producto.id_producto,
+            id_tipo_producto : producto.id_tipo_producto,
+            medida_producto : producto.medida_producto,
+            nombre_producto : producto.nombre_producto,
+            stock_producto : producto.stock_producto,
+            valor_unitario : producto.valor_unitario_producto
+          }
+
+          const productoEnCarro : ProductoEnCarro = {
+            cantidad: producto.cantidad_productos_en_pedido,
+            esPlato : false,
+            esProducto : true,
+            valorUnitario : producto.valor_unitario_producto,
+            producto : unProductoPedido
+          }
+          carritoDeUnPedido.push(productoEnCarro);
+        })
+
+        const unPedido : Pedido ={
+          fechaIngreso : pedido.fecha_ingreso,
+          idEstadoIinstancia: pedido.id_estado_instancia,
+          idMesa: pedido.id_mesa,
+          rutCliente : pedido.id_cliente,
+          idBoleta : pedido.id_boleta,
+          idPedido : pedido.id_pedido,
+          nombreEstadoInstancia : pedido.nombre_estado_instancia,
+          subtotal : pedido.subtotal,
+          carritoProductos : carritoDeUnPedido
+        }
+
+        // console.log('unPedido', unPedido);
+        this.listaPedidosEntregadosHoy.push(unPedido);
+      });
+      console.log('listaPedidosEntregadosHoy', this.listaPedidosEntregadosHoy);
+    })
   }
 }

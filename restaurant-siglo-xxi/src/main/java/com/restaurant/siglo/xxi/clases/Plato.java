@@ -1,5 +1,6 @@
 package com.restaurant.siglo.xxi.clases;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -28,6 +29,8 @@ public class Plato {
 	String descripcion_plato;
 	String comentario;
 	boolean disponibilidad;
+	
+	@Column(nullable = true)
 	boolean eliminado;
 	
 	public int getId_plato() {

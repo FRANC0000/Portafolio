@@ -81,4 +81,26 @@ export class CocinaService {
     );
   }
 
+  public modificarInstanciaPedido(modificarInstanciaPedido) {
+    return this.http.post(
+      'http://localhost:8085/restaurantSXXI/rest-rsxii/pedido/modificarInstanciaPedido', modificarInstanciaPedido, { responseType : 'text'}
+    );
+  }
+
+  public obtenerPedidosEnPreparacion() {
+    return this.http.get(
+      'http://localhost:8085/restaurantSXXI/rest-rsxii/pedido/obtenerPedidosEnPreparacion', { headers: this.headers }
+    );
+  }
+
+  public obtenerPedidosParaEntregar() {
+    return this.http.get(
+      'http://localhost:8085/restaurantSXXI/rest-rsxii/pedido/obtenerPedidosParaEntregar', { headers: this.headers }
+    );
+  }
+  public obtenerPedidosEntregadosHoy() {
+    return this.http.get(
+      'http://localhost:8085/restaurantSXXI/rest-rsxii/pedido/obtenerPedidosEntregadosHoy', { headers: this.headers }
+    );
+  }
 }

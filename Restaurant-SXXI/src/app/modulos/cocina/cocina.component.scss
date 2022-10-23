@@ -203,6 +203,16 @@
 .pedidos-row{
     display: flex;
     overflow-x: scroll;
+    height: 232px;
+}
+
+.sin-pedidos{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 30px;
+    font-weight: bolder;
+    color: gray;
 }
 
 ::ng-deep .ant-card-head{

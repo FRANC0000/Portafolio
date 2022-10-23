@@ -27,4 +27,17 @@ public interface PedidoRepository extends JpaRepository<Pedido, Integer>{
 	
 	@Query(name = "obtenerPedidosEnCola", nativeQuery = true)
 	List<Pedido> obtenerPedidosEnCola();
+	
+	@Query(name = "obtenerPedidosEnPreparacion", nativeQuery = true)
+	List<Pedido> obtenerPedidosEnPreparacion();
+	
+	@Query(name = "obtenerPedidosParaEntregar", nativeQuery = true)
+	List<Pedido> obtenerPedidosParaEntregar();
+	
+	@Query(name = "obtenerPedidosEntregadosHoy", nativeQuery = true)
+	List<Pedido> obtenerPedidosEntregadosHoy();
+	
+	@Query(value = "select modificar_instancia_pedido(:id_pedido, :id_estado_instancia )", nativeQuery = true)
+	String modificarInstanciaPedido(@Param("id_pedido") int id_pedido, 
+			@Param("id_estado_instancia") int id_estado_instancia);
 }

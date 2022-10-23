@@ -9,7 +9,11 @@ import org.springframework.stereotype.Service;
 public interface PedidoService {
 	
 	public String ingresarPedido(Map<String, Object> ingresarPedido) throws ParseException;
+	public String modificarInstanciaPedido(Map<String, Object> modificarInstanciaPedido) throws ParseException;
 	public String obtenerPedidosPorIdBoleta(Map<String, Object> idBoleta) throws ParseException;
 	public String obtenerPedidosEnCola();
+	public String obtenerPedidosEnPreparacion();
+	public String obtenerPedidosParaEntregar();
+	public String obtenerPedidosEntregadosHoy();
 
 }

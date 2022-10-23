@@ -22,7 +22,20 @@ import javax.persistence.Table;
 			@NamedQuery(
 					name = "obtenerPedidosEnCola", 
 					query = " select p from Pedido p where p.estadoInstancia.id_estado_instancia = 1 order by 2 asc "
-			)
+			),
+			@NamedQuery(
+					name = "obtenerPedidosEnPreparacion", 
+					query = " select p from Pedido p where p.estadoInstancia.id_estado_instancia = 2 order by 2 asc "
+			),
+			@NamedQuery(
+					name = "obtenerPedidosParaEntregar", 
+					query = " select p from Pedido p where p.estadoInstancia.id_estado_instancia = 3 order by 2 asc "
+			),
+			@NamedQuery(
+					name = "obtenerPedidosEntregadosHoy", 
+					query = " select p from Pedido p where p.estadoInstancia.id_estado_instancia = 4 order by 2 asc "
+			),
+			
 		})
 public class Pedido {
 	@Id
