@@ -119,17 +119,19 @@
 
 .img-plato{
     img{
-        max-width: 200px;
+        max-width: 160px;
         height: -webkit-fill-available;
         padding: 20px 0 20px 20px;
         object-fit: cover;
         object-position: center;
+        min-width: 160px;
     }
 }
 
 .img-producto{
     img{
-        max-width: 200px;
+        max-width: 160px;
+        min-width: 160px;
         height: -webkit-fill-available;
         padding: 20px 0 20px 20px;
         object-fit: cover;
@@ -140,8 +142,11 @@
 .img-detalle-plato{
     height: 300px;
     width: 100%;
-    object-fit: cover;
-    object-position: center;
+    
+    img{
+        object-fit: cover;
+        object-position: center;
+    }
 }
 
 /*Carrito de compras*/
@@ -286,4 +291,76 @@
 
 ::ng-deep .ant-collapse-content>.ant-collapse-content-box{
     padding: 0;
+}
+
+.checkout{
+    padding: 10px 20px;
+    
+    .item{
+        margin-bottom: 5px;
+        
+        label.lbl-name{
+            width: 150px;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            overflow: hidden;
+            display: inline-flex;
+        }
+
+        input.ipt-style{
+            width: calc(100% - 150px);
+        }
+
+        .picker{
+            position: relative;
+            display: inline-block;
+            width: calc(100% - 150px);
+            height: 32px;
+            padding: 4px 11px;
+            color: rgba(0,0,0,.65);
+            font-size: 14px;
+            line-height: 1.5;
+            background-color: #fff;
+            background-image: none;
+            border: 1px solid #d9d9d9;
+            border-radius: 4px;
+            transition: all .3s;
+        }
+        
+        .picker:hover, .picker:focus-visible{
+            border-color: #40a9ff !important;
+            border-right-width: 1px!important;
+        }
+    }
+}
+
+.pago-efectivo{
+    margin: 20px 0px;
+    text-align: center;
+
+    label{
+        color: purple;
+        font-weight: bold;
+    }
+}
+
+.detalle-boleta{
+    padding: 15px 20px;
+}
+
+.forma-de-pago{
+    .content{
+        transition: 1s;
+        animation: efecto 1s;
+    }
+}
+
+@keyframes efecto {
+    0% {
+        opacity: 0;
+    }
+
+    100% {
+        opacity: 1;
+    }
 }

@@ -85,3 +85,62 @@ tr:nth-child(even) {
   border-radius: 20px 20px 0px 0px;
   padding: 16px 20px;
 }
+
+.grid{
+  gap: 20px;
+  grid-template-columns: repeat(4, 1fr);
+  display: grid;
+}
+
+.funcionalidades{
+  display: grid;
+  grid-template-rows: 1fr; 
+}
+
+.card{
+  margin: 20px;
+  border: 2px solid gainsboro;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border-radius: 10px;
+  background-color: rgba(81, 0, 195, 0.319);
+  height: 100px;
+
+  h3{
+    color: white;
+    text-align: center;
+  }
+}
+
+.card:hover{
+  transition: .5s;
+  background-color: rgba(81, 0, 195, 0.683)
+}
+
+.mesa-row:hover{
+  background-color: rgba(81, 0, 195, 0.319);
+}
+
+.botones-listado-mesas{
+  display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 50px;
+    font-size: 30px;
+    margin: 0px 0px 20px;
+
+    span{
+        margin: 0px 10px;
+        padding: 10px;
+        background-color: rgba(81, 0, 195, 0.319);
+        border-radius: 50px;
+        box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
+    }
+
+    span:hover{
+        background-color: rgba(81, 0, 195, 0.683);
+    }
+}

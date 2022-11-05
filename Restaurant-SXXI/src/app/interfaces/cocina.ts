@@ -1,5 +1,5 @@
 export interface Plato {
-    id_plato : number,
+    id_plato ?: number,
     id_tipo_plato : number,
     nombre_plato : string,
     precio_plato : number,
@@ -7,7 +7,8 @@ export interface Plato {
     descripcion_plato : string,
     comentario : string,
     disponibilidad : boolean,
-    eliminado? : boolean
+    eliminado? : boolean,
+    nombre_imagen? : string
 }
 
 export interface Producto{
@@ -19,7 +20,8 @@ export interface Producto{
     valor_unitario: string,
     id_tipo_producto: number,
     comentario : string,
-    fecha_ingreso_producto : string
+    fecha_ingreso_producto : string,
+    nombre_imagen? : string
 }
 
 export interface Receta {
@@ -34,4 +36,10 @@ export interface TipoPlato {
     id_tipo_plato : number,
     descripcion_tipo_plato : string,
     nombre_tipo_plato : string
+}
+
+export interface TipoProducto{
+    id_tipo_producto : number,
+    comentario : string,
+    nombre_tipo_producto : string
 }

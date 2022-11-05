@@ -70,7 +70,7 @@ public class ReservaServiceImpl implements ReservaService {
 			if (resp.contains("creada satisfactoriamente")) {
 				//Cambiar estado de mesa a 'Ocupado'
 				Mesa estaMesa = mesaRepository.getById(id_mesa);
-				String consola = mesaRepository.modificarMesa(id_mesa, estaMesa.getId_tipo_mesa().getId_tipo_mesa(), 1, false);
+				String consola = mesaRepository.modificarMesa(id_mesa, estaMesa.getId_tipo_mesa().getId_tipo_mesa(), 2);
 				System.out.println("Respuesta modificarMesa(): " + consola);
 			}
 			
@@ -96,7 +96,7 @@ public class ReservaServiceImpl implements ReservaService {
 			
 			if (resp.contains("cancelada con éxito")) {
 				//Cambiar estado de mesa a 'Disponible'
-				String consola = mesaRepository.modificarMesa(reserva.getId_mesa().getId_mesa(), reserva.getId_mesa().getId_tipo_mesa().getId_tipo_mesa(), 1, false);
+				String consola = mesaRepository.modificarMesa(reserva.getId_mesa().getId_mesa(), reserva.getId_mesa().getId_tipo_mesa().getId_tipo_mesa(), 1);
 				System.out.println("Respuesta modificarMesa(): " + consola);
 			}
 			

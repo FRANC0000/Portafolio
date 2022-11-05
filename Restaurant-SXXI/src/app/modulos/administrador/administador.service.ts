@@ -43,4 +43,40 @@ export class AdministadorService {
       'http://localhost:8085/restaurantSXXI/rest-rsxii/usuario/eliminarUsuario', usuarioAEliminar, { responseType : 'text'}
     );
   }
+  
+  public crearMesa(mesa) {
+    return this.http.post(
+      'http://localhost:8085/restaurantSXXI/rest-rsxii/mesa/crearMesa', mesa, { responseType : 'text'}
+    );
+  }
+
+  public obtenerMesas() {
+    return this.http.get(
+      'http://localhost:8085/restaurantSXXI/rest-rsxii/mesa/obtenerMesas',
+    );
+  }
+
+  public obtenerEstadosMesas() {
+    return this.http.get(
+      'http://localhost:8085/restaurantSXXI/rest-rsxii/estado-mesa/obtenerEstadoMesa'
+    );
+  }
+
+  public obtenerTipoMesas() {
+    return this.http.get(
+      'http://localhost:8085/restaurantSXXI/rest-rsxii/tipo-mesa/obtenerTipoMesa'
+    );
+  }
+
+  public actualizarMesa(mesa) {
+    return this.http.post(
+      'http://localhost:8085/restaurantSXXI/rest-rsxii/mesa/modificarMesa', mesa, { responseType : 'text'}
+    );
+  }
+
+  public eliminarMesa(mesa) {
+    return this.http.post(
+      'http://localhost:8085/restaurantSXXI/rest-rsxii/mesa/eliminarMesa', mesa, { responseType : 'text'}
+    );
+  } 
 }

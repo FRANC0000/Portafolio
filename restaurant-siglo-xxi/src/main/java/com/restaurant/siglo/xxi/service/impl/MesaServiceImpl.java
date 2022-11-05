@@ -64,29 +64,20 @@ public class MesaServiceImpl implements MesaService{
 	}
 
 	@Override
-	public String crearMesa(Mesa mesa) {
+	public String crearMesa(Map<String, Object> mesa) {
 		
+		System.out.println("Crear mesa");
 		String resp = "";
-		int id_mesa = mesa.getId_mesa();
-		int id_estado_mesa = mesa.getId_estado_mesa().getId_estado_mesa();
-		int id_tipo_mesa = mesa.getId_tipo_mesa().getId_tipo_mesa();		
-		boolean existeMesa = mesaRepository.existsById(id_mesa);
-		boolean existeEstadoMesa = estadoMesaRepository.existsById(id_estado_mesa);
-		boolean existeTipoMesa = tipoMesaRepository.existsById(id_tipo_mesa);
+		try {
+			int id_tipo_mesa = Integer.parseInt(mesa.get("id_tipo_mesa").toString());
+			int id_estado_mesa = Integer.parseInt(mesa.get("id_estado_mesa").toString());
+			resp = mesaRepository.crearMesa(id_tipo_mesa,id_estado_mesa);
+		} catch (Exception e) {
+			// TODO: handle exception
+			return "Error al crear mesa \n"
+			+ "Mensaje: "+e.getMessage();
+		}
 		
-		if (existeMesa && existeEstadoMesa && existeTipoMesa) {
-			resp =  "No se puede crear esta mesa";
-		}
-		else {
-			System.out.println("Crear mesa");
-			try {
-				resp = mesaRepository.crearMesa(mesa.getId_mesa(), mesa.getId_tipo_mesa().getId_tipo_mesa(), mesa.getId_estado_mesa().getId_estado_mesa());
-			} catch (Exception e) {
-				// TODO: handle exception
-				return "Error al crear mesa \n"
-				+ "Mensaje: "+e.getMessage();
-			}
-		}
 		
 		return resp;
 	}
@@ -116,32 +107,20 @@ public class MesaServiceImpl implements MesaService{
 	}
 	
 	@Override
-	public String modificarMesa(Mesa mesa) {
+	public String modificarMesa(Map<String, Object> mesa) {
 		
 		String resp = "";
-		int id_mesa = mesa.getId_mesa();
-		int id_estado_mesa = mesa.getId_estado_mesa().getId_estado_mesa();
-		int id_tipo_mesa = mesa.getId_tipo_mesa().getId_tipo_mesa();		
-		boolean existeMesa = mesaRepository.existsById(id_mesa);
-		//boolean existeEstadoMesa = estadoMesaRepository.existsById(id_estado_mesa);
-		//boolean existeTipoMesa = tipoMesaRepository.existsById(id_tipo_mesa);
-		boolean eliminado = mesa.isEliminado();
-		
-		if (!existeMesa) {
-			resp =  "No existe mesa asociada a este ID";
+		try {
+			int id_mesa = Integer.parseInt(mesa.get("id_mesa").toString());
+			int id_estado_mesa = Integer.parseInt(mesa.get("id_estado_mesa").toString());
+			int id_tipo_mesa = Integer.parseInt(mesa.get("id_tipo_mesa").toString());
+			resp = mesaRepository.modificarMesa(id_mesa, id_tipo_mesa, id_estado_mesa);
+		} catch (Exception e) {
+			// TODO: handle exception
+			return "Error al modificar mesa \n"
+			+ "Mensaje: "+e.getMessage();
 		}
-		else {
-			System.out.println("Modificar mesa");
-			try {
-				resp = mesaRepository.modificarMesa(id_mesa, id_tipo_mesa, id_estado_mesa, eliminado);
-			
 		
-			} catch (Exception e) {
-				// TODO: handle exception
-				return "Error al modificar mesa \n"
-				+ "Mensaje: "+e.getMessage();
-			}
-		}
 		
 		return resp;
 	}

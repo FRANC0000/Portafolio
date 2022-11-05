@@ -1,0 +1,1 @@
+--aqui van todas las creaciones de funciones y sequencias

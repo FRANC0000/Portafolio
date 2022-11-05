@@ -45,6 +45,7 @@ public class PlatoServiceImpl implements PlatoService{
                 	platos.put("nombre_tipo_plato", plato.getTipo_plato().getNombre_tipo_plato());
                 	platos.put("descripcion_tipo_plato", plato.getTipo_plato().getDescripcion());
                 	platos.put("eliminado", plato.isEliminado());
+                	platos.put("nombre_imagen", plato.getNombre_imagen());
                 	listPlatos.put(platos);
                 }
             } catch (JSONException e) {
@@ -62,7 +63,7 @@ public class PlatoServiceImpl implements PlatoService{
 		
 		String resp = "";
 		try {
-			int id_plato = Integer.parseInt(plato.get("id_plato").toString());
+			
 			int cantidad_personas_recomendadas = Integer.parseInt(plato.get("cantidad_personas_recomendadas").toString());
 			String comentario = plato.get("comentario").toString();
 			String descripcion_plato  = plato.get("descripcion_plato").toString();
@@ -70,11 +71,10 @@ public class PlatoServiceImpl implements PlatoService{
 			String nombre_plato  = plato.get("nombre_plato").toString();
 			int precio_plato = Integer.parseInt(plato.get("precio_plato").toString());
 			int id_tipo_plato = Integer.parseInt(plato.get("id_tipo_plato").toString());
-			boolean eliminado = Boolean.parseBoolean(plato.get("eliminado").toString());
 			
-			resp = platoRepository.crearPlato(id_plato, cantidad_personas_recomendadas, comentario,
+			resp = platoRepository.crearPlato(cantidad_personas_recomendadas, comentario,
 					descripcion_plato, disponibilidad, nombre_plato,
-					precio_plato, id_tipo_plato, eliminado); 
+					precio_plato, id_tipo_plato); 
 		} catch (Exception e) {
 			return "Error al crear plato. \n"
 					+ "Mensaje de error: "+ e.getMessage();

@@ -2,6 +2,7 @@ package com.restaurant.siglo.xxi.clases;
 
 import java.sql.Timestamp;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -26,6 +27,13 @@ public class Producto {
 	
 	String comentario;
 	Timestamp fecha_ingreso_producto;
+	
+	@Column(nullable = true)
+    String nombre_imagen;
+	
+	@Column(nullable = true)
+	boolean eliminado;
+	
 	public int getId_producto() {
 		return id_producto;
 	}
@@ -80,6 +88,19 @@ public class Producto {
 	public void setFecha_ingreso_producto(Timestamp fecha_ingreso_producto) {
 		this.fecha_ingreso_producto = fecha_ingreso_producto;
 	}
+	
+	public boolean isEliminado() {
+        return eliminado;
+    }
+    public void setEliminado(boolean eliminado) {
+        this.eliminado = eliminado;
+    }
+    public String getNombre_archivo() {
+        return nombre_imagen;
+    }
+    public void setNombre_archivo(String nombre_archivo) {
+        this.nombre_imagen = nombre_archivo;
+    }
 	
 	
 }

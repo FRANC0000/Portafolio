@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NzNotificationService } from 'ng-zorro-antd';
+import { EstadoMesa, Mesa, TipoMesa } from 'src/app/interfaces/mesa';
 import { rol, user } from 'src/app/interfaces/user';
 import { AdministadorService } from './administador.service';
 
@@ -19,8 +20,36 @@ export class AdministradorComponent implements OnInit {
     private router: Router
   ) { }
 
+  title = 'Restaurant-SXXI';
+  listUsuarios : user[] = [];
+  existenUsuarios = false;
+  isVisibleCrearUsuario = false;
+  isVisibleListadoUsuarios = false;
+  rolSelected = '';
+  listRoles: rol[] = [];
+  isVisibleModificarUsuario = false;
+  validateFormEliminarUsuario: FormGroup;
+  validateFormModificarUsuario: FormGroup;
+  isVisibleEliminarUsuario = false;
+  isVisibleCrearMesa = false;
+  validateFormCrearMesa: FormGroup;
+  listadoTiposMesas: TipoMesa [] = [];
+  tipoMesaSeleccionado = '';
+  listadoEstadosMesas: EstadoMesa [] = [];
+  estadoMesaSeleccionado = '';
+  listadoMesas: Mesa[] = [];
+  validateFormCrearUsuario!: FormGroup;
+  isVisibleListadoMesas = false;
+  mesaSelected;
+  usuarioSelected;
+  isVisibleActualizarMesa = false;
+  validateFormActualizarMesa : FormGroup;
+
   ngOnInit() {
     this.obtenerRoles();
+    this.obtenerMesas();
+    this.obtenerEstadosMesas();
+    this.obtenerTiposMesas();
     this.validateFormCrearUsuario = new FormGroup({
       id_usuario : new FormControl,
       rut_usuario: new FormControl,
@@ -31,7 +60,6 @@ export class AdministradorComponent implements OnInit {
       rol: new FormControl,
       correo: new FormControl,
       contrasena: new FormControl,
-      eliminado: new FormControl
     })
 
     this.validateFormModificarUsuario = new FormGroup({
@@ -44,28 +72,24 @@ export class AdministradorComponent implements OnInit {
       rol: new FormControl,
       correo: new FormControl,
       contrasena: new FormControl,
-      eliminado: new FormControl,
     })
 
     this.validateFormEliminarUsuario = new FormGroup({
-      id_usuario : new FormControl,
-      })
+      id_usuario: new FormControl,
+    })
+
+    this.validateFormCrearMesa = new FormGroup({
+      id_estado_mesa: new FormControl,
+      id_tipo_mesa: new FormControl
+    })
+    
+    this.validateFormActualizarMesa = new FormGroup({
+      id_mesa : new FormControl,
+      id_estado_mesa: new FormControl,
+      id_tipo_mesa: new FormControl,
+      eliminado : new FormControl
+    })
   }
-
-  title = 'Restaurant-SXXI';
-  listUsuarios : user[] = [];
-  existenUsuarios = false;
-  isVisibleCrearUsuario = false;
-  isVisibleListadoUsuarios = false;
-  rolSelected = '';
-  listRoles: rol[] = [];
-  isVisibleModificarUsuario = false;
-  validateFormEliminarUsuario: FormGroup;
-  validateFormModificarUsuario: FormGroup;
-  isVisibleEliminarUsuario = false;
-
-  //Formulario Crear Usuario
-  validateFormCrearUsuario!: FormGroup;
 
   obtenerRoles(){
     this.listRoles = []
@@ -159,7 +183,8 @@ export class AdministradorComponent implements OnInit {
             rut: user.rut,
             dv : user.dv,
             contrasena: user.contrasena,
-            correo: user.correo
+            correo: user.correo,
+            eliminado : user.eliminado
           }
           this.listUsuarios.push(usuario);
         }
@@ -214,14 +239,17 @@ export class AdministradorComponent implements OnInit {
         apellido_materno : this.validateFormModificarUsuario.value.apellido_materno,
         id_rol : this.validateFormModificarUsuario.value.rol,
         correo : this.validateFormModificarUsuario.value.correo,
-        contrasena : this.validateFormModificarUsuario.value.contrasena,
-        eliminado : this.validateFormModificarUsuario.value.eliminado
+        contrasena : this.validateFormModificarUsuario.value.contrasena
        })
       
        console.log('UnUsuario', unUsuario);
       this.administadorService.modificarUsuario(unUsuario).subscribe(resp => {
-        console.log('respuesta a mi servicio modificarReceta', resp);
+        // console.log('respuesta a mi servicio modificarReceta', resp);
+        this.notification.create(
+          'success', 'Modificar usuario', 'Usuario modificado correctamente'
+          )
         this.isVisibleModificarUsuario = false;
+        this.obtenerUsuarios();
       })
       
       
@@ -237,16 +265,9 @@ export class AdministradorComponent implements OnInit {
     this.isVisibleModificarUsuario = false;
   }
 
-  guardarEliminarUsuario(){
-    // this.isVisibleCrearMesa = false;
-   console.log('validateFormEliminarUsuario', this.validateFormEliminarUsuario.value);
-   if (this.validateFormEliminarUsuario.valid){
-     console.log('Formulario válido');
-     var valores = this.validateFormEliminarUsuario.value;
-
+  guardarEliminarUsuario(id_usuario){
      var usuarioAEliminar = {
-       id_usuario : valores.id_usuario
-       
+       id_usuario : id_usuario
      }
 
      this.administadorService.eliminarUsuario(usuarioAEliminar).subscribe(resp =>{
@@ -256,43 +277,31 @@ export class AdministradorComponent implements OnInit {
            'error', 'Error al eliminar el usuario', resp
          )
        }
-       else if (resp.includes('eliminado satisfactoriamente')){
+       else if (resp.includes('usuario correctamente')){
          this.notification.create(
            'success', 'Usuario eliminado', resp
          )
-         this.isVisibleEliminarUsuario = false;
+         setTimeout(() => {
+           this.obtenerUsuarios();
+         }, 1500);
        }
-     
     });
-   }
-   else{
-     console.log('Usuario no eliminado', this.validateFormEliminarUsuario.value);
+  }
 
-     this.notification.create(
-       'error', 'Error al eliminar el usuario', 'Debes rellenar todos los campos'
-     )
-   }
 
- }
- cerrarEliminarUsuario(){
-     this.isVisibleEliminarUsuario = false;
-
- }
-
-  modificarUsuario() {
+  modificarUsuario(usuario) {
     console.log('modificarUsuario');
     this.isVisibleModificarUsuario = true;
     this.validateFormModificarUsuario = this.fb.group({
-      id_usuario: [null, [Validators.required]],
-      rut_usuario: [null, [Validators.required]],
-      dv_usuario: [null, [Validators.required]],
-      nombre: [null, [Validators.required]],
-      apellido_paterno: [null, [Validators.required]],
-      apellido_materno: [null, [Validators.required]],
-      rol: [null, [Validators.required]],
-      correo: [null, [Validators.email, Validators.required]],
-      contrasena: [null, [Validators.required]],
-      eliminado: [null, [Validators.required]]
+      id_usuario: [usuario.id_usuario, [Validators.required]],
+      rut_usuario: [usuario.rut, [Validators.required]],
+      dv_usuario: [usuario.dv, [Validators.required]],
+      nombre: [usuario.nombre, [Validators.required]],
+      apellido_paterno: [usuario.apellido_paterno, [Validators.required]],
+      apellido_materno: [usuario.apellido_materno, [Validators.required]],
+      rol: [usuario.rol, [Validators.required]],
+      correo: [usuario.correo, [Validators.email, Validators.required]],
+      contrasena: [usuario.contrasena, [Validators.required]],
     })
   }
 
@@ -303,5 +312,200 @@ export class AdministradorComponent implements OnInit {
       id_usuario: [null, [Validators.required]],
 
     })
+  }
+
+  guardarCrearMesa(){
+    // this.isVisibleCrearMesa = false;
+    console.log('validateFormCrearMesa', this.validateFormCrearMesa.value);
+    if (this.validateFormCrearMesa.valid){
+      console.log('Formulario válido');
+      var valores = this.validateFormCrearMesa.value;
+
+      var mesaACrear : Mesa = {
+        id_tipo_mesa: valores.id_tipo_mesa,
+        id_estado_mesa: valores.id_estado_mesa
+      }
+
+      this.administadorService.crearMesa(mesaACrear).subscribe(resp =>{
+        console.log('resp', resp);
+        if (resp.includes('No se puede crear esta mesa')){
+          this.notification.create(
+            'error', 'Error al crear mesa', resp
+          )
+        }
+        else{
+          this.notification.create(
+            'success', 'Mesa creada', resp
+          )
+          this.obtenerMesas();
+          this.isVisibleCrearMesa = false;
+        }
+      });
+    }
+    else{
+      console.log('Formulario no válido', this.validateFormCrearMesa.value);
+
+      this.notification.create(
+        'error', 'Error al crear mesa', 'Debes rellenar todos los campos'
+      )
+    }
+  }
+
+  cerrarCrearMesa(){
+    this.isVisibleCrearMesa = false;
+  }
+
+  crearMesa(){
+    this.isVisibleCrearMesa = true;
+    this.validateFormCrearMesa = this.fb.group({
+      id_estado_mesa: [null, [Validators.required]],
+      id_tipo_mesa: [null, [Validators.required]],
+    })
+  }
+
+  obtenerMesas(){
+    this.administadorService.obtenerMesas().subscribe(resp => {
+      this.listadoMesas = resp["listado_mesas"];
+      console.log('listadoMesas', this.listadoMesas);
+      this.listadoMesas.sort(function(a,b){
+        if(a.id_mesa < b.id_mesa){
+          return -1
+        }
+        if (a.id_mesa > b.id_mesa){
+          return 1
+        }
+        return 0;
+      })
+    })
+  }
+
+  obtenerEstadosMesas(){
+    this.administadorService.obtenerEstadosMesas().subscribe(resp => {
+      let listadoEM = resp['listEstadoMesa'];
+      for (let eM of listadoEM){
+        const estadoMesa : EstadoMesa ={
+          id_estado_mesa : eM.id_estado_mesa,
+          nombre_estado_mesa: eM.nombre_estado_mesa
+        }
+        this.listadoEstadosMesas.push(estadoMesa)
+      }
+      console.log('listadoEstadosMesas', this.listadoEstadosMesas);
+    })
+  }
+
+  obtenerTiposMesas(){
+    this.administadorService.obtenerTipoMesas().subscribe(resp => {
+      let listadoTM = resp['tipoMesa'];
+      for (let tM of listadoTM){
+        const tipoMesa : TipoMesa ={
+          id_tipo_mesa : tM.id_tipo_mesa,
+          nombre_tipo_mesa: tM.nombre_tipo_mesa,
+          cantidad_asientos: tM.cantidad_asientos
+
+        }
+        this.listadoTiposMesas.push(tipoMesa)
+      }
+      console.log('listadoTiposMesas', this.listadoTiposMesas);
+    })
+  }
+
+  okListadoMesas(){
+    this.isVisibleListadoMesas = false;
+    this.isVisibleActualizarMesa = false
+  }
+
+  mostrarMesas(){
+    this.isVisibleListadoMesas = true;
+  }
+
+  seleccionarMesa(mesa){
+    if (this.mesaSelected == mesa){
+      this.mesaSelected = '';
+    }
+    else{
+      this.mesaSelected = mesa;
+    }
+    console.log('seleccionarMesa', this.mesaSelected); 
+  }
+
+  seleccionarUsuario(usuario){
+    if (this.usuarioSelected == usuario){
+      this.usuarioSelected = '';
+    }
+    else{
+      this.usuarioSelected = usuario;
+    }
+    console.log('seleccionarUsuario', this.usuarioSelected);
+  }
+
+  actualizarMesa(mesa){
+    this.isVisibleActualizarMesa = true;
+    this.validateFormActualizarMesa = this.fb.group({
+      id_mesa : [mesa.id_mesa, [Validators.required]],
+      id_estado_mesa: [mesa.id_estado_mesa, [Validators.required]],
+      id_tipo_mesa: [mesa.id_tipo_mesa, [Validators.required]]
+    })
+  }
+  
+  guardarActualizarMesa(){
+    console.log('validateFormActualizarMesa', this.validateFormActualizarMesa.value);
+    if (this.validateFormActualizarMesa.valid){
+      console.log('Formulario válido');
+      var valores = this.validateFormActualizarMesa.value;
+
+      var mesaAActualizar : Mesa = {
+        id_mesa : valores.id_mesa,
+        id_tipo_mesa: valores.id_tipo_mesa,
+        id_estado_mesa: valores.id_estado_mesa,
+      }
+
+      this.administadorService.actualizarMesa(mesaAActualizar).subscribe(resp =>{
+        console.log('resp', resp);
+        if (resp.includes('No existe mesa asociada a este ID')){
+          this.notification.create(
+            'error', 'Error al actualizar mesa', resp
+          )
+        }
+        else if (resp.includes('actualizada satisfactoriamente')){
+          this.notification.create(
+            'success', 'Mesa actualizada', resp
+          )
+          this.obtenerMesas();
+          this.isVisibleActualizarMesa = false;
+        }
+      });
+    }
+    else{
+      console.log('Formulario no válido', this.validateFormActualizarMesa.value);
+      
+      this.notification.create(
+        'error', 'Error al actualizar mesa', 'Debes rellenar todos los campos'
+      )
+    }
+  }
+
+  cerrarActualizarMesa(){
+    this.isVisibleActualizarMesa = false;
+  }
+
+  guardarEliminarMesa(id_mesa){
+    var mesaAEliminar = {
+      id_mesa: id_mesa
+    }
+    // Validación mesa reservada: obtener reserva activa por Id_mesa
+    this.administadorService.eliminarMesa(mesaAEliminar).subscribe(resp => {
+      console.log('resp', resp);
+      if (resp.includes('No se puede eliminar esta mesa')) {
+        this.notification.create(
+          'error', 'Error al eliminar mesa', resp
+        )
+      }
+      else if (resp.includes('Se eliminó la mesa correctamente')) {
+        this.notification.create(
+          'success', 'Mesa eliminada', resp
+        )
+        this.obtenerMesas();
+      }
+    });
   }
 }

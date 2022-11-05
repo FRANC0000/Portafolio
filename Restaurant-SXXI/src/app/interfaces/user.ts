@@ -7,7 +7,8 @@ export interface user{
     rut: number,
     dv: string
     correo: string,
-    contrasena: string
+    contrasena: string,
+    eliminado? : boolean
 }
 
 export interface iniciarSesion{

@@ -9,6 +9,7 @@ import { registerLocaleData } from '@angular/common';
 import es from '@angular/common/locales/es';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { SafePipe } from './pipes/safe-url.pipe';
 
 // Componentes
 import { NzGridModule } from 'ng-zorro-antd/grid';
@@ -39,6 +40,10 @@ import { NzTabsModule } from 'ng-zorro-antd/tabs';
 import { NzCollapseModule } from 'ng-zorro-antd/collapse';
 import { NzMessageModule } from 'ng-zorro-antd/message';
 import { NzCardModule } from 'ng-zorro-antd/card';
+import { NzUploadModule } from 'ng-zorro-antd/upload';
+import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
+import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
+import { NzRadioModule } from 'ng-zorro-antd/radio';
 
 registerLocaleData(es);
 
@@ -51,7 +56,8 @@ registerLocaleData(es);
     FinanzasComponent,
     CocinaComponent,
     ClienteComponent,
-    MenuComponent
+    MenuComponent,
+    SafePipe
   ],
   imports: [
     BrowserModule,
@@ -80,7 +86,11 @@ registerLocaleData(es);
     NzTabsModule,
     NzCollapseModule,
     NzMessageModule,
-    NzCardModule
+    NzCardModule,
+    NzUploadModule,
+    NzDatePickerModule,
+    NzCheckboxModule,
+    NzRadioModule
   ],
   providers: [{ provide: NZ_I18N, useValue: es_ES }],
   bootstrap: [AppComponent]

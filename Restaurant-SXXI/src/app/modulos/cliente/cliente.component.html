@@ -26,7 +26,8 @@
           <div *ngFor="let plato of listaPlatos; let i = index;">
             <div *ngIf="plato.disponibilidad" class="plato-row">
               <div class="img-plato">
-                <img src="assets/img-platos/cazuela_de_vacuno.jpg" alt="">
+                <img *ngIf="plato.nombre_imagen != undefined" src="http://localhost:8085/restaurantSXXI/imagenes-rxxi/platos/{{plato.nombre_imagen}}" alt="">
+                <img *ngIf="plato.nombre_imagen == undefined" src="assets/img-platos/nodisponible.png" alt="">
               </div>
               <div class="plato-disponible">
                 <div class="plato-title">
@@ -48,7 +49,8 @@
             <nz-divider></nz-divider>
             <div *ngIf="!plato.disponibilidad" class="plato-row-no-disponible">
               <div class="img-plato">
-                <img src="assets/img-platos/cazuela_de_vacuno.jpg" alt="">
+                <img *ngIf="plato.nombre_imagen != undefined" src="http://localhost:8085/restaurantSXXI/imagenes-rxxi/platos/{{plato.nombre_imagen}}" alt="">
+                <img *ngIf="plato.nombre_imagen == undefined" src="assets/img-platos/nodisponible.png" alt="">
               </div>
               <div class="plato-no-disponible">
                 <div class="plato-title">
@@ -72,7 +74,8 @@
           <div *ngFor="let producto of listaProductos; let i = index;">
             <div *ngIf="producto.stock_producto > 0" class="plato-row">
               <div class="img-producto">
-                <img src="assets/img-platos/cazuela_de_vacuno.jpg" alt="">
+                <img *ngIf="producto.nombre_imagen != undefined" src="http://localhost:8085/restaurantSXXI/imagenes-rxxi/productos/{{producto.nombre_imagen}}" alt="">
+                <img *ngIf="producto.nombre_imagen == undefined" src="assets/img-platos/nodisponible.png" alt="">
               </div>
               <div class="plato-disponible">
                 <div class="plato-title">
@@ -94,7 +97,8 @@
             <nz-divider></nz-divider>
             <div *ngIf="!(producto.stock_producto > 0)" class="plato-row-no-disponible">
               <div class="img-producto">
-                <img src="assets/img-platos/cazuela_de_vacuno.jpg" alt="">
+                <img *ngIf="producto.nombre_imagen != undefined" src="http://localhost:8085/restaurantSXXI/imagenes-rxxi/productos/{{producto.nombre_imagen}}" alt="">
+                <img *ngIf="producto.nombre_imagen == undefined" src="assets/img-platos/nodisponible.png" alt="">
               </div>
               <div class="plato-no-disponible">
                 <div class="plato-title">
@@ -114,7 +118,6 @@
             <nz-divider></nz-divider>
           </div>
         </nz-tab>
-        <nz-tab nzTitle="Tab 3">Content of Tab Pane 3</nz-tab>
       </nz-tabset>
     </div>
   </div>
@@ -132,24 +135,37 @@
     <ng-container>
       <div class="all-detalle-plato">
         <div class="img-detalle-plato">
-          <img src="assets/img-platos/cazuela_de_vacuno.jpg" alt=""
-          style="height: 300px; width: 100%;">
+          <img *ngIf="platoSelected?.nombre_imagen != undefined" src="http://localhost:8085/restaurantSXXI/imagenes-rxxi/platos/{{platoSelected.nombre_imagen}}" alt="" style="height: 300px; width: 100%;">
+            <img *ngIf="platoSelected?.nombre_imagen == undefined" src="assets/img-platos/nodisponible.png" alt="" style="height: 300px; width: 100%;">
         </div>
         <div class="header-detalle-plato">
           <div class="name-detalle-plato">
             <h3>{{platoSelected?.nombre_plato | uppercase}}</h3>
           </div>
           <div class="desc-detalle-plato">
-            <h5>{{platoSelected?.descripcion_tipo_plato}}</h5>
-            <h5>Recomendado para {{platoSelected?.cantidad_personas_recomendadas}} persona(s) </h5>
-            <h5>{{platoSelected?.nombre_tipo_plato}}</h5>
-            <h5>$ {{platoSelected?.precio_plato}}</h5>
-          </div>  
-        </div>
-        <div class="detalles-plato">
-          <p>{{platoSelected?.descripcion_plato}}</p>
-          <br>
-          <p>{{platoSelected?.comentario}}</p>
+            <h4>Tipo de plato:
+              <h3 style="color: rgb(122, 122, 122)">{{platoSelected?.nombre_tipo_plato}} - {{platoSelected?.descripcion_tipo_plato}}
+              </h3>
+            </h4>
+            <br>
+            </div>
+            </div>
+            <div class="detalles-plato">
+              <h4>Descripción del plato:
+                <h3 style="color: rgb(122, 122, 122)">{{platoSelected?.descripcion_plato}}</h3>
+              </h4>
+              <br>
+              <h4>Comentario acerca del plato:
+                <h3 style="color: rgb(122, 122, 122)">{{platoSelected?.comentario}}</h3>
+              </h4>
+              <br>
+              <h4>Recomendado para:
+                <h3 style="color: rgb(122, 122, 122)">{{platoSelected?.cantidad_personas_recomendadas}} persona(s)</h3>
+              </h4>
+              <br>
+              <h4>Valor del plato: $
+                <h3 style="color: rgb(122, 122, 122)">{{platoSelected?.precio_plato}}</h3>
+              </h4>
         </div>
       </div>
     </ng-container>
@@ -172,7 +188,11 @@
           <!-- ES PLATO -->
           <div *ngIf="item.esPlato" class="carrito-row">
             <div class="img-plato-carrito">
-              <img src="assets/img-platos/cazuela_de_vacuno.jpg" alt="">
+              <img *ngIf="item.plato.nombre_imagen != undefined"
+                src="http://localhost:8085/restaurantSXXI/imagenes-rxxi/platos/{{item.plato.nombre_imagen}}" alt=""
+                style="width: 100%;">
+              <img *ngIf="item.plato.nombre_imagen == undefined" src="assets/img-platos/nodisponible.png" alt=""
+                style="width: 100%;">
             </div>
             <div class="plato-carrito">
               <div class="plato-title">
@@ -191,7 +211,11 @@
           <!-- ES PRODUCTO -->
           <div *ngIf="item.esProducto" class="carrito-row">
             <div class="img-plato-carrito">
-              <img src="assets/img-platos/cazuela_de_vacuno.jpg" alt="">
+              <img *ngIf="item.producto.nombre_imagen != undefined"
+                src="http://localhost:8085/restaurantSXXI/imagenes-rxxi/platos/{{item.producto.nombre_imagen}}" alt=""
+                style="width: 100%;">
+              <img *ngIf="item.nombre_imagen == undefined" src="assets/img-platos/nodisponible.png" alt=""
+                style="width: 100%;">
             </div>
             <div class="plato-carrito">
               <div class="plato-title">
@@ -265,12 +289,136 @@
       <div class="footer-carrito-boleta">
         <h2>Subtotal : ${{boletaAIngresar?.subtotal | currency:'CLP'}}</h2>
         <br>
-        <button nz-button 
+        <button nz-button
+        *ngIf="puedePagar" 
         nz-popconfirm
         nzPopconfirmTitle="¿Seguro que quieres pagar?"
         nzPopconfirmPlacement="top"
-        (nzOnConfirm)="confirmarPago()">
+        (nzOnConfirm)="pedirCuenta()">
           Pagar cuenta
+        </button>
+        <label *ngIf="!puedePagar"style="color: red; font-weight: bold; font-size: 15px"> PARA PAGAR, PRIMERO DEBES RECIBIR TODOS TUS PEDIDOS</label>
+      </div>
+    </ng-container>
+  </nz-drawer>
+
+  <!-- PEDIR Y PAGAR CUENTA -->
+  <nz-drawer
+    [nzWidth] = "700"
+    [nzClosable]="true"
+    [nzVisible]="visiblePedirCuenta"
+    nzPlacement="left"
+    nzTitle="Boleta a pagar #{{boletaAIngresar?.id_boleta}}"
+    (nzOnClose)="cerrarDrawerPedirCuenta()"
+    style="background-color: rgba(81, 0, 195, 0.319);"
+  >
+    <ng-container>
+      <div class="detalle-boleta">
+        <div class="content">
+          <nz-descriptions nzTitle="Detalle de boleta" nzBordered>
+            <nz-descriptions-item nzTitle="Nro boleta">#{{boletaAIngresar?.id_boleta}}</nz-descriptions-item>
+
+            <nz-descriptions-item nzTitle="Fecha">{{boletaAIngresar?.fechaAtencion}} - {{boletaAIngresar?.horaAtencion}}</nz-descriptions-item>
+
+            <nz-descriptions-item nzTitle="RUT">{{boletaAIngresar?.rutCliente}}</nz-descriptions-item>
+
+            <nz-descriptions-item nzTitle="Subtotal">${{boletaAIngresar?.subtotal | currency : 'CLP'}}</nz-descriptions-item>
+          </nz-descriptions>
+        </div>
+        <br>
+        <div>
+          <label nz-checkbox [(ngModel)]="propinaEnBoletaAPagar" (ngModelChange)="onChangePropina()">Añadir propina</label>
+        </div>
+        <br>
+        <div>
+          <nz-descriptions nzTitle="Total a pagar" nzBordered>
+            <nz-descriptions-item nzTitle="Descuentos">
+              <label for="" *ngIf="boletaAIngresar?.descuentos > 0">
+                ${{boletaAIngresar?.descuentos | currency : 'CLP'}}
+              </label>
+              <label for="" *ngIf="boletaAIngresar?.descuentos <= 0">
+                -
+              </label>
+            </nz-descriptions-item>
+
+            <nz-descriptions-item nzTitle="Propina">
+              <label for="" *ngIf="boletaAIngresar?.extras > 0">
+                ${{boletaAIngresar?.extras | currency : 'CLP'}}
+              </label>
+              <label for="" *ngIf="boletaAIngresar?.extras <= 0">
+                -
+              </label>
+              </nz-descriptions-item>
+
+            <nz-descriptions-item nzTitle="Total">${{boletaAIngresar?.total | currency : 'CLP'}}</nz-descriptions-item>
+          </nz-descriptions>
+        </div>
+        <br>
+        <div>
+          <h3 style="margin-bottom: 20px; color: rgba(0,0,0,.85); font-weight: 700; font-size: 16px; line-height: 1.5;"> 
+            Escoge tu forma de pago 
+          </h3>
+          <nz-radio-group [(ngModel)]="formaDePago">
+            <label nz-radio-button nzValue="1">Efectivo</label>
+            <label nz-radio-button nzValue="2">Débito</label>
+            <label nz-radio-button nzValue="3">Crédito</label>
+          </nz-radio-group>
+        </div>
+        <div class="forma-de-pago">
+          <div *ngIf="formaDePago == '1'" class="content">
+            <div class="pago-efectivo">
+              <label for="">
+                Al presionar el botón de pagar debe dirigirse a la caja a cancelar el valor ${{boletaAIngresar?.total}}
+              </label>
+            </div>
+          </div>
+          <div *ngIf="formaDePago == '2' || formaDePago == '3'" class="content">
+            <div class="checkout">
+              <form nz-form [formGroup]="validateFormPagoTarjeta" id="validateFormPagoTarjeta" [nzLayout]="'inline'">
+                <div class="item">
+                  <label for="" class="lbl-name"> Nombre del titular</label>
+                  <input type="text" nz-input class="ipt-style" placeholder="Juan Pérez" formControlName="nombre_titular">
+                </div>
+                <div class="item">
+                  <label for="" class="lbl-name" > Email </label>
+                  <input type="text" nz-input class="ipt-style" placeholder="jperez@gmail.com" formControlName="email">
+                </div>
+                <div class="item">
+                  <label for="" class="lbl-name"> Rut del titular </label>
+                  <input type="text" nz-input class="ipt-style" placeholder="11111111-1" formControlName="rut_titular">
+                </div>
+                <div class="item">
+                  <label for="" class="lbl-name"> Número de tarjeta </label>
+                  <input type="text" nz-input class="ipt-style" placeholder="1111-2222-3333-4444" formControlName="numero_tarjeta">
+                </div>              
+                <div class="item">
+                  <label for="" class="lbl-name"> Mes expiración </label>
+                  <input type="number" min="1" max="12" step="1" placeholder="11" class="picker" onkeydown="return false" formControlName="mes_expiracion"/>
+                </div>
+                <div class="item">
+                  <label for="" class="lbl-name"> Año expiración </label>
+                  <input type="number" min="2022" max="2050" step="1" placeholder="2022" class="picker" onkeydown="return false" formControlName="ano_expiracion"/>
+                </div>
+                <div class="item">
+                  <label for="" class="lbl-name"> CVV </label>
+                  <input type="text" nz-input class="ipt-style" placeholder="123" maxlength="3" formControlName="cvv">
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-carrito-boleta">
+        <h2>Total a pagar : ${{boletaAIngresar?.total | currency:'CLP'}}</h2>
+        <br>
+        <button nz-button
+        *ngIf="puedePagar"
+        nz-popconfirm
+        nzPopconfirmTitle="¿Seguro que quieres pagar la cuenta?"
+        nzPopconfirmPlacement="top"
+        (nzOnConfirm)="confirmarPago()">
+          Pagar
         </button>
       </div>
     </ng-container>

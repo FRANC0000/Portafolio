@@ -24,10 +24,8 @@ public class RecetaServiceImpl implements RecetaService{
 		String comentario = receta.get("comentario").toString();
 		int tiempo_preparacion = Integer.parseInt(receta.get("tiempoPreparacion").toString());
 		String complejidad = receta.get("complejidad").toString();
-		boolean eliminado = Boolean.parseBoolean(receta.get("eliminado").toString());
 		
-		
-		String resp = recetaRepository.modificarReceta(id_receta, comentario, complejidad, tiempo_preparacion, eliminado); 
+		String resp = recetaRepository.modificarReceta(id_receta, comentario, complejidad, tiempo_preparacion); 
 	
 		
 		return resp;
@@ -37,13 +35,11 @@ public class RecetaServiceImpl implements RecetaService{
     public String crearReceta(Map<String, Object> receta) {
         String resp = "";
         try {
-            int id_receta = Integer.parseInt(receta.get("id_receta").toString());
             String comentario = receta.get("comentario").toString();
             String complejidad  = receta.get("complejidad").toString();
             int tiempoPreparacion = Integer.parseInt(receta.get("tiempoPreparacion").toString());
             
-            resp = recetaRepository.crearReceta(id_receta, comentario, complejidad,
-                    tiempoPreparacion); 
+            resp = recetaRepository.crearReceta(comentario, complejidad,tiempoPreparacion); 
         } catch (Exception e) {
             return "Error al crear receta. \n"
                     + "Mensaje de error: "+ e.getMessage();

@@ -28,7 +28,7 @@ public class MesaController {
 	}
 	
 	@RequestMapping(value="/crearMesa")
-	public String crearMesa(@RequestBody Mesa mesa) throws JSONException{
+	public String crearMesa(@RequestBody Map<String, Object> mesa) throws JSONException{
 		String resp = mesaService.crearMesa(mesa);
 		return resp;
 	}
@@ -40,7 +40,7 @@ public class MesaController {
 	}
 	
 	@RequestMapping(value="/modificarMesa")
-	public String modificarMesa(@RequestBody Mesa mesa) throws JSONException{
+	public String modificarMesa(@RequestBody Map<String, Object> mesa) throws JSONException{
 		String resp = mesaService.modificarMesa(mesa);
 		return resp;
 	}

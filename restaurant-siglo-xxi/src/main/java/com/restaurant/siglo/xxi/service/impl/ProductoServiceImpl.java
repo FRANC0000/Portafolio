@@ -13,7 +13,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.restaurant.siglo.xxi.clases.Producto;
+import com.restaurant.siglo.xxi.clases.TipoProducto;
 import com.restaurant.siglo.xxi.repository.ProductoRepository;
+import com.restaurant.siglo.xxi.repository.TipoProductoRepository;
 import com.restaurant.siglo.xxi.service.ProductoService;
 
 @Service
@@ -21,6 +23,9 @@ public class ProductoServiceImpl implements ProductoService{
 	
 	@Autowired
     ProductoRepository productoRepository;
+	
+	@Autowired
+    TipoProductoRepository tipoProductoRepository;
     
     @Override
     public String obtenerProductos() throws JSONException {
@@ -42,6 +47,7 @@ public class ProductoServiceImpl implements ProductoService{
                 productos.put("id_tipo_producto", producto.getTipoProducto().getId_tipo_producto());
                 productos.put("tipo_producto_comentario", producto.getTipoProducto().getComentario());
                 productos.put("nombre_tipo_producto", producto.getTipoProducto().getNombre_tipo_producto());
+                productos.put("nombre_imagen", producto.getNombre_archivo());
                 listProductos.put(productos);
             } catch (JSONException e) {
                 // TODO Auto-generated catch block
@@ -56,7 +62,6 @@ public class ProductoServiceImpl implements ProductoService{
     @Override
 	public String crearProducto(Map<String, Object> producto) throws ParseException {
 		
-		int id_producto = Integer.parseInt(producto.get("id_producto").toString());
 		String comentario = producto.get("comentario").toString();
 		String fecha_ingreso_producto  = producto.get("fecha_ingreso_producto").toString();
 		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
@@ -69,7 +74,7 @@ public class ProductoServiceImpl implements ProductoService{
 		int valor_unitario = Integer.parseInt(producto.get("valor_unitario").toString());
 		int tipo_producto = Integer.parseInt(producto.get("tipo_producto").toString());
 
-		String resp = productoRepository.crearProducto(id_producto, comentario, fecha_ingreso_producto_format, fecha_vencimiento_format,
+		String resp = productoRepository.crearProducto(comentario, fecha_ingreso_producto_format, fecha_vencimiento_format,
 				medida_producto, nombre_producto, stock_producto, valor_unitario, tipo_producto); 
 		
 		return resp;
@@ -136,4 +141,56 @@ public class ProductoServiceImpl implements ProductoService{
 		
 		return resp;
 	}
+
+    @Override
+    public String obtenerUnProducto(Map<String, Object> producto) {
+        int id_producto = Integer.parseInt(producto.get("id_producto").toString());
+        
+        Producto unProducto = productoRepository.getById(id_producto);
+        JSONObject resp = new JSONObject();
+        
+        try {           
+            resp.put("id_producto", unProducto.getId_producto());
+            resp.put("comentario", unProducto.getComentario());
+            resp.put("fecha_ingreso_producto", unProducto.getComentario());
+            resp.put("fecha_vencimiento", unProducto.getFecha_ingreso_producto());
+            resp.put("medida_producto", unProducto.getMedida_producto());
+            resp.put("nombre_producto", unProducto.getNombre_producto());
+            resp.put("stock_producto", unProducto.getStock_producto());
+            resp.put("valor_unitario", unProducto.getValor_unitario()); //como un join pa rescatar los atributos de id tipo plato
+            resp.put("tipo_producto", unProducto.getTipoProducto().getId_tipo_producto());
+            resp.put("tipo_producto", unProducto.getTipoProducto().getNombre_tipo_producto());
+            resp.put("tipo_producto", unProducto.getTipoProducto().getComentario());
+            resp.put("eliminado", unProducto.isEliminado());
+            
+        } catch (Exception e) {
+            return "Producto no existe. \n"
+                    + "Mensaje de error: "+ e.getMessage();
+        }
+        
+        return resp.toString();
+    }
+
+    @Override
+    public String obtenerTipoProducto() throws JSONException {
+        List<TipoProducto> tipos = tipoProductoRepository.findAll();
+        JSONObject resp = new JSONObject();
+        JSONArray listTipoProducto = new JSONArray();
+        
+        for (TipoProducto tipo : tipos) {
+            try {
+                JSONObject unTipoProducto = new JSONObject();
+                unTipoProducto.put("id_tipo_producto", tipo.getId_tipo_producto());
+                unTipoProducto.put("comentario", tipo.getComentario());
+                unTipoProducto.put("nombre_tipo_producto", tipo.getNombre_tipo_producto());
+                listTipoProducto.put(unTipoProducto);
+            } catch (Exception e) {
+                // TODO: handle exception
+            }
+        }
+        resp.put("listTipoProducto", listTipoProducto);
+        
+        return resp.toString();
+    }
+
 }

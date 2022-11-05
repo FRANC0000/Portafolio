@@ -63,6 +63,12 @@ export class CocinaService {
     );
   }
 
+  public obtenerTipoProducto() {
+    return this.http.get(
+      'http://localhost:8085/restaurantSXXI/rest-rsxii/producto/obtenerTipoProducto', { headers: this.headers }
+    );
+  }
+
   public eliminarPlato(platoAEliminar) {
     return this.http.post(
       'http://localhost:8085/restaurantSXXI/rest-rsxii/plato/eliminarPlato', platoAEliminar, { responseType : 'text' }
@@ -101,6 +107,48 @@ export class CocinaService {
   public obtenerPedidosEntregadosHoy() {
     return this.http.get(
       'http://localhost:8085/restaurantSXXI/rest-rsxii/pedido/obtenerPedidosEntregadosHoy', { headers: this.headers }
+    );
+  }
+
+  public subirImagenPlato(file) {
+    return this.http.post(
+      'http://localhost:8085/restaurantSXXI/plato/save',  file
+    );
+  }
+
+  public subirImagenProducto(file) {
+    return this.http.post(
+      'http://localhost:8085/restaurantSXXI/producto/save', file
+    );
+  }
+
+  public obtenerImagenPlato(file) {
+    return this.http.get(
+      'http://localhost:8085/restaurantSXXI/imagenes-rxxi/platos/'+file
+    );
+  }
+
+  public obtenerImagenProducto(file) {
+    return this.http.get(
+      'http://localhost:8085/restaurantSXXI/imagenes-rxxi/productos/'+file
+    );
+  }
+
+  public crearProducto(unProducto) {
+    return this.http.post(
+      'http://localhost:8085/restaurantSXXI/rest-rsxii/producto/crearProducto', unProducto, { responseType : 'text' }
+    );
+  }
+
+  public modificarProducto(productoAModificar) {
+    return this.http.post(
+      'http://localhost:8085/restaurantSXXI/rest-rsxii/producto/modificarProducto', productoAModificar, { responseType : 'text'}
+    );
+  }
+
+  public eliminarProducto(productoAEliminar) {
+    return this.http.post(
+      'http://localhost:8085/restaurantSXXI/rest-rsxii/producto/eliminarProducto', productoAEliminar, { responseType : 'text' }
     );
   }
 }

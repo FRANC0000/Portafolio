@@ -14,6 +14,8 @@ import { NzNotificationModule } from 'ng-zorro-antd/notification';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClientModule } from '@angular/common/http';
+import { NzIconModule } from 'ng-zorro-antd/icon';
+import { NzPopconfirmModule } from 'ng-zorro-antd/popconfirm';
 
 
 @NgModule({
@@ -31,7 +33,9 @@ import { HttpClientModule } from '@angular/common/http';
     NzFormModule,
     NzInputModule,
     NzSelectModule,
-    NzNotificationModule
+    NzNotificationModule,
+    NzIconModule,
+    NzPopconfirmModule
   ]
 })
 export class AdministradorModule { }

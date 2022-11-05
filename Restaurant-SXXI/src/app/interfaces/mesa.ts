@@ -10,9 +10,11 @@ export interface TipoMesa {
 }
 
 export interface Mesa {
-    id_mesa : number,
-    id_tipo_mesa: TipoMesa,
-    id_estado_mesa: EstadoMesa,
+    id_mesa? : number,
+    id_tipo_mesa?: number,
+    id_estado_mesa?: number,
+    tipoMesa? : TipoMesa,
+    tipoEstadoMesa?: EstadoMesa,
     eliminado? : boolean
 }
 

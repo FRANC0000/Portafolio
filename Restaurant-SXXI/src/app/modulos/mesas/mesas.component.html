@@ -1,9 +1,9 @@
 <div class="container">
-    <div class="top">
+    <!-- <div class="top">
         <button nz-button (click)="crearMesa()"> Crear mesa </button>
         <button nz-button (click)="eliminarMesa()"> Eliminar mesa </button>
         <button nz-button (click)="actualizarMesa()"> Actualizar mesa </button>
-    </div>
+    </div> -->
     <div class="grid">
         <div *ngFor="let mesa of listadoMesas" class="mesas">
             <div class="card" *ngIf="mesa.nombre_estado_mesa == 'Disponible'" (click)="clickMesa(mesa)">
@@ -46,7 +46,7 @@
     </div>
 </div>
 
-<nz-modal nzTitle="Crear mesa" [nzWidth]="800" [nzContent]="crearMesaContent" [(nzVisible)]="isVisibleCrearMesa"
+<!-- <nz-modal nzTitle="Crear mesa" [nzWidth]="800" [nzContent]="crearMesaContent" [(nzVisible)]="isVisibleCrearMesa"
     (nzOnOk)="guardarCrearMesa()" (nzOnCancel)="cerrarCrearMesa()">
     <ng-container #crearMesaContent>
         <form nz-form [formGroup]="validateFormCrearMesa" id="validateFormCrearMesa" [nzLayout]="'inline'"
@@ -93,7 +93,7 @@
             </div>
         </form>
     </ng-container>
-</nz-modal>
+</nz-modal> -->
 
 <nz-modal ([nzTitle])="ingresarClienteTitle" [nzWidth]="800" [nzContent]="ingresarClienteConent" [(nzVisible)]="isVisibleIngresarReserva"
     (nzOnOk)="enviarIngresoReserva()" (nzOnCancel)="cerrarIngresarReserva()">
@@ -134,7 +134,7 @@
             (ngSubmit)="ingresarReserva()">
             <div>
                 <div class="title-datos-reserva">
-                    <!-- <h3>Datos de la reserva</h3> -->
+                    <h3>Datos de la reserva</h3> 
                     <nz-descriptions nzTitle="Datos de la reserva" nzLayout="vertical"></nz-descriptions>
                 </div>
                 <div nz-row>
@@ -216,7 +216,7 @@
     </ng-container>
 </nz-modal>
 
-<nz-modal nzTitle="Eliminar mesa" [nzWidth]="800" [nzContent]="eliminarMesaContent"
+<!-- <nz-modal nzTitle="Eliminar mesa" [nzWidth]="800" [nzContent]="eliminarMesaContent"
     [(nzVisible)]="isVisibleEliminarMesa" (nzOnOk)="guardarEliminarMesa()" (nzOnCancel)="cerrarEliminarMesa()">
     <ng-container #eliminarMesaContent>
         <form nz-form [formGroup]="validateFormEliminarMesa" id="validateFormEliminarMesa" [nzLayout]="'inline'"
@@ -235,9 +235,9 @@
             </div>
         </form>
     </ng-container>
-</nz-modal>
+</nz-modal> -->
 
-<nz-modal nzTitle="Actualizar mesa" [nzWidth]="800" [nzContent]="actualizarMesaContent"
+<!-- <nz-modal nzTitle="Actualizar mesa" [nzWidth]="800" [nzContent]="actualizarMesaContent"
     [(nzVisible)]="isVisibleActualizarMesa" (nzOnOk)="guardarActualizarMesa()" (nzOnCancel)="cerrarActualizarMesa()">
     <ng-container #crearMesaContent>
         <form nz-form [formGroup]="validateFormActualizarMesa" id="validateFormActualizarMesa" [nzLayout]="'inline'"
@@ -300,7 +300,7 @@
             </div>
         </form>
     </ng-container>
-</nz-modal>
+</nz-modal> -->
 
 <div class="reserva-ingresada-container" *ngIf="mostrarReservaRealizada">
     <div>

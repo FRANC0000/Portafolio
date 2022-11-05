@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Routes, RouterModule, ActivatedRoute, Router} from '@angular/router';
 import { NzNotificationService, NzTreeHigherOrderServiceToken } from 'ng-zorro-antd';
 import { NzMessageService } from 'ng-zorro-antd/message';
@@ -19,7 +20,8 @@ export class ClienteComponent implements OnInit {
     private clienteService : ClienteService,
     private router: Router,
     private nzMessageService: NzMessageService,
-    private nzNotificacionService : NzNotificationService
+    private nzNotificacionService : NzNotificationService,
+    private fb: FormBuilder,
   ) { 
     this.ruta.params.subscribe(params => {
       console.log('idMesa: ', params['idMesa']);
@@ -33,8 +35,8 @@ export class ClienteComponent implements OnInit {
   clienteObjectParam : Cliente;
   boletaObjectParam : Boleta;
   mesaReservada :boolean = false;
-  listaPlatos;
-  listaProductos;
+  listaPlatos : Plato;
+  listaProductos : Producto;
   carritoDeCompras : ProductoEnCarro[] = [];
   visibleDetallePlato = false;
   visibleCarritoCompras = false;
@@ -47,6 +49,13 @@ export class ClienteComponent implements OnInit {
   pedidoEnBoleta : Pedido[] = [];
   boletaAIngresar : Boleta;
   clicksEnCarrito : number = 0;
+  puedePagar = false;
+  visiblePedirCuenta = false;
+  propinaEnBoletaAPagar = false;
+  formaDePago = '1';
+  mode = 'month';
+  validateFormPagoTarjeta : FormGroup
+
 
   ngOnInit() {
     this.mesaReservada = false;
@@ -72,9 +81,9 @@ export class ClienteComponent implements OnInit {
         nombre_estado_mesa : Object(resp).nombre_estado_mesa
       }
       this.mesaObjectParam = {
-        id_estado_mesa : estadoMesa,
+        tipoEstadoMesa : estadoMesa,
         id_mesa : Object(resp).id_mesa,
-        id_tipo_mesa : tipoMesa
+        tipoMesa : tipoMesa
       }
       console.log('mesaObjectParam', this.mesaObjectParam);
     });
@@ -153,8 +162,12 @@ export class ClienteComponent implements OnInit {
     this.clienteService.obtenerPedidosPorIdBoleta(id_boleta).subscribe(resp=>{
       // console.log('resp obtenerPedidosPorIdBoleta', resp);
       let pedidos = Object(resp["pedidos"]);
+      let sumaPedidosEntregados = 0;
       // console.log('pedidos', pedidos);
       for (let pedido of pedidos){
+        if (pedido.id_estado_instancia === 4){
+          sumaPedidosEntregados +=1;
+        }
         // console.log('pedido', pedido);
         // console.log('pedido', pedido.platos_del_pedido);
         // console.log('pedido', pedido.productos_del_pedido);
@@ -223,6 +236,9 @@ export class ClienteComponent implements OnInit {
         // console.log('------------');
         this.pedidoEnBoleta.push(unPedido);
       }
+      if (this.pedidoEnBoleta.length === sumaPedidosEntregados){
+        this.puedePagar = true;
+      }
       console.log('pedidoEnBoleta', this.pedidoEnBoleta);
 
       let subtotalSumPedidos :number = 0;
@@ -237,15 +253,31 @@ export class ClienteComponent implements OnInit {
 
   obtenerPlatos(){
     this.clienteService.obtenerPlatos().subscribe(resp=>{
-      this.listaPlatos = resp['plato'];
+      this.listaPlatos = resp['plato'].sort(function(a,b){
+        if(a.disponibilidad < b.disponibilidad){
+          return 1
+        }
+        if(a.disponibilidad > b.disponibilidad){
+          return -1
+        }
+        return 0;
+      });
       console.log('listaPlatos', this.listaPlatos);
-      
     });
   }
 
   obtenerProductos(){
     this.clienteService.obtenerProductos().subscribe(resp=>{
-      this.listaProductos = resp['productos'];
+      this.listaProductos = resp['productos'].filter((item) => item.id_tipo_producto !== 2).sort(function(a,b){
+        if(a.disponibilidad < b.disponibilidad){
+          return 1
+        }
+        if(a.disponibilidad > b.disponibilidad){
+          return -1
+        }
+        return 0;
+      });;
+
       console.log('listaProductos', this.listaProductos);
     })
   }
@@ -271,6 +303,7 @@ export class ClienteComponent implements OnInit {
     console.log('mostrarPedidosEnBoleta');
     this.obtenerPedidosPorIdBoleta(this.boletaAIngresar.id_boleta);
     console.log('pedidoEnBoleta', this.pedidoEnBoleta);
+    
     this.visibleBoleta = true;
   }
 
@@ -309,10 +342,11 @@ export class ClienteComponent implements OnInit {
       }, 10000);
     }
     else{
-      this.clicksEnCarrito + 1;
-      if (this.clicksEnCarrito! > 2){
+      // console.log('clicks',this.clicksEnCarrito);
+      this.clicksEnCarrito += 1;
+      if (this.clicksEnCarrito <= 1){
         this.nzNotificacionService.create(
-          'warning', 'Problemas para autenticar', 'No fue posible autenticar sus credenciales, lo sentimos :('
+          'warning', 'Carrito sin items', 'No tienes productos en tu carrito'
         );
       }
 
@@ -446,31 +480,59 @@ export class ClienteComponent implements OnInit {
   confirmarPago(){
     console.log('confirmarPago');
     this.now = new Date();
-    //calcular los boletaAIngresar <---------------
-    //descuentos
-    //extras
-    //idBoleta
-    //idTipoPago
-    //total
-    //horaEmision
+
     this.boletaAIngresar.descuentos = 0;
-    this.boletaAIngresar.extras = (this.boletaAIngresar.subtotal * 0.1);
-    this.boletaAIngresar.total = this.boletaAIngresar.subtotal + this.boletaAIngresar.extras;
     this.boletaAIngresar.horaEmision = this.now.toLocaleTimeString();
     this.boletaAIngresar.idEstadoBoleta = 3
-    //AQUI FALTA AGREGAR UN MÉTODO DE PAGO
-    this.boletaAIngresar.idTipoPago = 1
 
-    console.log('boletaAIngresar', this.boletaAIngresar);
-    //SERVICIO PARA MODIFICAR BOLETA
-    const boleta = {
-      "boleta" : this.boletaAIngresar
+    if (this.boletaAIngresar.extras === -1){
+      this.boletaAIngresar.extras = 0
     }
-    this.clienteService.modificarBoleta(boleta).subscribe(resp =>{
-      console.log('resp modificarBoleta', resp);
-      this.cancelarReserva();
-      window.location.reload();
-    })
+
+    if (this.formaDePago == '1'){
+      this.boletaAIngresar.idTipoPago = 1;
+    }
+    else if (this.formaDePago == '2'){
+      this.boletaAIngresar.idTipoPago = 2;
+    }
+    else if(this.formaDePago == '3'){
+      this.boletaAIngresar.idTipoPago = 3;
+    }
+
+    if (this.boletaAIngresar.idTipoPago == 2 || this.boletaAIngresar.idTipoPago == 3){
+      //SIGNIFICA QUE PAGA CON TARJETA POR LO TANTO DEBEMOS SIMULAR UNA COMPRA CON TARJETA
+      if(this.validateFormPagoTarjeta.valid){
+        this.nzNotificacionService.create(
+          'success', 'Tarjeta válida', 'Pago aprobado'
+        );
+        console.log('boletaAIngresar', this.boletaAIngresar);
+        const boleta = {
+          "boleta": this.boletaAIngresar
+        }
+        // this.clienteService.modificarBoleta(boleta).subscribe(resp =>{
+        //   console.log('resp modificarBoleta', resp);
+        //   this.cancelarReserva();
+        //   window.location.reload();
+        // })
+      }
+      else{
+        this.nzNotificacionService.create(
+          'warning', 'Tarjeta inválida', 'Revise e ingrese los datos correctamente'
+        );
+      }
+    }
+    else if(this.boletaAIngresar.idTipoPago == 1){
+      console.log('boletaAIngresar', this.boletaAIngresar);
+      //PAGA EN EFECTIVO, FALTA PARTE DEL PROCESO DE PAGO EN CAJA
+        const boleta = {
+          "boleta": this.boletaAIngresar
+        }
+        // this.clienteService.modificarBoleta(boleta).subscribe(resp =>{
+        //   console.log('resp modificarBoleta', resp);
+        //   this.cancelarReserva();
+        //   window.location.reload();
+        // })
+    }
   }
 
   crearPedidoAIngresar(){
@@ -553,4 +615,47 @@ export class ClienteComponent implements OnInit {
       
     })
   }
+
+  cerrarDrawerPedirCuenta(){
+    this.visiblePedirCuenta = false;
+  }
+
+  pedirCuenta(){
+    console.log('pedirCuenta');
+    this.visiblePedirCuenta = true;
+    this.visibleBoleta = false;
+    this.boletaAIngresar.total = this.boletaAIngresar.subtotal
+
+    this.validateFormPagoTarjeta = new FormGroup({
+      nombre_titular : new FormControl,
+      email : new FormControl,
+      rut_titular : new FormControl,
+      numero_tarjeta : new FormControl,
+      mes_expiracion : new FormControl,
+      ano_expiracion : new FormControl,
+      cvv : new FormControl
+    })
+
+    this.validateFormPagoTarjeta = this.fb.group({
+      nombre_titular : [null, [Validators.required]],
+      email : [null, [Validators.required, Validators.email]],
+      rut_titular : [null, [Validators.required]],
+      numero_tarjeta : [null, [Validators.required, Validators.minLength(16)]],
+      mes_expiracion : [null, [Validators.required]],
+      ano_expiracion : [null, [Validators.required]],
+      cvv : [null, [Validators.required, Validators.minLength(3)]]
+    })
+  }
+
+  onChangePropina(){
+    if (this.propinaEnBoletaAPagar){
+      this.boletaAIngresar.extras = (this.boletaAIngresar.subtotal * 0.1);
+      this.boletaAIngresar.total = this.boletaAIngresar.subtotal + this.boletaAIngresar.extras
+    }
+    else{
+      this.boletaAIngresar.extras = -1;
+      this.boletaAIngresar.total = this.boletaAIngresar.subtotal
+    }
+  }
+
 }

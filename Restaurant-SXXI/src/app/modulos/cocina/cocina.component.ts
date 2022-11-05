@@ -1,10 +1,13 @@
+import { DatePipe } from '@angular/common';
 import { ThrowStmt } from '@angular/compiler';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { RESOURCE_CACHE_PROVIDER } from '@angular/platform-browser-dynamic';
 import { Router } from '@angular/router';
 import { NzNotificationService } from 'ng-zorro-antd';
 import { Pedido, ProductoEnCarro } from 'src/app/interfaces/carrito-compras';
-import { Plato, Producto, Receta, TipoPlato } from 'src/app/interfaces/cocina';
+import { Plato, Producto, Receta, TipoPlato, TipoProducto } from 'src/app/interfaces/cocina';
+import { isObject } from 'util';
 import { CocinaService } from './cocina.service';
 
 @Component({
@@ -23,8 +26,10 @@ export class CocinaComponent implements OnInit {
   listaProductos : Producto[] = [];
   visibleDetallePlato = false;
   visibleDetalleProdcuto = false;
+  visibleDetalleReceta = false;
   platoSelected : Plato;
   productoSelected : Producto;
+  recetaSelected;
   isVisibleCrearReceta :boolean = false;
   validateFormCrearReceta!: FormGroup;
   listaRecetas : Receta[] = [];  
@@ -34,7 +39,9 @@ export class CocinaComponent implements OnInit {
   isVisibleEliminarReceta : boolean= false
   isVisibleCrearPlato = false;
   validateFormCrearPlato!: FormGroup;
+  validateFormCrearProducto!: FormGroup;
   listaTipoPlato: TipoPlato[] = [];
+  listaTipoProducto: TipoProducto[] = [];
   validateFormEliminarPlato!: FormGroup;
   isVisibleEliminarPlato = false;
   validateFormModificarPlato!: FormGroup;
@@ -44,27 +51,32 @@ export class CocinaComponent implements OnInit {
   listaPedidosEnPreparacion : Pedido[] = [];
   listaPedidosParaEntregar : Pedido[] = [];
   listaPedidosEntregadosHoy : Pedido[] = [];
+  formDataPlato = new FormData();
+  formDataProducto = new FormData();
+  now = new Date();
+  isVisibleCrearProducto = false;
+  isVisibleModificarProducto = false;
+  validateFormModificarProducto : FormGroup;
 
   ngOnInit() {
     this.obtenerPlatos();
     this.obtenerProductos();
     this.obtenerTipoPlato();
+    this.obtenerTipoProducto();
+    this.obtenerRecetas();
 
     this.actualizarPedidos();
 
     this.validateFormCrearReceta = new FormGroup({
-      id_receta: new FormControl,
       comentario: new FormControl,
       complejidad: new FormControl,
       tiempo_preparacion: new FormControl
     })
 
     this.validateFormModificarReceta = new FormGroup({
-      id_receta: new FormControl,
       comentario: new FormControl,
       complejidad: new FormControl,
       tiempo_preparacion: new FormControl,
-      eliminado: new FormControl
     })
 
     this.validateFormEliminarReceta = new FormGroup({
@@ -72,7 +84,6 @@ export class CocinaComponent implements OnInit {
     })
 
     this.validateFormCrearPlato = new FormGroup({
-      id_plato : new FormControl,
       cantidad_personas_recomendadas: new FormControl,
       comentario : new FormControl,
       descripcion_plato: new FormControl,
@@ -80,7 +91,17 @@ export class CocinaComponent implements OnInit {
       nombre_plato: new FormControl,
       precio_plato: new FormControl,
       id_tipo_plato: new FormControl,
-      eliminado: new FormControl
+    })
+
+    this.validateFormCrearProducto = new FormGroup({
+      comentario: new FormControl,
+      fecha_ingreso_producto : new FormControl,
+      fecha_vencimiento: new FormControl,
+      medida_producto: new FormControl,
+      nombre_producto: new FormControl,
+      stock_producto: new FormControl,
+      valor_unitario: new FormControl,
+      tipo_producto : new FormControl
     })
 
     this.validateFormEliminarPlato = new FormGroup({
@@ -97,6 +118,18 @@ export class CocinaComponent implements OnInit {
       precio_plato: new FormControl,
       id_tipo_plato: new FormControl,
       eliminado: new FormControl
+    })
+
+    this.validateFormModificarProducto = new FormGroup({
+      id_producto : new FormControl,
+      comentario : new FormControl,
+      fecha_ingreso_producto : new FormControl,
+      fecha_vencimiento : new FormControl,
+      medida_producto : new FormControl,
+      nombre_producto : new FormControl,
+      stock_producto : new FormControl,
+      valor_unitario : new FormControl,
+      tipo_producto : new FormControl
     })
   }
 
@@ -133,16 +166,24 @@ export class CocinaComponent implements OnInit {
 
   cerrarDrawerDetalleProducto(){
     this.visibleDetalleProdcuto = false;
+    this.isVisibleModificarProducto = false;
+    this.validateFormModificarProducto = null;
+  }
+
+  cerrarDrawerDetalleReceta(){
+    this.visibleDetalleReceta = false;
   }
 
   cerrarDrawerDetallePlato(){
     this.visibleDetallePlato = false;
+    this.isVisibleModificarPlato = false;
+    this.validateFormModificarPlato = null;
   }
 
   crearPlato() {
     this.isVisibleCrearPlato = true; //para abrir la ventana emergente, luego hay que cerrarla en otra funcion
+    this.formDataPlato = new FormData();
     this.validateFormCrearPlato = this.fb.group({
-      id_plato: [null, [Validators.required]],
       cantidad_personas_recomendadas: [null, [Validators.required]],
       comentario: [null, [Validators.required]],
       descripcion_plato: [null, [Validators.required]],
@@ -150,7 +191,6 @@ export class CocinaComponent implements OnInit {
       nombre_plato: [null, [Validators.required]],
       precio_plato: [null, [Validators.required]],
       id_tipo_plato: [null, [Validators.required]],
-      eliminado: [false, [Validators.required]]
     })
 
     console.log('Crear Plato');
@@ -160,12 +200,10 @@ export class CocinaComponent implements OnInit {
     console.log('crearReceta');
     this.isVisibleCrearReceta = true;
     this.validateFormCrearReceta = this.fb.group({
-      id_receta : [null, [Validators.required]],
       comentario :[null, [Validators.required]],
       complejidad :[null, [Validators.required]],
       tiempo_preparacion :[null, [Validators.required]]
     })
-    
   }
   verPlatos(){
     console.log('verPlatos');
@@ -179,7 +217,6 @@ export class CocinaComponent implements OnInit {
       console.log('formulario válido, usa el servicio de crear Receta');
       console.log('valores', this.validateFormCrearReceta.value);
       const unaReceta = {
-        id_receta : this.validateFormCrearReceta.value.id_receta,
         comentario: this.validateFormCrearReceta.value.comentario,
         complejidad : this.validateFormCrearReceta.value.complejidad,
         tiempoPreparacion : this.validateFormCrearReceta.value.tiempo_preparacion
@@ -234,24 +271,26 @@ export class CocinaComponent implements OnInit {
     })
   }
 
-  guardarModificarReceta(){
+  guardarModificarReceta(id_receta){
     console.log('guardarModificarReceta');
     console.log('valid ', this.validateFormModificarReceta.valid);
     if (this.validateFormModificarReceta.valid){
       console.log('formulario válido, usa el servicio de modificar Receta');
       console.log('valores', this.validateFormModificarReceta.value);
       const unaReceta = {
-        id_receta : this.validateFormModificarReceta.value.id_receta,
+        id_receta : id_receta,
         comentario: this.validateFormModificarReceta.value.comentario,
         complejidad : this.validateFormModificarReceta.value.complejidad,
-        tiempoPreparacion : this.validateFormModificarReceta.value.tiempo_preparacion,
-        eliminado : this.validateFormModificarReceta.value.eliminado
+        tiempoPreparacion : this.validateFormModificarReceta.value.tiempo_preparacion
       }
       console.log('UnaReceta', unaReceta);
       this.cocinaService.modificarReceta(unaReceta).subscribe(resp => {
         console.log('respuesta a mi servicio modificarReceta', resp);
-        // this.obtenerRecetas();
         this.isVisibleModificarReceta = false;
+        this.cerrarDrawerDetalleReceta();
+        setTimeout(() => {
+           this.obtenerRecetas();
+        }, 1500);
         
       })
       
@@ -265,52 +304,38 @@ export class CocinaComponent implements OnInit {
     this.isVisibleModificarReceta = false;
   }
 
-  modificarReceta(){
+  modificarReceta(receta){
     console.log('modificarReceta');
     this.isVisibleModificarReceta= true;
     this.validateFormModificarReceta = this.fb.group({
-      id_receta : [null, [Validators.required]],
-      comentario :[null, [Validators.required]],
-      complejidad :[null, [Validators.required]],
-      tiempo_preparacion :[null, [Validators.required]],
-      eliminado :[null, [Validators.required]]
+      comentario :[receta.comentario, [Validators.required]],
+      complejidad :[receta.complejidad, [Validators.required]],
+      tiempo_preparacion :[receta.tiempoPreparacion, [Validators.required]],
     })
   }
   
-  guardarEliminarReceta(){
-    // this.isVisibleCrearMesa = false;
-   console.log('validateFormEliminarReceta', this.validateFormEliminarReceta.value);
-   if (this.validateFormEliminarReceta.valid){
-     console.log('Formulario válido');
-     var valores = this.validateFormEliminarReceta.value;
-
-     var recetaAEliminar = {
-       id_receta : valores.id_receta
-       
-     }
-
-     this.cocinaService.eliminarReceta(recetaAEliminar).subscribe(resp =>{
-       console.log('resp', resp);
-       if (resp.includes('No se puede eliminar la receta')){
-         this.notification.create(
-           'error', 'Error al eliminar la receta', resp
-         )
-       }
-       else if (resp.includes('correctamente')){
-         this.notification.create(
-           'success', 'Receta eliminada', resp
-         )
-         this.isVisibleEliminarReceta = false;
-       }
-     });
-   }
-   else{
-     console.log('Receta no eliminada', this.validateFormEliminarReceta.value);
-
-     this.notification.create(
-       'error', 'Error al eliminar receta', 'Debes rellenar todos los campos'
-     )
-   }
+  guardarEliminarReceta(id_receta){
+    var recetaAEliminar = {
+      id_receta: id_receta
+    }
+    this.cocinaService.eliminarReceta(recetaAEliminar).subscribe(resp => {
+      console.log('resp', resp);
+      if (resp.includes('No se puede eliminar la receta')) {
+        this.notification.create(
+          'error', 'Error al eliminar la receta', resp
+        )
+      }
+      else if (resp.includes('correctamente')) {
+        this.notification.create(
+          'success', 'Receta eliminada', resp
+        )
+        this.isVisibleEliminarReceta = false;
+        this.cerrarDrawerDetalleReceta();
+        setTimeout(() => {
+          this.obtenerRecetas();
+       }, 1500);
+      }
+    });
  }
 
   cerrarEliminarReceta() {
@@ -333,15 +358,13 @@ export class CocinaComponent implements OnInit {
 
     if (this.validateFormCrearPlato.valid){
       var platoACrear : Plato = {
-        id_plato : valores.id_plato,
         cantidad_personas_recomendadas: valores.cantidad_personas_recomendadas,
         comentario: valores.comentario,
         descripcion_plato: valores.descripcion_plato,
         disponibilidad: valores.disponibilidad,
         nombre_plato: valores.nombre_plato,
         precio_plato: valores.precio_plato,
-        id_tipo_plato: valores.id_tipo_plato,
-        eliminado: valores.eliminado
+        id_tipo_plato: valores.id_tipo_plato
       }
 
       console.log('platoACrear: ', platoACrear);
@@ -351,7 +374,15 @@ export class CocinaComponent implements OnInit {
         this.notification.create(
           'success', 'Plato creado', resp
         );
-        this.obtenerPlatos();
+
+        this.formDataPlato.append("id_plato", resp);
+        this.cocinaService.subirImagenPlato(this.formDataPlato).subscribe(resp=>{
+        console.log(resp)
+        })
+
+        setTimeout(() => {
+          this.obtenerPlatos();
+        }, 1500);
       },
       error => {
         // console.log('error', error); 
@@ -406,67 +437,75 @@ export class CocinaComponent implements OnInit {
       
     })
   }
+  
+  obtenerTipoProducto(){
+    this.listaTipoProducto = []
+    this.cocinaService.obtenerTipoProducto().subscribe(resp => {
+      // console.log("resp",resp);
+      let listaTipoProducto = resp["listTipoProducto"]
+      for (let tp of listaTipoProducto){
+        const tipo_producto : TipoProducto = {
+          id_tipo_producto : tp.id_tipo_producto,
+          comentario : tp.comentario,
+          nombre_tipo_producto : tp.nombre_tipo_producto
+        }
+        this.listaTipoProducto.push(tipo_producto);
+      }
+      console.log('listaTipoProducto', this.listaTipoProducto);
+    })
+  }
 
   eliminarPlato(){
-    this.isVisibleEliminarPlato = true; //para abrir la ventana emergente, luego hay que cerrarla en otra funcion
-        this.validateFormEliminarPlato = this.fb.group({
-          id_plato : [null, [Validators.required]]
-        })
-  
-      console.log('Eliminar Plato');
+    this.validateFormEliminarPlato = this.fb.group({
+      id_plato: [null, [Validators.required]]
+    })
+
+    console.log('Eliminar Plato');
   }
 
   cerrarEliminarPlato(){
     this.isVisibleEliminarPlato = false;
   }
 
-  guardarEliminarPlato(){
-    console.log('validateFormEliminarPlato', this.validateFormEliminarPlato.value);
-      if (this.validateFormEliminarPlato.valid){
-        console.log('Formulario válido');
-        var valores = this.validateFormEliminarPlato.value;
-  
-        var platoAEliminar = {
-          id_plato : valores.id_plato
-        }
-        // Validación mesa reservada: obtener reserva activa por Id_mesa
-        this.cocinaService.eliminarPlato(platoAEliminar).subscribe(resp =>{
-          console.log('resp', resp);
-          if (resp.includes('No se puede eliminar este plato')){
-            this.notification.create(
-              'error', 'Error al eliminar plato', resp
-            )
-          }
-          else if (resp.includes('Se eliminó el plato correctamente')){
-            this.notification.create(
-              'success', 'Plato eliminado', resp
-            )
-            this.obtenerPlatos();
-            this.isVisibleEliminarPlato = false;
-          }
-        });
-      }
-      else{
-        console.log('Formulario no válido', this.validateFormEliminarPlato.value);
-  
+  guardarEliminarPlato(id_plato){
+    var platoAEliminar = {
+      id_plato: id_plato
+    }
+    // Validación mesa reservada: obtener reserva activa por Id_mesa
+    this.cocinaService.eliminarPlato(platoAEliminar).subscribe(resp => {
+      console.log('resp', resp);
+      if (resp.includes('No se puede eliminar este plato')) {
         this.notification.create(
-          'error', 'Error al eliminar el plato', 'Debes rellenar todos los campos'
+          'error', 'Error al eliminar plato', resp
         )
       }
+      else if (resp.includes('Se eliminó el plato correctamente')) {
+        this.notification.create(
+          'success', 'Plato eliminado', resp
+        )
+        this.cerrarEliminarPlato();
+        this.cerrarDrawerDetallePlato();
+        setTimeout(() => {
+          this.obtenerPlatos();
+        }, 1500);
+      }
+    });
   }
 
-  guardarModificarPlato(){
+  guardarModificarPlato(id_plato){
     console.log('validateFormModificarPlato', this.validateFormModificarPlato.value);
     if (this.validateFormModificarPlato.valid){
       console.log('Formulario válido');
       var valores = this.validateFormModificarPlato.value;
+      console.log('valores', valores);
+      
       /* console.log("tp selelcted",this.tipoPlatoSelected) */
 
       var platoAActualizar : Plato = {
-        id_plato : valores.id_plato,
+        id_plato : id_plato,
         cantidad_personas_recomendadas : valores.cantidad_personas_recomendadas,
         comentario : valores.comentario,
-        id_tipo_plato : this.tipoPlatoSelected,
+        id_tipo_plato : valores.id_tipo_plato,
         nombre_plato : valores.nombre_plato,
         precio_plato : valores.precio_plato, 
         descripcion_plato : valores.descripcion_plato,  
@@ -486,8 +525,15 @@ export class CocinaComponent implements OnInit {
           this.notification.create(
             'success', 'Plato actualizado', resp
           )
-          this.obtenerPlatos();
-          this.isVisibleModificarPlato = false;
+          this.formDataPlato.append("id_plato", id_plato);
+          this.cocinaService.subirImagenPlato(this.formDataPlato).subscribe(resp=>{
+            console.log(resp)
+          })
+          this.cerrarModificarPlato();
+          this.cerrarDrawerDetallePlato();
+          setTimeout(() => {
+            this.obtenerPlatos();
+          }, 1500);
         }
       }); 
     }
@@ -500,18 +546,19 @@ export class CocinaComponent implements OnInit {
     }
   }
 
-  actualizarPlato(){
+  actualizarPlato(plato){
+    this.formDataPlato = new FormData();
+    console.log(plato);
     this.isVisibleModificarPlato = true;
     this.validateFormModificarPlato = this.fb.group({
-      id_plato : [null,  [Validators.required]],
-      cantidad_personas_recomendadas:[null, [Validators.required]],
-      comentario :[null, [Validators.required]],
-      descripcion_plato:[null, [Validators.required]],
-      disponibilidad:[null, [Validators.required]],
-      nombre_plato:[null, [Validators.required]],
-      precio_plato:[null, [Validators.required]],
-      id_tipo_plato:[null, [Validators.required]],
-      eliminado:[false, [Validators.required]]
+      cantidad_personas_recomendadas:[plato.cantidad_personas_recomendadas, [Validators.required]],
+      comentario :[plato.comentario, [Validators.required]],
+      descripcion_plato:[plato.descripcion_plato, [Validators.required]],
+      disponibilidad:[plato.disponibilidad, [Validators.required]],
+      nombre_plato:[plato.nombre_plato, [Validators.required]],
+      precio_plato:[plato.precio_plato, [Validators.required]],
+      id_tipo_plato:[plato.id_tipo_plato, [Validators.required]],
+      eliminado:[plato.eliminado, [Validators.required]]
     })
   }
 
@@ -870,6 +917,204 @@ export class CocinaComponent implements OnInit {
         this.listaPedidosEntregadosHoy.push(unPedido);
       });
       console.log('listaPedidosEntregadosHoy', this.listaPedidosEntregadosHoy);
+    })
+  }
+
+  onFileSelectedPlato(e){
+    const file:File = e.target.files[0];
+    console.log('file',file);
+    this.formDataPlato.append("fichero", file);
+
+    this.notification.create(
+      'success', 'Imagen añadida', ''
+    )
+  }
+
+  onFileSelectedProducto(e){
+    const file:File = e.target.files[0];
+    this.formDataProducto.append("fichero", file);
+    this.notification.create(
+      'success', 'Imagen añadida', ''
+    )
+  }
+
+  obtenerImagenProducto(nombre_archivo){
+    let resp = this.cocinaService.obtenerImagenPlato(nombre_archivo)
+    console.log('resp', resp);
+    
+    return resp;
+  }
+
+  verDetalleReceta(receta){
+    console.log('verDetalleReceta', receta);
+    this.recetaSelected = receta
+    this.visibleDetalleReceta = true;
+  }
+
+  crearProducto(){
+    this.now = new Date();
+    this.isVisibleCrearProducto = true; 
+    this.formDataProducto = new FormData();
+    this.obtenerTipoProducto();
+    this.validateFormCrearProducto = this.fb.group({
+      comentario: [null],
+      fecha_ingreso_producto : [this.now.toLocaleDateString(), [Validators.required]],
+      fecha_vencimiento: [null, [Validators.required]],
+      medida_producto: [null, [Validators.required]],
+      nombre_producto: [null, [Validators.required]],
+      stock_producto: [null, [Validators.required]],
+      valor_unitario: [null, [Validators.required]],
+      tipo_producto : [null, [Validators.required]]
+    })
+
+    console.log('Crear Producto');
+  }
+
+  guardarCrearProducto(){
+    if (this.validateFormCrearProducto.valid){
+      console.log('valid');
+
+      if (this.validateFormCrearProducto.value.comentario == null){
+        this.validateFormCrearProducto.value.comentario = ''
+      }
+
+      const unProducto = {
+        "comentario": this.validateFormCrearProducto.value.comentario,
+        "fecha_ingreso_producto": this.validateFormCrearProducto.value.fecha_ingreso_producto,
+        "fecha_vencimiento": this.validateFormCrearProducto.value.fecha_vencimiento.toLocaleDateString(),
+        "medida_producto": this.validateFormCrearProducto.value.medida_producto,
+        "nombre_producto": this.validateFormCrearProducto.value.nombre_producto,
+        "stock_producto": this.validateFormCrearProducto.value.stock_producto,
+        "valor_unitario": this.validateFormCrearProducto.value.valor_unitario,
+        "tipo_producto": this.validateFormCrearProducto.value.tipo_producto,
+      }
+      console.log('unProducto', unProducto);
+
+      this.cocinaService.crearProducto(unProducto).subscribe(resp=>{
+        console.log('resp', resp);
+
+        this.formDataProducto.append("id_producto", resp);
+        this.cocinaService.subirImagenProducto(this.formDataProducto).subscribe(resp=>{
+        console.log(resp)
+        })
+
+        setTimeout(() => {
+          this.obtenerProductos();
+        }, 1500);
+
+        this.notification.create(
+          'success', 'Formulario válido', ''
+        )
+      })
+    }
+    else{
+      console.log('invalid');
+      this.notification.create(
+        'error', 'Formulario inválido', ''
+      )
+    }
+  }
+
+  cerrarCrearProducto(){
+    this.isVisibleCrearProducto = false; 
+  }
+
+  cerrarModificarProducto(){
+    this.isVisibleModificarProducto = false;
+  }
+
+  modificarProducto(producto){
+    this.formDataProducto = new FormData();
+    this.isVisibleModificarProducto = true;
+    console.log('producto', producto);
+    
+    this.validateFormModificarProducto = this.fb.group({
+      id_producto : [producto.id_producto, [Validators.required]],
+      comentario : [producto.comentario, [Validators.required]],
+      fecha_ingreso_producto : [producto.fecha_ingreso_producto, [Validators.required]],
+      fecha_vencimiento : [producto.fecha_vencimiento, [Validators.required]],
+      medida_producto : [producto.medida_producto, [Validators.required]],
+      nombre_producto : [producto.nombre_producto, [Validators.required]],
+      stock_producto : [producto.stock_producto, [Validators.required]],
+      valor_unitario : [producto.valor_unitario, [Validators.required]],
+      tipo_producto : [producto.id_tipo_producto, [Validators.required]],
+    })
+  }
+
+  guardarEliminarProducto(id_producto){
+    console.log('id_producto', id_producto);
+    const productoAEliminar = {
+      "id_producto" : id_producto
+    }
+
+    this.cocinaService.eliminarProducto(productoAEliminar).subscribe(resp =>{
+      console.log('resp', resp);
+      this.notification.create(
+        'success', 'Producto eliminado', 'Producto #' + id_producto
+      )
+      this.cerrarDrawerDetalleProducto();
+      setTimeout(() => {
+        this.obtenerProductos();
+      }, 1500);
+    })
+  }
+
+  guardarModificarProducto(id_producto){
+    // console.log('id_producto', id_producto);
+    // console.log('form', this.validateFormModificarProducto.value);
+    let fecha_ingreso_format
+    let fecha_vencimiento_format
+    var datePipe = new DatePipe('en-US');
+
+    if (Object.prototype.isPrototypeOf(this.validateFormModificarProducto.value.fecha_ingreso_producto)){
+      // console.log('es objeto');
+      fecha_ingreso_format = this.validateFormModificarProducto.value.fecha_ingreso_producto.toLocaleDateString();
+    }
+    else{
+      // console.log('es string');
+      fecha_ingreso_format = datePipe.transform(this.validateFormModificarProducto.value.fecha_ingreso_producto, 'dd/MM/yyyy')
+    }
+
+    if (Object.prototype.isPrototypeOf(this.validateFormModificarProducto.value.fecha_vencimiento)){
+      // console.log('es objeto');
+      fecha_vencimiento_format = this.validateFormModificarProducto.value.fecha_vencimiento.toLocaleDateString();
+    }
+    else{
+      // console.log('es string');
+      fecha_vencimiento_format = datePipe.transform(this.validateFormModificarProducto.value.fecha_vencimiento, 'dd/MM/yyyy')
+    }
+
+    const productoAModificar  = {
+      "id_producto" : id_producto,
+      "comentario" : this.validateFormModificarProducto.value.comentario,
+      "fecha_ingreso_producto" : fecha_ingreso_format,
+      "fecha_vencimiento": fecha_vencimiento_format,
+      "medida_producto" : this.validateFormModificarProducto.value.medida_producto,
+      "nombre_producto" : this.validateFormModificarProducto.value.nombre_producto,
+      "stock_producto" : this.validateFormModificarProducto.value.stock_producto,
+      "valor_unitario" : this.validateFormModificarProducto.value.valor_unitario,
+      "tipo_producto" : this.validateFormModificarProducto.value.tipo_producto
+    }
+
+    console.log('productoAModificar', productoAModificar);
+    
+    this.cocinaService.modificarProducto(productoAModificar).subscribe(resp =>{
+      console.log('resp', resp);
+      
+      if (resp.includes('correctamente')){
+        this.notification.create(
+          'success', 'Producto modificado', 'Producto #'+id_producto
+        )
+        this.cerrarDrawerDetalleProducto();
+        this.formDataProducto.append("id_producto", id_producto);
+        this.cocinaService.subirImagenProducto(this.formDataProducto).subscribe(resp=>{
+        console.log(resp)
+        })
+
+        setTimeout(() => {
+          this.obtenerProductos();
+        }, 1500);
+      }
     })
   }
 }

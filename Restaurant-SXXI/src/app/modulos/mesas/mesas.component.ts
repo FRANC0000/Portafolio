@@ -164,8 +164,8 @@ export class MesasComponent implements OnInit, OnDestroy{
 
       var mesaACrear : Mesa = {
         id_mesa : valores.id_mesa,
-        id_tipo_mesa: tipoMesaCrear,
-        id_estado_mesa: estadoMesaCrear
+        tipoMesa: tipoMesaCrear,
+        tipoEstadoMesa: estadoMesaCrear
       }
 
       this.mesasService.crearMesa(mesaACrear).subscribe(resp =>{
@@ -438,8 +438,8 @@ export class MesasComponent implements OnInit, OnDestroy{
 
       var mesaAActualizar : Mesa = {
         id_mesa : valores.id_mesa,
-        id_tipo_mesa: tipoMesaActualizar,
-        id_estado_mesa: estadoMesaActualizar,
+        tipoMesa: tipoMesaActualizar,
+        tipoEstadoMesa: estadoMesaActualizar,
         eliminado : valores.eliminado
       }
 

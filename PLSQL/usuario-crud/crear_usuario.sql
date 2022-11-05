@@ -14,8 +14,8 @@ DECLARE
 BEGIN
 
   -- insert into
-  INSERT into usuario (id_usuario, apellido_materno, apellido_paterno, contrasena, correo, dv, nombre, rut, id_rol)
-  values (v_idUsuario, v_apellidoM, v_apellidoP, v_contrasena, v_correo, v_dv, v_nombre, v_rut, v_rol);
+  INSERT into usuario (id_usuario, apellido_materno, apellido_paterno, contrasena, correo, dv, nombre, rut, id_rol, eliminado)
+  values (v_idUsuario, v_apellidoM, v_apellidoP, v_contrasena, v_correo, v_dv, v_nombre, v_rut, v_rol, false);
 
   RETURN 'Usuario ¨'||v_idUsuario ||'¨ creado satisfactoriamente';
 

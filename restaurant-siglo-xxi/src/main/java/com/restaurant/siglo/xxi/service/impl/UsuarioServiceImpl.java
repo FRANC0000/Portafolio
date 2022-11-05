@@ -58,6 +58,7 @@ public class UsuarioServiceImpl implements UsuarioService{
 				usuario.put("dv", user.getDv());
 				usuario.put("correo", user.getCorreo());
 				usuario.put("contrasena", user.getContrasena());
+				usuario.put("eliminado", user.isEliminado());
 				listUsuarios.put(usuario);
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
@@ -82,9 +83,8 @@ public class UsuarioServiceImpl implements UsuarioService{
 		String dv = usuario.get("dv").toString();
 		String correo = usuario.get("correo").toString();
 		String contrasena = usuario.get("contrasena").toString();
-		boolean eliminado = Boolean.parseBoolean(usuario.get("eliminado").toString());
 
-		String resp = usuarioRepository.crearUsuario(id_usuario, nombre, apP, apM, rut, dv, rol, correo, contrasena, eliminado); 
+		String resp = usuarioRepository.crearUsuario(id_usuario, nombre, apP, apM, rut, dv, rol, correo, contrasena); 
 		
 		return resp;
 	}
@@ -162,9 +162,8 @@ public class UsuarioServiceImpl implements UsuarioService{
 	        String dv = usuario.get("dv").toString();
 	        String correo = usuario.get("correo").toString();
 	        String contrasena = usuario.get("contrasena").toString();
-	        boolean eliminado = Boolean.parseBoolean(usuario.get("eliminado").toString());
 
-	        String resp = usuarioRepository.modificarUsuario(id_usuario, nombre, apP, apM, rut, dv,id_rol, correo, contrasena, eliminado);  
+	        String resp = usuarioRepository.modificarUsuario(id_usuario, nombre, apP, apM, rut, dv,id_rol, correo, contrasena);  
 
 	        return resp;
 	    }

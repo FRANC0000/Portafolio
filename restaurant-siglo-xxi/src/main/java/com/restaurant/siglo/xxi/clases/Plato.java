@@ -32,6 +32,9 @@ public class Plato {
 	
 	@Column(nullable = true)
 	boolean eliminado;
+
+	@Column(nullable = true)
+	String nombre_imagen;
 	
 	public int getId_plato() {
 		return id_plato;
@@ -92,5 +95,11 @@ public class Plato {
 	}
 	public void setEliminado(boolean eliminado) {
 		this.eliminado = eliminado;
+	}
+	public String getNombre_imagen() {
+		return nombre_imagen;
+	}
+	public void setNombre_imagen(String nombre_imagen) {
+		this.nombre_imagen = nombre_imagen;
 	}
 }

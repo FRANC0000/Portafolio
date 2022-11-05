@@ -11,8 +11,8 @@ import com.restaurant.siglo.xxi.clases.Mesa;
 public interface MesaService {
 	
 	public String obtenerMesas();
-	public String crearMesa(Mesa mesa);
+	public String crearMesa(Map<String, Object> mesa);
 	public String obtenerUnaMesa(Map<String, Object> idMesa);
-	public String modificarMesa(Mesa mesa);
+	public String modificarMesa(Map<String, Object> mesa);
 	public String eliminarMesa(Map<String, Object> mesa) throws ParseException;
 }

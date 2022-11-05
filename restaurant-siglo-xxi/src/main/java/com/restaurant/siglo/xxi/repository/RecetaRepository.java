@@ -7,17 +7,15 @@ import org.springframework.data.repository.query.Param;
 import com.restaurant.siglo.xxi.clases.Receta;
 
 public interface RecetaRepository extends JpaRepository<Receta, Integer>{
-	@Query(value = "select modificar_receta(:id_receta, :comentario, :complejidad, :tiempo_preparacion, :eliminado) ", nativeQuery = true)
+	@Query(value = "select modificar_receta(:id_receta, :comentario, :complejidad, :tiempo_preparacion) ", nativeQuery = true)
 	String modificarReceta(
 			@Param("id_receta") int id_receta,
 			@Param("comentario") String comentario,
 			@Param("complejidad") String complejidad,
-			@Param("tiempo_preparacion") int tiempo,
-			@Param("eliminado") boolean eliminado);
+			@Param("tiempo_preparacion") int tiempo_preparacion);
 	
-	@Query(value = "select crear_receta(:id_receta, :comentario, :complejidad, :tiempoPreparacion) ", nativeQuery = true)
-    String crearReceta(@Param("id_receta") int id_receta,
-            @Param("comentario") String comentario,
+	@Query(value = "select crear_receta(:comentario, :complejidad, :tiempoPreparacion) ", nativeQuery = true)
+    String crearReceta(@Param("comentario") String comentario,
             @Param("complejidad") String complejidad,
             @Param("tiempoPreparacion") int tiempoPreparacion);
 	

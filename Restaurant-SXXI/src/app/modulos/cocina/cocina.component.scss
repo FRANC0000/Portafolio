@@ -7,6 +7,29 @@
   .title-card{
     font-weight: bold;
 }
+
+.botones-modificar{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 50px;
+    font-size: 30px;
+    margin: 10px 0px;
+
+    span{
+        margin: 0px 10px;
+        padding: 10px;
+        background-color: rgba(81, 0, 195, 0.319);
+        border-radius: 50px;
+        box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
+    }
+
+    span:hover{
+        background-color: rgba(81, 0, 195, 0.683);
+    }
+}
+
+
 .card{
     margin: 20px;
     border: 2px solid gainsboro;
@@ -142,7 +165,13 @@
 }
 
 .all-detalle-plato{
-    padding: 20px;
+    // padding: 20px;
+}
+
+.modificar-content-form{
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
 }
 
 .all-cocina{
@@ -158,17 +187,19 @@
 
 .img-plato{
     img{
-        max-width: 200px;
+        max-width: 160px;
         height: -webkit-fill-available;
         padding: 20px 0 20px 20px;
         object-fit: cover;
         object-position: center;
+        min-width: 160px;
     }
 }
 
 .img-producto{
     img{
-        max-width: 200px;
+        max-width: 160px;
+        min-width: 160px;
         height: -webkit-fill-available;
         padding: 20px 0 20px 20px;
         object-fit: cover;
@@ -179,8 +210,11 @@
 .img-detalle-plato{
     height: 300px;
     width: 100%;
-    object-fit: cover;
-    object-position: center;
+    
+    img{
+        object-fit: cover;
+        object-position: center;
+    }
 }
 
 ::ng-deep.ant-divider-horizontal{
@@ -203,7 +237,7 @@
 .pedidos-row{
     display: flex;
     overflow-x: scroll;
-    height: 232px;
+    height: 270px;
 }
 
 .sin-pedidos{
@@ -237,3 +271,75 @@
         margin: 2px 0px;
     }
 }
+
+/* subir imagen */
+.file-select {
+    position: relative;
+    display: inline-block;
+}
+
+.file-select:hover{
+    background-color: rgba(81, 0, 195, 0.657);
+    border-radius: 3px;
+}
+
+.file-select::before {
+    background-color: rgba(81, 0, 195, 0.434);
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 3px;
+    content: 'Seleccionar';
+    /* testo por defecto */
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+}
+
+.file-select input[type="file"] {
+    opacity: 0;
+    width: 200px;
+    height: 32px;
+    display: inline-block;
+}
+
+#src-file1::before {
+    content: 'Seleccionar imagen';
+}
+
+::ng-deep nz-form-control.nz-control-modificar-plato{
+    width: calc(100% - 150px);
+}
+
+::ng-deep nz-form-label.nz-label-modificar-plato{
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    width: 150px;
+}
+
+::ng-deep nz-form-control.nz-control-crear-producto{
+    width: calc(100% - 150px);
+}
+
+::ng-deep nz-form-label.nz-label-crear-producto{
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    width: 150px;
+}
+
+::ng-deep nz-form-control.nz-control-modificar-producto{
+    width: calc(100% - 150px);
+}
+
+::ng-deep nz-form-label.nz-label-modificar-producto{
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    width: 150px;
+}
+

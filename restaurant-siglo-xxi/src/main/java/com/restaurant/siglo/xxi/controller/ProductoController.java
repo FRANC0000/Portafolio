@@ -51,5 +51,19 @@ public class ProductoController {
 		String resp = productoService.modificarProducto(producto);		
 		return resp;	
 	}
+    
+    @RequestMapping(value="/obtenerUnProducto")
+    public String obtenerUnProducto(@RequestBody Map<String, Object> producto) throws ParseException {
+        
+        String resp = productoService.obtenerUnProducto(producto);
+        
+        return resp;    
+    }
+    
+    @RequestMapping(value="/obtenerTipoProducto")
+    public String obtenerTipoProducto() throws JSONException, ParseException{
+        String listTipoProducto = productoService.obtenerTipoProducto();
+        return listTipoProducto;
+    }
 
 }
