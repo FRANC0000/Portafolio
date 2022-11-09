@@ -7,8 +7,6 @@
               <button nz-button (click)="crearPlato()"> Crear plato </button>
               <button nz-button (click)="crearProducto()"> Crear producto </button>
               <button nz-button (click)="crearReceta()"> Crear receta </button>
-              <button nz-button (click)="modificarReceta()"> Modificar receta </button>
-              <button nz-button (click)="eliminarReceta()"> Eliminar receta </button>
               <button nz-button nzType="danger" (click)="cerrarSesion()"> Cerrar sesión </button>
           </div>
     </div>
@@ -599,7 +597,27 @@
                         <h5>Tiempo de preparación: {{recetaSelected?.tiempoPreparacion}}</h5>
                         <h5>Complejidad: {{recetaSelected?.complejidad}}</h5>
                         <h5>Comentario: {{recetaSelected?.comentario}}</h5>
-                    </div>  
+                    </div>
+                    <br>
+                    <div class="desc-detalle-plato">
+                        <h4>Productos que utiliza esta receta:</h4>
+                        <div>
+                            <nz-table #basicTable nzData="null" [nzShowPagination]="false">
+                                <thead>
+                                    <tr>
+                                        <th>Nombre</th>
+                                        <th>Cantidad</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let prod of recetaSelected?.productosEnUnaReceta">
+                                        <td>{{prod.producto.nombre_producto}}</td>
+                                        <td>(x{{prod.cantidad}})</td>
+                                    </tr>
+                                </tbody>
+                            </nz-table>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div *ngIf="isVisibleModificarReceta">
@@ -628,17 +646,25 @@
                                 Complejidad
                             </nz-form-label>
                             <nz-form-control nzErrorTip="Por favor indique la nueva complejidad">
-                                <input nz-input type="text" name="complejidad" id="complejidad" placeholder="complejidad"
-                                    formControlName="complejidad">
+                                <nz-select nzPlaceHolder="Elegir complejidad" name="complejidad" formControlName="complejidad" style="width: 200px">
+                                    <nz-option nzValue="Fácil" nzLabel="Fácil"></nz-option>
+                                    <nz-option nzValue="Mediana" nzLabel="Mediana"></nz-option>
+                                    <nz-option nzValue="Difícil" nzLabel="Difícil"></nz-option>
+                                </nz-select>
                             </nz-form-control>
                         </nz-form-item>
                         <nz-form-item>
                             <nz-form-label nzRequired nzFor="tiempo_preparacion">
-                                Tiempo preparacion
+                                Tiempo preparación
                             </nz-form-label>
                             <nz-form-control nzErrorTip="Por favor ingrese el tiepo de tiempo de preparacion">
-                                <input nz-input type="text" name="tiempo_preparacion" id="tiempo_preparacion"
-                                    placeholder="tiempo_preparacion" formControlName="tiempo_preparacion">
+                                <nz-select nzPlaceHolder="Elegir tiempo" name="tiempo_preparacion" formControlName="tiempo_preparacion"
+                                    style="width: 200px">
+                                    <nz-option nzValue="10" nzLabel="10"></nz-option>
+                                    <nz-option nzValue="20" nzLabel="20"></nz-option>
+                                    <nz-option nzValue="30" nzLabel="30"></nz-option>
+                                    <nz-option nzValue="60" nzLabel="60"></nz-option>
+                                </nz-select>
                             </nz-form-control>
                         </nz-form-item>
                     </div>
@@ -656,25 +682,34 @@
                 (ngSubmit)="(guardarCrearReceta)">
                 <div style="display: flex; justify-content: center;">
                     <nz-form-item>
-                        <nz-form-label nzRequired nzFor="complejidad">
+                        <nz-form-label nzFor="complejidad">
                             Complejidad
                         </nz-form-label>
                         <nz-form-control nzErrorTip="Por favor ingrese la complejidad de la receta">
-                            <input nz-input type="text" name="complejidad" id="complejidad" placeholder="complejidad"
-                                formControlName="complejidad">
+                            <nz-select nzPlaceHolder="Elegir complejidad" name="complejidad" formControlName="complejidad"
+                            style="width: 200px">
+                                <nz-option nzValue="Fácil" nzLabel="Fácil"></nz-option>
+                                <nz-option nzValue="Mediana" nzLabel="Mediana"></nz-option>
+                                <nz-option nzValue="Difícil" nzLabel="Difícil"></nz-option>
+                            </nz-select>
                         </nz-form-control>
                     </nz-form-item>
                     <nz-form-item>
-                        <nz-form-label nzRequired nzFor="tiempo_preparacion">
-                            Tiempo de preparacion
+                        <nz-form-label nzFor="tiempo_preparacion">
+                            Tiempo de preparación
                         </nz-form-label>
                         <nz-form-control nzErrorTip="Por favor ingrese el tiempo de preparacion">
-                            <input nz-input type="text" name="tiempo_preparacion" id="tiempo_preparacion"
-                                placeholder="tiempo_preparacion" formControlName="tiempo_preparacion">
+                            <nz-select nzPlaceHolder="Elegir tiempo" name="tiempo_preparacion" formControlName="tiempo_preparacion"
+                            style="width: 200px">
+                                <nz-option nzValue="10" nzLabel="10"></nz-option>
+                                <nz-option nzValue="20" nzLabel="20"></nz-option>
+                                <nz-option nzValue="30" nzLabel="30"></nz-option>
+                                <nz-option nzValue="60" nzLabel="60"></nz-option>
+                            </nz-select>
                         </nz-form-control>
                     </nz-form-item>
                     <nz-form-item>
-                        <nz-form-label nzRequired nzFor="comentario">
+                        <nz-form-label nzFor="comentario">
                             Comentario
                         </nz-form-label>
                         <nz-form-control nzErrorTip="Por favor ingrese un comentario">
@@ -684,6 +719,56 @@
                         </nz-form-control>
                     </nz-form-item>
                 </div>
+                <br>
+                <div nz-row>
+                    <div nz-col nzSpan="11">
+                        <div>
+                            <h3 nz-title>Ingredientes disponibles</h3>
+                            <nz-table #basicTable nzData="null" [nzShowPagination]="false">
+                                <thead>
+                                    <tr>
+                                        <th>Nombre</th>
+                                        <th>Acción</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let prod of listaProductos">
+                                        <td *ngIf="prod.nombre_tipo_producto.toLowerCase().includes('ingrediente')">{{ prod.nombre_producto}}</td>
+                                        <td *ngIf="prod.nombre_tipo_producto.toLowerCase().includes('ingrediente')">
+                                            <a (click)="mostrarModalAgregarIngrediente(prod)" [id]="prod.id_producto">Agregar ingrediente</a>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </nz-table>
+                        </div>
+                    </div>
+                    <div nz-col nzSpan="2"></div>
+                    <div nz-col nzSpan="11">
+                        <div>
+                            <h3 nz-title>Ingredientes de esta receta</h3>
+                            <nz-table #basicTable nzData="null" [nzShowPagination]="false">
+                                <thead>
+                                    <tr>
+                                        <th>Nombre</th>
+                                        <th>Acción</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let prod of listProductosReceta">
+                                        <td>{{ prod.nombre_producto }} (x{{prod.cantidad}})</td>
+                                        <td>
+                                            <a (click)="quitarIngredienteDeReceta(prod)">Quitar</a>
+                                            <nz-divider nzType="vertical"></nz-divider>
+                                            <a (click)="modificarIngredienteDeReceta(prod)">Modificar</a>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </nz-table>
+                        </div>
+                    </div>
+                </div>
+                
+                
             </form>
         </ng-container>
     </nz-modal>
@@ -889,4 +974,47 @@
             </ng-container>
         </div>
     </nz-modal>
+
+    <!-- CREAR PRODUCTOS RECETA -->
+    <nz-modal [(nzVisible)]="isVisibleCrearProductoReceta" nzTitle="Ingresar producto en receta" (nzOnCancel)="cancelarCrearProductoReceta()" (nzOnOk)="guardarProductoEnReceta()">
+        <ng-container>
+            <form nz-form [formGroup]="validateFormCrearProductosReceta" id="validateFormCrearProductosReceta" [nzLayout]="'inline'">
+                <div nz-row class="form-plato">
+                    <div style="display: grid;">
+                        <nz-form-item>
+                            <nz-form-label class="nz-label-crear-productos-receta">
+                                Nombre
+                            </nz-form-label>
+                            <nz-form-control class="nz-control-crear-productos-receta">
+                                <input nz-input type="text" name="nombre_producto" id="nombre_producto"
+                                    formControlName="nombre_producto" disabled>
+                            </nz-form-control>
+                        </nz-form-item>
+                        <nz-form-item>
+                            <nz-form-label class="nz-label-crear-productos-receta">
+                                Cantidad
+                            </nz-form-label>
+                            <nz-form-control class="nz-control-crear-productos-receta">
+                                <div style="display: flex; align-items: center;">
+                                    <input nz-input type="text" disabled [value]="cantidadProductoReceta" style="width: 100px;">
+                                    <span nz-icon nzType="minus-circle" nzTheme="outline" (click)="quitarCantidadProductoReceta()" style="font-size: x-large"></span>
+                                    <span nz-icon nzType="plus-circle" nzTheme="outline" (click)="agregarCantidadProductoReceta()" style="font-size: x-large"></span>
+                                </div>
+                            </nz-form-control>
+                        </nz-form-item>
+                        <nz-form-item>
+                            <nz-form-label class="nz-label-crear-productos-receta">
+                                Comentario
+                            </nz-form-label>
+                            <nz-form-control class="nz-control-crear-productos-receta">
+                                <textarea rows="2" nz-input name="comentario" id="comentario" placeholder="Añadir un descripción a este producto en una receta..."
+                                    formControlName="comentario">
+                                </textarea>
+                            </nz-form-control>
+                        </nz-form-item>
+                    </div>
+                </div>
+            </form>
+        </ng-container>
+      </nz-modal>
 </div>

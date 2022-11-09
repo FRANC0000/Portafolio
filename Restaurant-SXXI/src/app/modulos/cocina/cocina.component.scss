@@ -343,3 +343,15 @@
     width: 150px;
 }
 
+
+::ng-deep nz-form-control.nz-control-crear-productos-receta{
+    width: calc(100% - 100px);
+}
+
+::ng-deep nz-form-label.nz-label-crear-productos-receta{
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    width: 100px;
+}
+

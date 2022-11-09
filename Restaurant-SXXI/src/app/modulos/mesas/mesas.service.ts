@@ -90,4 +90,10 @@ export class MesasService {
       })
     );
   }
+
+  public disponibilizarMesa(id_mesa) {
+    return this.http.post(
+      'http://localhost:8085/restaurantSXXI/rest-rsxii/reserva/disponibilizarMesa', id_mesa, { responseType : 'text'}
+    )
+  }
 }

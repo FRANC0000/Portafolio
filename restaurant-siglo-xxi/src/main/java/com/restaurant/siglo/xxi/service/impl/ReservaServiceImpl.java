@@ -148,5 +148,52 @@ public class ReservaServiceImpl implements ReservaService {
 		
 		return listadoReservas.toString();
 	}
+	
+	@Override
+	public String terminarEstancia(Map<String, Object> terminarEstancia) throws ParseException {
+		
+		String resp = "";
+		String id_reserva = terminarEstancia.get("id_reserva").toString();
+		Reserva reserva = reservaRepository.getById(id_reserva);
+	
+		try {
+			resp = reservaRepository.cancelarReserva(id_reserva);
+			
+			if (resp.contains("cancelada con éxito")) {
+				//Cambiar estado de mesa a 'Disponible'
+				String consola = mesaRepository.modificarMesa(reserva.getId_mesa().getId_mesa(), reserva.getId_mesa().getId_tipo_mesa().getId_tipo_mesa(), 3);
+				System.out.println("Respuesta modificarMesa(): " + consola);
+			}
+			
+		} catch (Exception e) {
+			// TODO: handle exception
+			resp = "Error al cancelar reserva \n"
+					+ "Mensaje: " +e.getMessage();
+		}
+		
+		return resp;
+	}
+	
+	@Override
+	public String disponibilizarMesa(Map<String, Object> disponibilizarMesa) throws ParseException {
+		
+		String resp = "";
+	
+		try {
+			int id_mesa = Integer.parseInt(disponibilizarMesa.get("id_mesa").toString());
+			Mesa mesa = mesaRepository.getById(id_mesa);
+
+			String consola = mesaRepository.modificarMesa(mesa.getId_mesa(), mesa.getId_tipo_mesa().getId_tipo_mesa(), 1);
+			System.out.println("Respuesta modificarMesa(): " + consola);
+			resp = consola;
+			
+		} catch (Exception e) {
+			// TODO: handle exception
+			resp = "Error al cancelar reserva \n"
+					+ "Mensaje: " +e.getMessage();
+		}
+		
+		return resp;
+	}
 
 }

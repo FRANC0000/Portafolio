@@ -148,7 +148,7 @@ public class PlatoServiceImpl implements PlatoService{
 		int id_tipo_plato = Integer.parseInt(plato.get("id_tipo_plato").toString());
 		boolean eliminado = Boolean.parseBoolean(plato.get("eliminado").toString());
 		String resp = platoRepository.modificarPlato(id_plato, cantidad_personas_recomendadas, comentario,
-				descripcion_plato, disponibilidad, nombre_plato, precio_plato, id_tipo_plato, eliminado);
+				descripcion_plato, disponibilidad, nombre_plato, precio_plato, id_tipo_plato);
 		
 		return resp;
 	}

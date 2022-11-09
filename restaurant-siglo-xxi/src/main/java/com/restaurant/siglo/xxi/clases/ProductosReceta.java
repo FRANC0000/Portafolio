@@ -6,10 +6,20 @@ import javax.persistence.Embeddable;
 import javax.persistence.Embedded;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
 @Entity
 @Table (name="productos_receta")
+@NamedQueries(
+		{
+			@NamedQuery(
+					name = "obtenerProductosDeUnaReceta", 
+					query = " select p from ProductosReceta p "
+							+ " where p.productosRecetaId.id_receta = :id_receta "				
+			)
+		})
 public class ProductosReceta implements Serializable{
 
 	/**

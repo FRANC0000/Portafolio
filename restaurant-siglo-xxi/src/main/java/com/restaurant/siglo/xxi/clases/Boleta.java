@@ -20,6 +20,12 @@ import javax.persistence.Table;
 							+ "where b.cliente.rut_cliente = :id_cliente "
 							+ "and b.estadoBoleta.id_estado_boleta = 1 "
 							+ "order by 4 desc "
+			),
+			@NamedQuery(
+					name = "obtenerBoletasPorPagarEnCaja", 
+					query = " select b from Boleta b "
+							+ "where b.estadoBoleta.id_estado_boleta = 4 "
+							+ "order by 4 desc "
 			)
 		})
 public class Boleta {

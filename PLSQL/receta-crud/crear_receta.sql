@@ -17,7 +17,7 @@ BEGIN
   insert into receta(id_receta,comentario,complejidad,tiempo_preparacion,eliminado)
    VALUES (v_idReceta,v_comentario,v_complejidad,v_tiempoPreparacion,false);
 
-  RETURN 'Receta ¨'||v_idReceta||'¨ creada satisfactoriamente';
+  RETURN v_idReceta;
 
 END;
 $BODY$

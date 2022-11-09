@@ -29,7 +29,8 @@ export interface Receta {
     comentario : string,
     complejidad : string,
     tiempoPreparacion : number,
-    eliminado : boolean
+    eliminado : boolean,
+    productos ?: Producto
 }
 
 export interface TipoPlato {
@@ -42,4 +43,11 @@ export interface TipoProducto{
     id_tipo_producto : number,
     comentario : string,
     nombre_tipo_producto : string
+}
+
+export interface ProductosReceta{
+    id_producto : number,
+    nombre_producto : string,
+    cantidad : number,
+    comentario : string
 }

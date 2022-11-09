@@ -1,1 +1,14 @@
-<p>bodega works!</p>
+<div class="all-bodega" *ngIf="!resumenPago">
+    <div class="datos-sesion">
+        <div class="title-datos-sesion">
+            <label>MÓDULO BODEGA </label>
+        </div>
+        <div class="btn-reserva">
+            <!-- <button nz-button (click)="crearPlato()"> Crear plato </button> -->
+            <button nz-button nzType="danger" (click)="cerrarSesion()"> Cerrar sesión </button>
+        </div>
+    </div>
+    <div class="menu">
+        <div class="menu-header">
+            <h2>Inventario</h2>
+        </div>

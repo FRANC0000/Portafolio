@@ -8,14 +8,29 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.google.gson.JsonObject;
+import com.restaurant.siglo.xxi.clases.Producto;
+import com.restaurant.siglo.xxi.clases.ProductosReceta;
 import com.restaurant.siglo.xxi.clases.Receta;
+import com.restaurant.siglo.xxi.repository.ProductoRepository;
+import com.restaurant.siglo.xxi.repository.ProductosRecetaRepository;
 import com.restaurant.siglo.xxi.repository.RecetaRepository;
+import com.restaurant.siglo.xxi.service.ProductosRecetaService;
 import com.restaurant.siglo.xxi.service.RecetaService;
 
 @Service
 public class RecetaServiceImpl implements RecetaService{
 	@Autowired
 	RecetaRepository recetaRepository;
+	
+	@Autowired
+	ProductosRecetaService productosRecetaService;
+	
+	@Autowired
+	ProductosRecetaRepository productosRecetaRepository;
+	
+	@Autowired
+	ProductoRepository productoRepository;
 
 	@Override
 	public String modificarReceta(Map<String, Object> receta) {		
@@ -38,8 +53,12 @@ public class RecetaServiceImpl implements RecetaService{
             String comentario = receta.get("comentario").toString();
             String complejidad  = receta.get("complejidad").toString();
             int tiempoPreparacion = Integer.parseInt(receta.get("tiempoPreparacion").toString());
+            List<Map<String,Object>> productosEnReceta = (List<Map<String, Object>>) receta.get("productosEnReceta");
             
             resp = recetaRepository.crearReceta(comentario, complejidad,tiempoPreparacion); 
+            
+            productosRecetaService.crearProductosEnUnaReceta(Integer.parseInt(resp), productosEnReceta);
+            
         } catch (Exception e) {
             return "Error al crear receta. \n"
                     + "Mensaje de error: "+ e.getMessage();
@@ -102,6 +121,33 @@ public class RecetaServiceImpl implements RecetaService{
                     m.put("comentario", receta.getComentario());
                     m.put("complejidad", receta.getComplejidad());
                     m.put("tiempo_preparacion", receta.getTiempo_preparacion());
+                    
+                    List<ProductosReceta> productosEnUnaReceta = productosRecetaRepository.obtenerProductosDeUnaReceta(receta.getId_receta());
+                    
+                    JSONArray listaProductosEnUnaReceta = new JSONArray();
+                    for (ProductosReceta unProductoEnUnaReceta : productosEnUnaReceta) {
+						JSONObject unProducto = new JSONObject();
+						Producto prod = productoRepository.getById(unProductoEnUnaReceta.getProductosRecetaId().getId_producto());
+						JSONObject pro = new JSONObject();
+						pro.put("id_producto", prod.getId_producto());
+						pro.put("stock", prod.getStock_producto());
+						pro.put("valor_unitario", prod.getValor_unitario());
+						pro.put("comentario", prod.getComentario());
+						pro.put("fecha_ingreso", prod.getFecha_ingreso_producto());
+						pro.put("fecha_vencimiento", prod.getFecha_vencimiento());
+						pro.put("medida_producto", prod.getMedida_producto());
+						pro.put("nombre_imagen", prod.getNombre_archivo());
+						pro.put("nombre_producto", prod.getNombre_producto());
+						pro.put("id_tipo_producto", prod.getTipoProducto().getId_tipo_producto());
+						pro.put("nombre_tipo_producto", prod.getTipoProducto().getNombre_tipo_producto());
+						pro.put("comentario_tipo_producto", prod.getTipoProducto().getComentario());
+						
+						unProducto.put("producto", pro);
+						unProducto.put("cantidad", unProductoEnUnaReceta.getCantidad_producto());
+						unProducto.put("comentario", unProductoEnUnaReceta.getComentario());
+						listaProductosEnUnaReceta.put(unProducto);
+					}
+                    m.put("productosEnUnaReceta", listaProductosEnUnaReceta);
                     
                     listRecetas.put(m);
                 }

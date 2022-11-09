@@ -27,6 +27,12 @@ export class ClienteService {
     );
   }
 
+  public terminarEstancia(terminarEstancia : CancelarReserva) {
+    return this.http.post(
+      'http://localhost:8085/restaurantSXXI/rest-rsxii/reserva/terminarEstancia', terminarEstancia, { responseType : 'text'}
+    );
+  }
+
   public obtenerReservaActivaPorIdMesa(id_mesa) {
     return this.http.post(
       'http://localhost:8085/restaurantSXXI/rest-rsxii/reserva/obtenerReservaActivaPorIdMesa', id_mesa, {headers : this.headers}

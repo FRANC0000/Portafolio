@@ -3,6 +3,7 @@ import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms'
 import { Routes, RouterModule, ActivatedRoute, Router} from '@angular/router';
 import { NzNotificationService, NzTreeHigherOrderServiceToken } from 'ng-zorro-antd';
 import { NzMessageService } from 'ng-zorro-antd/message';
+import { TimeHolder } from 'ng-zorro-antd/time-picker/time-holder';
 import { Boleta, InstanciarBoleta, InstanciarPedido, Pedido, ProductoEnCarro } from 'src/app/interfaces/carrito-compras';
 import { Plato, Producto } from 'src/app/interfaces/cocina';
 import { CancelarReserva, Cliente, EstadoMesa, Mesa, Reserva, TipoMesa } from 'src/app/interfaces/mesa';
@@ -51,10 +52,12 @@ export class ClienteComponent implements OnInit {
   clicksEnCarrito : number = 0;
   puedePagar = false;
   visiblePedirCuenta = false;
-  propinaEnBoletaAPagar = false;
+  propinaEnBoletaAPagar = true;
   formaDePago = '1';
   mode = 'month';
   validateFormPagoTarjeta : FormGroup
+  resumenPago = false;
+  dirigirseACaja = false;
 
 
   ngOnInit() {
@@ -268,7 +271,7 @@ export class ClienteComponent implements OnInit {
 
   obtenerProductos(){
     this.clienteService.obtenerProductos().subscribe(resp=>{
-      this.listaProductos = resp['productos'].filter((item) => item.id_tipo_producto !== 2).sort(function(a,b){
+      this.listaProductos = resp['productos'].filter((item) => item.nombre_tipo_producto.toLowerCase() !== 'ingrediente').sort(function(a,b){
         if(a.disponibilidad < b.disponibilidad){
           return 1
         }
@@ -293,7 +296,23 @@ export class ClienteComponent implements OnInit {
       console.log('resp cancelarReserva', resp);
 
       if (resp.includes('cancelada con éxito')){
-        window.location.reload();
+        this.mesaReservada = false;
+      }
+      
+    })
+  }
+
+  terminarEstancia(){
+    console.log('aquí se terminará la estancia y se setea la mesa en estado limpieza');
+    const terminarEstancia : CancelarReserva = {
+      id_reserva : this.reservaObjectParam.id_reserva.toString()
+    }
+
+    this.clienteService.terminarEstancia(terminarEstancia).subscribe(resp =>{
+      console.log('resp terminarEstancia', resp);
+
+      if (resp.includes('cancelada con éxito')){
+        this.mesaReservada = false;
       }
       
     })
@@ -397,18 +416,44 @@ export class ClienteComponent implements OnInit {
     this.nzMessageService.success('Plato añadido')
   }
 
-  quitarPlatoDelCarro(plato){
-    console.log('eliminar plato', plato);
-    this.carritoDeCompras.findIndex(p => {
-      if (p.plato.id_plato === plato.id_plato){
-        if (p.cantidad > 0){
-          p.cantidad -= 1;
-        }
-      }
-    })
-    console.log('carritoDeCompras', this.carritoDeCompras);
+  quitarPlatoDelCarro(item){
+    console.log('eliminar plato', item);
+    if (item.cantidad > 1){
+      item.cantidad -= 1
+    }
+    else if (item.cantidad == 1){
+      this.eliminarPlatoDelCarro(item.plato);
+    }
     this.crearPedidoAIngresar();
     this.nzMessageService.success('Plato quitado')
+  }
+
+  eliminarPlatoDelCarro(plato){
+    const platoIndex = this.carritoDeCompras.findIndex(o => {
+      return o.plato == plato
+    })
+    
+    if (platoIndex !== -1){
+      this.carritoDeCompras.splice(platoIndex, 1)
+    }
+    console.log('carritoDeCompras', this.carritoDeCompras);
+    if (this.carritoDeCompras.length == 0){
+      this.cerrarDrawerCarritoCompras();
+    }
+  }
+
+  eliminarProductoDelCarro(producto){
+    const productoIndex = this.carritoDeCompras.findIndex(o => {
+      return o.producto == producto
+    })
+    
+    if (productoIndex !== -1){
+      this.carritoDeCompras.splice(productoIndex, 1)
+    }
+    console.log('carritoDeCompras', this.carritoDeCompras);
+    if (this.carritoDeCompras.length == 0){
+      this.cerrarDrawerCarritoCompras();
+    }
   }
 
   agregarProductoAlCarro(producto){
@@ -455,15 +500,15 @@ export class ClienteComponent implements OnInit {
     this.nzMessageService.success('Producto añadido')
   }
 
-  quitarProductoDelCarro(producto){
-    console.log('eliminar producto', producto);
-    this.carritoDeCompras.findIndex(p => {
-      if (p.producto.id_producto === producto.id_producto){
-        if (p.cantidad > 0){
-          p.cantidad -= 1;
-        }
-      }
-    })
+  quitarProductoDelCarro(item){
+    console.log('eliminar producto', item);
+
+    if (item.cantidad > 1){
+      item.cantidad -= 1
+    }
+    else if (item.cantidad == 1){
+      this.eliminarProductoDelCarro(item.producto);
+    }
     console.log('carritoDeCompras', this.carritoDeCompras);
     this.crearPedidoAIngresar();
     this.nzMessageService.success('Producto quitado')
@@ -483,7 +528,6 @@ export class ClienteComponent implements OnInit {
 
     this.boletaAIngresar.descuentos = 0;
     this.boletaAIngresar.horaEmision = this.now.toLocaleTimeString();
-    this.boletaAIngresar.idEstadoBoleta = 3
 
     if (this.boletaAIngresar.extras === -1){
       this.boletaAIngresar.extras = 0
@@ -505,15 +549,18 @@ export class ClienteComponent implements OnInit {
         this.nzNotificacionService.create(
           'success', 'Tarjeta válida', 'Pago aprobado'
         );
+        this.boletaAIngresar.idEstadoBoleta = 3
         console.log('boletaAIngresar', this.boletaAIngresar);
         const boleta = {
           "boleta": this.boletaAIngresar
         }
-        // this.clienteService.modificarBoleta(boleta).subscribe(resp =>{
-        //   console.log('resp modificarBoleta', resp);
-        //   this.cancelarReserva();
-        //   window.location.reload();
-        // })
+        this.clienteService.modificarBoleta(boleta).subscribe(resp =>{
+          console.log('resp modificarBoleta', resp);
+          this.visiblePedirCuenta = false;
+          this.mostrarDetalleBoletaFinal();
+          // this.cancelarReserva();
+          // window.location.reload();
+        })
       }
       else{
         this.nzNotificacionService.create(
@@ -523,15 +570,18 @@ export class ClienteComponent implements OnInit {
     }
     else if(this.boletaAIngresar.idTipoPago == 1){
       console.log('boletaAIngresar', this.boletaAIngresar);
+      this.boletaAIngresar.idEstadoBoleta = 4
       //PAGA EN EFECTIVO, FALTA PARTE DEL PROCESO DE PAGO EN CAJA
         const boleta = {
           "boleta": this.boletaAIngresar
         }
-        // this.clienteService.modificarBoleta(boleta).subscribe(resp =>{
-        //   console.log('resp modificarBoleta', resp);
-        //   this.cancelarReserva();
-        //   window.location.reload();
-        // })
+        this.clienteService.modificarBoleta(boleta).subscribe(resp =>{
+          console.log('resp modificarBoleta', resp);
+          this.visiblePedirCuenta = false;
+          this.mostrarDetalleBoletaFinal();
+          // this.cancelarReserva();
+          // window.location.reload();
+        })
     }
   }
 
@@ -625,6 +675,7 @@ export class ClienteComponent implements OnInit {
     this.visiblePedirCuenta = true;
     this.visibleBoleta = false;
     this.boletaAIngresar.total = this.boletaAIngresar.subtotal
+    this.onChangePropina();
 
     this.validateFormPagoTarjeta = new FormGroup({
       nombre_titular : new FormControl,
@@ -656,6 +707,20 @@ export class ClienteComponent implements OnInit {
       this.boletaAIngresar.extras = -1;
       this.boletaAIngresar.total = this.boletaAIngresar.subtotal
     }
+  }
+
+  mostrarDetalleBoletaFinal(){
+    if (this.formaDePago == '1'){
+      this.dirigirseACaja = true;
+    }
+    else if (this.formaDePago == '2' || this.formaDePago == '3'){
+      this.resumenPago = true;
+    }
+    setTimeout(() => {
+      this.resumenPago = false;
+      this.dirigirseACaja = false;
+      this.terminarEstancia();
+    }, 10000);
   }
 
 }

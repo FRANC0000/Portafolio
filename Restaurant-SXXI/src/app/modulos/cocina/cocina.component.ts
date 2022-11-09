@@ -6,8 +6,9 @@ import { RESOURCE_CACHE_PROVIDER } from '@angular/platform-browser-dynamic';
 import { Router } from '@angular/router';
 import { NzNotificationService } from 'ng-zorro-antd';
 import { Pedido, ProductoEnCarro } from 'src/app/interfaces/carrito-compras';
-import { Plato, Producto, Receta, TipoPlato, TipoProducto } from 'src/app/interfaces/cocina';
+import { Plato, Producto, ProductosReceta, Receta, TipoPlato, TipoProducto } from 'src/app/interfaces/cocina';
 import { isObject } from 'util';
+import { LoginComponent } from '../login/login.component';
 import { CocinaService } from './cocina.service';
 
 @Component({
@@ -32,7 +33,7 @@ export class CocinaComponent implements OnInit {
   recetaSelected;
   isVisibleCrearReceta :boolean = false;
   validateFormCrearReceta!: FormGroup;
-  listaRecetas : Receta[] = [];  
+  listaRecetas : Receta[] = [];
   validateFormModificarReceta!: FormGroup;
   isVisibleModificarReceta : boolean= false
   validateFormEliminarReceta!: FormGroup;
@@ -57,6 +58,10 @@ export class CocinaComponent implements OnInit {
   isVisibleCrearProducto = false;
   isVisibleModificarProducto = false;
   validateFormModificarProducto : FormGroup;
+  listProductosReceta : ProductosReceta[] = [];
+  validateFormCrearProductosReceta : FormGroup;
+  isVisibleCrearProductoReceta = false;
+  cantidadProductoReceta : number = 1;
 
   ngOnInit() {
     this.obtenerPlatos();
@@ -131,6 +136,13 @@ export class CocinaComponent implements OnInit {
       valor_unitario : new FormControl,
       tipo_producto : new FormControl
     })
+
+    this.validateFormCrearProductosReceta = new FormGroup({
+      id_producto : new FormControl,
+      nombre_producto : new FormControl,
+      cantidad : new FormControl,
+      comentario : new FormControl,
+    })
   }
 
   cerrarSesion(){
@@ -172,6 +184,7 @@ export class CocinaComponent implements OnInit {
 
   cerrarDrawerDetalleReceta(){
     this.visibleDetalleReceta = false;
+    this.isVisibleModificarReceta = false;
   }
 
   cerrarDrawerDetallePlato(){
@@ -213,25 +226,32 @@ export class CocinaComponent implements OnInit {
   guardarCrearReceta(){
     console.log('guardarCrearReceta');
     console.log('valid ', this.validateFormCrearReceta.valid);
-    if (this.validateFormCrearReceta.valid){
+    if (this.validateFormCrearReceta.valid && this.listProductosReceta.length > 0){
       console.log('formulario válido, usa el servicio de crear Receta');
       console.log('valores', this.validateFormCrearReceta.value);
+      console.log('listProductosReceta', this.listProductosReceta);
+      
       const unaReceta = {
         comentario: this.validateFormCrearReceta.value.comentario,
         complejidad : this.validateFormCrearReceta.value.complejidad,
-        tiempoPreparacion : this.validateFormCrearReceta.value.tiempo_preparacion
+        tiempoPreparacion : this.validateFormCrearReceta.value.tiempo_preparacion,
+        productosEnReceta : this.listProductosReceta
       }
       console.log('UnaReceta', unaReceta);
-      this.cocinaService.crearReceta(unaReceta).subscribe(resp => {
-        console.log('respuesta a mi servicio crearReceta', resp);
-        // this.obtenerRecetas();
-        this.isVisibleCrearReceta = false;
-      })
-      
+      // this.cocinaService.crearReceta(unaReceta).subscribe(resp => {
+      //   console.log('respuesta a mi servicio crearReceta', resp);
+      //   // this.obtenerRecetas();
+      //   this.isVisibleCrearReceta = false;
+      // })
+      this.notification.create(
+        'success', 'Receta creada', ''
+      )
     }
     else{
       console.log('formulario no válido.');
-      
+      this.notification.create(
+        'error', 'Formulario no válido', 'Debes rellenar correctamente el formulario'
+      )
     }
     
   }
@@ -243,31 +263,17 @@ export class CocinaComponent implements OnInit {
   obtenerRecetas(){
     this.listaRecetas = [];
     this.cocinaService.obtenerRecetas().subscribe(resp => {
-      // console.log('resp', resp);
-      for (let unaReceta of resp["listado_recetas"]){
-        // console.log('unaReceta', unareceta);
-        const receta : Receta = {
-          id_receta : unaReceta.id_receta,
-          comentario : unaReceta.comentario,
-          complejidad : unaReceta.complejidad,
-          tiempoPreparacion : unaReceta.tiempo_preparacion,
-          eliminado : unaReceta.eliminado
-          
-        }
-        // console.log('plato', plato);
-        this.listaRecetas.push(receta);
-        console.log('listaRecetas', this.listaRecetas);
-        this.listaRecetas.sort(function(a,b){
-          if(a.id_receta < b.id_receta){
-            return -1
-          }
-          if (a.id_receta > b.id_receta){
-            return 1
-          }
-          return 0;
-        })
-      }
 
+      this.listaRecetas = resp["listado_recetas"].sort(function(a,b){
+            if(a.id_receta < b.id_receta){
+              return -1
+            }
+            if (a.id_receta > b.id_receta){
+              return 1
+            }
+            return 0;
+          })
+      console.log('listaRecetas', this.listaRecetas);
     })
   }
 
@@ -277,6 +283,9 @@ export class CocinaComponent implements OnInit {
     if (this.validateFormModificarReceta.valid){
       console.log('formulario válido, usa el servicio de modificar Receta');
       console.log('valores', this.validateFormModificarReceta.value);
+      if (this.validateFormModificarReceta.value.comentario == null){
+        this.validateFormModificarReceta.value.comentario = '';
+      }
       const unaReceta = {
         id_receta : id_receta,
         comentario: this.validateFormModificarReceta.value.comentario,
@@ -310,7 +319,7 @@ export class CocinaComponent implements OnInit {
     this.validateFormModificarReceta = this.fb.group({
       comentario :[receta.comentario, [Validators.required]],
       complejidad :[receta.complejidad, [Validators.required]],
-      tiempo_preparacion :[receta.tiempoPreparacion, [Validators.required]],
+      tiempo_preparacion :[receta.tiempoPreparacion.toString(), [Validators.required]],
     })
   }
   
@@ -1005,6 +1014,7 @@ export class CocinaComponent implements OnInit {
         this.notification.create(
           'success', 'Formulario válido', ''
         )
+        this.cerrarCrearProducto();
       })
     }
     else{
@@ -1116,5 +1126,106 @@ export class CocinaComponent implements OnInit {
         }, 1500);
       }
     })
+  }
+  
+  mostrarModalAgregarIngrediente(producto){
+    this.validateFormCrearProductosReceta = this.fb.group({
+      id_producto : [producto.id_producto, [Validators.required]],
+      nombre_producto : [producto.nombre_producto, [Validators.required]],
+      cantidad: [this.cantidadProductoReceta, [Validators.required, Validators.max(producto.stock_producto)]],
+      comentario : [null],
+    })
+    this.cantidadProductoReceta = 1;
+    this.isVisibleCrearProductoReceta = true;
+  }
+
+  cancelarCrearProductoReceta(){
+    this.validateFormCrearProductosReceta.reset();
+    this.isVisibleCrearProductoReceta = false;
+    this.cantidadProductoReceta = 1;
+  }
+
+  guardarProductoEnReceta(){
+    if(this.validateFormCrearProductosReceta.valid){
+      // console.log('valores', this.validateFormCrearProductosReceta.value);
+      if (this.validateFormCrearProductosReceta.value.comentario == null){
+        this.validateFormCrearProductosReceta.value.comentario = '';
+      }
+      this.validateFormCrearProductosReceta.value.cantidad = this.cantidadProductoReceta;
+
+      const productoEnReceta : ProductosReceta = {
+        id_producto : this.validateFormCrearProductosReceta.value.id_producto,
+        nombre_producto : this.validateFormCrearProductosReceta.value.nombre_producto,
+        cantidad : this.validateFormCrearProductosReceta.value.cantidad,
+        comentario : this.validateFormCrearProductosReceta.value.comentario
+      }
+      
+      let existe = this.listProductosReceta.some(p => {
+        return p.id_producto === productoEnReceta.id_producto
+      })
+
+      console.log('existe', existe);
+
+      if(existe){
+        let indexProd = this.listProductosReceta.findIndex(p =>{
+          return p.id_producto === productoEnReceta.id_producto
+        })
+        this.listProductosReceta.splice(indexProd, 1);
+        this.listProductosReceta.push(productoEnReceta);
+      }
+      else{
+        this.listProductosReceta.push(productoEnReceta);
+      }
+      console.log('listProductosReceta',this.listProductosReceta);
+      
+      this.notification.create(
+        'success', 'Formulario válido', ''
+      )
+
+      document.getElementById(this.validateFormCrearProductosReceta.value.id_producto).setAttribute('disabled', '');
+      
+      this.cancelarCrearProductoReceta();
+    }
+    else{
+      console.log('controles', this.validateFormCrearProductosReceta.controls);
+      this.notification.create(
+        'error', 'Formulario inválido', 'Debes ingresar correctamente los datos'
+      )
+    }
+  }
+
+  quitarCantidadProductoReceta(){
+    // console.log('quitarCantidadProductoReceta');
+    if(this.cantidadProductoReceta > 1){
+      this.cantidadProductoReceta -= 1;
+    }
+    // console.log(this.cantidadProductoReceta);
+  }
+
+  agregarCantidadProductoReceta(){
+    // console.log('agregarCantidadProductoReceta');
+    this.cantidadProductoReceta += 1;
+    // console.log(this.cantidadProductoReceta);
+  }
+
+  quitarIngredienteDeReceta(prod){
+    let indexProd = this.listProductosReceta.findIndex(p =>{
+      return p.id_producto === prod.id_producto
+    })
+    this.listProductosReceta.splice(indexProd, 1);
+    document.getElementById(prod.id_producto).removeAttribute('disabled');
+    console.log('listProductosReceta',this.listProductosReceta);
+  }
+
+  modificarIngredienteDeReceta(prod){
+    console.log('modificarIngredienteDeReceta');
+    this.cantidadProductoReceta = prod.cantidad;
+    this.validateFormCrearProductosReceta = this.fb.group({
+      id_producto : [prod.id_producto, [Validators.required]],
+      nombre_producto : [prod.nombre_producto, [Validators.required]],
+      cantidad: [this.cantidadProductoReceta, [Validators.required]],
+      comentario : [prod.comentario],
+    })
+    this.isVisibleCrearProductoReceta = true;
   }
 }

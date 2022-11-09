@@ -1,4 +1,4 @@
-<div *ngIf="mesaReservada == true" class="all-cliente">
+<div *ngIf="mesaReservada == true && resumenPago == false && dirigirseACaja == false" class="all-cliente">
   <div class="datos-reserva">
     <div class="title-datos-reserva">
       <label>Mesa #{{idMesaParam}}</label>
@@ -40,7 +40,6 @@
                   <p>{{plato.comentario}}</p>
                 </div>
                 <div>
-                  <label for="" style="margin-right: 10px;">Cantidad agregada: X</label>
                   <button nz-button (click)="agregarPlatoAlCarro(plato)" class="agregar-item"> Añadir </button>
                   <button nz-button (click)="verDetallePlato(plato)"> Ver detalle </button>
                 </div>
@@ -88,7 +87,6 @@
                   <p>{{producto.comentario}}</p>
                 </div>
                 <div>
-                  <label for="" style="margin-right: 10px;">Cantidad agregada: X</label>
                   <button nz-button (click)="agregarProductoAlCarro(producto)" class="agregar-item"> Añadir </button>
                   <!-- <button nz-button (click)="verDetallePlato(producto)"> Ver detalle </button> -->
                 </div>
@@ -203,7 +201,12 @@
               <div class="plato-content">
                 <h3 style="margin-bottom: 5px">${{item.plato.precio_plato}} (x{{item.cantidad}})</h3>
                 <button nz-button (click)="agregarPlatoAlCarro(item.plato)" class="agregar-item"> Añadir </button>
-                <button nz-button (click)="quitarPlatoDelCarro(item.plato)"> Quitar </button>
+                <button nz-button *ngIf="item.cantidad > 1" (click)="quitarPlatoDelCarro(item)"> Quitar </button>
+                <button nz-button *ngIf="item.cantidad == 1" nzType="danger"
+                nz-popconfirm
+                nzPopconfirmTitle="¿Quieres eliminar este artículo?"
+                nzPopconfirmPlacement="top"
+                (nzOnConfirm)="quitarPlatoDelCarro(item)"> Eliminar </button>
               </div>
             </div>
           </div>
@@ -226,7 +229,12 @@
               <div class="plato-content">
                 <h3 style="margin-bottom: 5px">${{item.producto.valor_unitario}} (x{{item.cantidad}})</h3>
                 <button nz-button (click)="agregarProductoAlCarro(item.producto)" class="agregar-item"> Añadir </button>
-                <button nz-button (click)="quitarProductoDelCarro(item.producto)"> Quitar </button>
+                <button nz-button *ngIf="item.cantidad > 1" (click)="quitarProductoDelCarro(item)"> Quitar </button>
+                <button nz-button *ngIf="item.cantidad == 1" nzType="danger"
+                nz-popconfirm
+                nzPopconfirmTitle="¿Quieres eliminar este artículo?"
+                nzPopconfirmPlacement="top"
+                (nzOnConfirm)="quitarPlatoDelCarro(item)"> Eliminar </button>
               </div>
             </div>
           </div>
@@ -451,4 +459,82 @@
         <button nz-button>Buy Again</button>
       </div> -->
     </nz-result>
+</div>
+
+<div *ngIf="resumenPago">
+  <nz-result
+    nzTitle="Resumen del pago"
+    nzStatus="success"
+    nzSubTitle="Boleta #{{boletaAIngresar?.id_boleta}}"
+  >    
+    <div nz-result-content>
+      <div class="desc">
+        <h2 nz-title style="text-align: center;">Detalle de la boleta</h2>
+        <div>
+          <nz-descriptions nzBordered>
+            <nz-descriptions-item nzTitle="RUT cliente">{{boletaAIngresar?.rutCliente}}</nz-descriptions-item>
+          </nz-descriptions>
+          <nz-descriptions nzBordered>
+            <nz-descriptions-item nzTitle="Fecha de atención">{{boletaAIngresar?.fechaAtencion}}</nz-descriptions-item>
+          </nz-descriptions>
+          <nz-descriptions nzBordered>
+            <nz-descriptions-item nzTitle="Hora de atención">{{boletaAIngresar?.horaAtencion}}</nz-descriptions-item>
+          </nz-descriptions>
+          <nz-descriptions nzBordered>
+            <nz-descriptions-item nzTitle="Hora de emisión de boleta">{{boletaAIngresar?.horaEmision}}</nz-descriptions-item>
+          </nz-descriptions>
+          <nz-descriptions nzBordered>
+            <nz-descriptions-item nzTitle="Subtotal">{{boletaAIngresar?.subtotal | currency : 'CLP'}}</nz-descriptions-item>
+            <nz-descriptions-item nzTitle="Descuentos">{{boletaAIngresar?.descuentos | currency : 'CLP'}}</nz-descriptions-item>
+            <nz-descriptions-item nzTitle="Propina">{{boletaAIngresar?.extras | currency : 'CLP'}}</nz-descriptions-item>
+          </nz-descriptions>
+          <nz-descriptions nzBordered>
+            <nz-descriptions-item nzTitle="Total a pagar">{{boletaAIngresar?.total | currency : 'CLP'}}</nz-descriptions-item>
+          </nz-descriptions>
+        </div>
+      </div>
+    </div>
+    <div nz-result-extra>
+      <button nz-button nzType="danger">Cerrar</button>
+    </div>
+  </nz-result>
+</div>
+
+<div *ngIf="dirigirseACaja">
+  <nz-result
+    nzTitle="Resumen de la compra"
+    nzStatus="success"
+    nzSubTitle="Boleta #{{boletaAIngresar?.id_boleta}}"
+  >    
+    <div nz-result-content>
+      <div class="desc">
+        <h2 nz-title style="text-align: center;">Finalice su compra pagando en caja ${{boletaAIngresar?.total | currency : 'CLP'}}</h2>
+        <div>
+          <nz-descriptions nzBordered>
+            <nz-descriptions-item nzTitle="RUT cliente">{{boletaAIngresar?.rutCliente}}</nz-descriptions-item>
+          </nz-descriptions>
+          <nz-descriptions nzBordered>
+            <nz-descriptions-item nzTitle="Fecha de atención">{{boletaAIngresar?.fechaAtencion}}</nz-descriptions-item>
+          </nz-descriptions>
+          <nz-descriptions nzBordered>
+            <nz-descriptions-item nzTitle="Hora de atención">{{boletaAIngresar?.horaAtencion}}</nz-descriptions-item>
+          </nz-descriptions>
+          <nz-descriptions nzBordered>
+            <nz-descriptions-item nzTitle="Hora de emisión de boleta">{{boletaAIngresar?.horaEmision}}</nz-descriptions-item>
+          </nz-descriptions>
+          <nz-descriptions nzBordered>
+            <nz-descriptions-item nzTitle="Subtotal">{{boletaAIngresar?.subtotal | currency : 'CLP'}}</nz-descriptions-item>
+            <nz-descriptions-item nzTitle="Descuentos">{{boletaAIngresar?.descuentos | currency : 'CLP'}}</nz-descriptions-item>
+            <nz-descriptions-item nzTitle="Propina">{{boletaAIngresar?.extras | currency : 'CLP'}}</nz-descriptions-item>
+          </nz-descriptions>
+          <nz-descriptions nzBordered>
+            <nz-descriptions-item nzTitle="Total a pagar">{{boletaAIngresar?.total | currency : 'CLP'}}</nz-descriptions-item>
+          </nz-descriptions>
+        </div>
+      </div>
+    </div>
+    <div nz-result-extra>
+      <button nz-button nzType="danger">Cerrar</button>
+    </div>
+  </nz-result>
 </div>

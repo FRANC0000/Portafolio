@@ -44,6 +44,8 @@ import { NzUploadModule } from 'ng-zorro-antd/upload';
 import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
 import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
 import { NzRadioModule } from 'ng-zorro-antd/radio';
+import { NzTransferModule } from 'ng-zorro-antd/transfer';
+import { NzTableModule } from 'ng-zorro-antd/table';
 
 registerLocaleData(es);
 
@@ -90,7 +92,9 @@ registerLocaleData(es);
     NzUploadModule,
     NzDatePickerModule,
     NzCheckboxModule,
-    NzRadioModule
+    NzRadioModule,
+    NzTransferModule,
+    NzTableModule
   ],
   providers: [{ provide: NZ_I18N, useValue: es_ES }],
   bootstrap: [AppComponent]

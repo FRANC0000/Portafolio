@@ -471,4 +471,15 @@ export class MesasComponent implements OnInit, OnDestroy{
   cerrarActualizarMesa(){
     this.isVisibleActualizarMesa = false;
   }
+
+  disponibilizarMesa(id_mesa){
+    const mesa = {
+      "id_mesa" : id_mesa
+    }
+
+    this.mesasService.disponibilizarMesa(mesa).subscribe(resp=>{
+      console.log('resp', resp);
+      this.obtenerMesas();
+    })
+  }
 }

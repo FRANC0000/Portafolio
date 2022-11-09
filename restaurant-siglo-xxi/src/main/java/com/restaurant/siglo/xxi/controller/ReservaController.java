@@ -60,5 +60,33 @@ public class ReservaController {
 		
 		return resp;	
 	}
+	
+	@RequestMapping(value="/terminarEstancia")
+	public String terminarEstancia(@RequestBody Map<String, Object> terminarEstancia) {
+		
+		String resp = "";
+		try {
+			resp = reservaService.terminarEstancia(terminarEstancia);
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return resp;	
+	}
+	
+	@RequestMapping(value="/disponibilizarMesa")
+	public String disponibilizarMesa(@RequestBody Map<String, Object> disponibilizarMesa) {
+		
+		String resp = "";
+		try {
+			resp = reservaService.disponibilizarMesa(disponibilizarMesa);
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return resp;	
+	}
 
 }

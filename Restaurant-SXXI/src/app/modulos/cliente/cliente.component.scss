@@ -364,3 +364,14 @@
         opacity: 1;
     }
 }
+
+::ng-deep .ant-result-content {
+    margin: 24px 300px;
+    padding: 24px 40px;
+    background-color: #fafafa;
+}
+
+::ng-deep .ant-descriptions-item-label {
+    background-color: #fafafa;
+    width: 300px;
+}

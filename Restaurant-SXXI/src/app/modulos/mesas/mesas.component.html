@@ -30,7 +30,7 @@
                     Tipo de mesa: {{mesa.nombre_tipo_mesa}}
                 </div>
             </div>
-            <div class="card-limpieza" *ngIf="mesa.nombre_estado_mesa == 'Limpieza'">
+            <div class="card-limpieza" *ngIf="mesa.nombre_estado_mesa == 'Limpieza'" (click)="disponibilizarMesa(mesa.id_mesa)">
                 <div class="title-card">
                     Mesa nro. {{mesa.id_mesa}}
                 </div>

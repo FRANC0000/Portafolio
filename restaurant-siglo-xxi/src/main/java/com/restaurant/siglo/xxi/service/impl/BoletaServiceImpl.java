@@ -155,5 +155,49 @@ public class BoletaServiceImpl implements BoletaService{
 		}		
 		return resp;
 	}
+	
+	@Override
+	public String obtenerBoletasPorPagarEnCaja(){
+		
+		String resp = "";
+		JSONObject objetoResp = new JSONObject();
+		SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+		JSONArray arrayResp = new JSONArray();
+		try {			
+			List<Boleta> listBoletas = boletaRepository.obtenerBoletasPorPagarEnCaja();
+			
+			for (Boleta boleta : listBoletas) {
+				JSONObject unaBoleta= new JSONObject();			
+				Date fecha_date = boleta.getFecha_atencion(); 
+				String fecha_atencion_formateada =  formatter.format(fecha_date);
+				unaBoleta.put("id_boleta", boleta.getId_boleta());
+				unaBoleta.put("id_cliente", boleta.getCliente().getRut_cliente());
+				unaBoleta.put("id_usuario", boleta.getUsuario().getId_usuario());
+				unaBoleta.put("id_tipo_pago", boleta.getTipoPago().getId_tipo_pago());
+				unaBoleta.put("nombre_tipo_pago", boleta.getTipoPago().getNombre_tipo_pago());
+				unaBoleta.put("fecha_atencion", fecha_atencion_formateada);
+				unaBoleta.put("hora_atencion", boleta.getHora_atencion());
+				unaBoleta.put("hora_emision", boleta.getHora_emision());
+				unaBoleta.put("subtotal", boleta.getSubtotal());
+				unaBoleta.put("total", boleta.getTotal());
+				unaBoleta.put("descuentos", boleta.getDescuentos());
+				unaBoleta.put("extras", boleta.getExtras());
+				unaBoleta.put("id_estado_boleta", boleta.getEstadoBoleta().getId_estado_boleta());
+				unaBoleta.put("nombre_estado_boleta", boleta.getEstadoBoleta().getNombre_estado_boleta());
+				arrayResp.put(unaBoleta);				
+			}
+			objetoResp.put("boleta", arrayResp);
+			resp = objetoResp.toString();
+			
+		} catch (Exception e) {
+			// TODO: handle exception
+			resp = "Error al obtener boleta \n"
+					+ "Mensaje: "+ e.getMessage();
+		}
+		
+		
+		
+		return resp;
+	}
 
 }

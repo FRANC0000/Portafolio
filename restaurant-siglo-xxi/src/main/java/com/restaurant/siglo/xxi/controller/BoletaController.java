@@ -60,5 +60,13 @@ public class BoletaController {
 		
 		return resp;	
 	}
-
+	
+	@RequestMapping(value="/obtenerBoletasPorPagarEnCaja")
+	public String obtenerBoletasPorPagarEnCaja() {
+		
+		String resp = "";
+		resp = boletaService.obtenerBoletasPorPagarEnCaja();
+		
+		return resp;	
+	}
 }

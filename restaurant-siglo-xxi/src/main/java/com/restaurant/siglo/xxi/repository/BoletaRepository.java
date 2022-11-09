@@ -44,4 +44,7 @@ public interface BoletaRepository extends JpaRepository<Boleta, Integer>{
 			@Param("id_estado_boleta") int id_estado_boleta,	
 			@Param("id_tipo_pago") int id_tipo_pago,
 			@Param("id_usuario") String id_usuario);
+	
+	@Query(name = "obtenerBoletasPorPagarEnCaja", nativeQuery = true)
+	List<Boleta> obtenerBoletasPorPagarEnCaja();
 }
