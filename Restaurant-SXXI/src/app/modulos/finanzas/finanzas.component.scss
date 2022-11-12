@@ -66,6 +66,11 @@
     color: gray;
 }
 
+::ng-deep .ant-result{
+    background: white;
+    height: 100vh;
+}
+
 ::ng-deep .ant-result-content {
     margin: 24px 300px;
     padding: 24px 40px;

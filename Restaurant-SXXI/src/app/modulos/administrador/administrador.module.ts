@@ -19,7 +19,7 @@ import { NzPopconfirmModule } from 'ng-zorro-antd/popconfirm';
 
 
 @NgModule({
-  declarations: [AdministradorComponent],
+  declarations: [],
   imports: [
     CommonModule,
     AdministradorRoutingModule,

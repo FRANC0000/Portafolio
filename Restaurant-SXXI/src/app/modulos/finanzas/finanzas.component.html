@@ -1,134 +1,168 @@
-<div class="all-finanzas" *ngIf="!resumenPago">
-    <div class="datos-sesion">
-        <div class="title-datos-sesion">
-            <label>MÓDULO FINANZAS </label>
+<div class="all-finanzas" *ngIf="rolUsuarioLogeado == 5 || rolUsuarioLogeado == 1 ">
+    <div *ngIf="!resumenPago">
+        <div class="datos-sesion">
+            <div class="title-datos-sesion">
+                <label>MÓDULO FINANZAS </label>
+            </div>
+            <div class="btn-reserva">
+                <!-- <button nz-button (click)="crearPlato()"> Crear plato </button> -->
+                <button nz-button nzType="danger" (click)="cerrarSesion()"> Cerrar sesión </button>
+            </div>
         </div>
-        <div class="btn-reserva">
-            <!-- <button nz-button (click)="crearPlato()"> Crear plato </button> -->
-            <button nz-button nzType="danger" (click)="cerrarSesion()"> Cerrar sesión </button>
-        </div>
-    </div>
-    <div class="menu">
-        <div class="menu-header">
-            <h2>Pagos en caja</h2>
-        </div>
-        <div>
-            <div class="pedidos-row" *ngIf="boletasPorPagarEnCaja.length > 0">
-                <div *ngFor="let boleta of boletasPorPagarEnCaja">
-                    <nz-card style="width:300px; margin: 0px 2px; margin-bottom: 10px;" nzTitle="Boleta #{{boleta.id_boleta}}">
-                        <div>
-                            <label for=""> RUT cliente: {{boleta.id_cliente}}</label>
+        <div class="menu">
+            <div class="menu-header">
+                <h2>Pagos en caja</h2>
+            </div>
+            <div>
+                <div class="pedidos-row" *ngIf="boletasPorPagarEnCaja.length > 0">
+                    <div *ngFor="let boleta of boletasPorPagarEnCaja">
+                        <nz-card style="width:300px; margin: 0px 2px; margin-bottom: 10px;"
+                            nzTitle="Boleta #{{boleta.id_boleta}}">
+                            <div>
+                                <label for=""> RUT cliente: {{boleta.id_cliente}}</label>
+                                <br>
+                                <label for=""> Fecha de atención: {{boleta.fecha_atencion}}</label>
+                                <br>
+                                <label for=""> Hora: {{boleta.hora_atencion}}</label>
+                                <br>
+                                <label for=""> Total a pagar: ${{boleta.total | currency: 'CLP'}}</label>
+                            </div>
                             <br>
-                            <label for=""> Fecha de atención: {{boleta.fecha_atencion}}</label>
-                            <br>
-                            <label for=""> Hora: {{boleta.hora_atencion}}</label>
-                            <br>
-                            <label for=""> Total a pagar: ${{boleta.total | currency: 'CLP'}}</label>
-                        </div>
-                        <br>
-                        <div class="botones-pedidos">
-                            <button nz-button (click)="abrirCaja(boleta)"
-                             style="width: 100%;">
-                                Abrir caja
-                            </button>
-                        </div>
-                    </nz-card>
+                            <div class="botones-pedidos">
+                                <button nz-button (click)="abrirCaja(boleta)" style="width: 100%;">
+                                    Abrir caja
+                                </button>
+                            </div>
+                        </nz-card>
+                    </div>
+                </div>
+                <div class="pedidos-row sin-pedidos" *ngIf="boletasPorPagarEnCaja.length == 0">
+                    No hay boletas a pagar en caja.
                 </div>
             </div>
-            <div class="pedidos-row sin-pedidos" *ngIf="boletasPorPagarEnCaja.length == 0">
-                No hay boletas a pagar en caja.
-            </div>
         </div>
-    </div>
-
-    <nz-modal [(nzVisible)]="isVisibleAbrirCaja" nzTitle="Caja" (nzOnCancel)="cancelarAbrirCaja()" (nzOnOk)="okAbrirCaja()">
-        <ng-container>
-            <div>
-                <h4>Total a pagar: ${{boletaAPagarSelected?.total}}</h4>
-            </div>
-            <br>
-            <div>
-                <h4 nz-title>Pedidos de esta boleta: </h4>
-                <nz-collapse nzAccordion>
-                    <nz-collapse-panel *ngFor="let item of pedidoEnBoleta; let i = index;"
-                        nzHeader="Pedido #{{item.idPedido}} | ${{item.subtotal | currency:'CLP'}}">
-                        <div class="pedido-content-row">
-                            <div class="pedido-info">
-                                Fecha de ingreso : {{item.fechaIngreso | date: 'dd/MM/yyyy HH:mm:ss'}} |
-                                {{item.nombreEstadoInstancia}}
-                                <br><br>
-                                <h4 nz-title> Productos de este pedido: </h4>
-                            </div>
-                            <div *ngFor="let itemDelCarro of item.carritoProductos; let i = index"
-                                class="carrito-de-un-pedido">
-                                <h5 *ngIf="itemDelCarro.esPlato == true">
-                                    <label for="" class="itemDelCarro-nombre">{{itemDelCarro.plato?.nombre_plato |
-                                        uppercase}} </label>
-                                    <label for="" class="itemDelCarro-valor-cantidad">${{itemDelCarro.valorUnitario |
-                                        currency:'CLP'}} (x{{itemDelCarro.cantidad}})</label>
-                                </h5>
-                                <h5 *ngIf="itemDelCarro.esProducto == true">
-                                    <label for="" class="itemDelCarro-nombre">{{itemDelCarro.producto?.nombre_producto |
-                                        uppercase}} </label>
-                                    <label for="" class="itemDelCarro-valor-cantidad">${{itemDelCarro.valorUnitario |
-                                        currency:'CLP'}} (x{{itemDelCarro.cantidad}})</label>
-                                </h5>
-                            </div>
-                        </div>
-                    </nz-collapse-panel>
-                </nz-collapse>
-            </div>
-            <br>
-            <div>
-                <h4 nz-title>Ingresar pago en efectivo</h4>
+        
+        <nz-modal [(nzVisible)]="isVisibleAbrirCaja" nzTitle="Caja" (nzOnCancel)="cancelarAbrirCaja()" (nzOnOk)="okAbrirCaja()">
+            <ng-container>
                 <div>
-                    <input type="number" nz-input placeholder="Paga con..." [(ngModel)]="dineroConElQuePago"
-                        (ngModelChange)="onChangeDineroPago()">
-                    <br>
-                    <h4 nz-title>Total a pagar: ${{boletaAPagarSelected?.total}}</h4>
-                    <h4 nz-title>Por pagar: ${{dineroPorPagar}}</h4>
-                    <h4 nz-title>Vuelto: ${{vueltoAEntregar}}</h4>
+                    <h4>Total a pagar: ${{boletaAPagarSelected?.total}}</h4>
+                </div>
+                <br>
+                <div>
+                    <h4 nz-title>Pedidos de esta boleta: </h4>
+                    <nz-collapse nzAccordion>
+                        <nz-collapse-panel *ngFor="let item of pedidoEnBoleta; let i = index;"
+                            nzHeader="Pedido #{{item.idPedido}} | ${{item.subtotal | currency:'CLP'}}">
+                            <div class="pedido-content-row">
+                                <div class="pedido-info">
+                                    Fecha de ingreso : {{item.fechaIngreso | date: 'dd/MM/yyyy HH:mm:ss'}} |
+                                    {{item.nombreEstadoInstancia}}
+                                    <br><br>
+                                    <h4 nz-title> Productos de este pedido: </h4>
+                                </div>
+                                <div *ngFor="let itemDelCarro of item.carritoProductos; let i = index"
+                                    class="carrito-de-un-pedido">
+                                    <h5 *ngIf="itemDelCarro.esPlato == true">
+                                        <label for="" class="itemDelCarro-nombre">{{itemDelCarro.plato?.nombre_plato |
+                                            uppercase}} </label>
+                                        <label for="" class="itemDelCarro-valor-cantidad">${{itemDelCarro.valorUnitario |
+                                            currency:'CLP'}} (x{{itemDelCarro.cantidad}})</label>
+                                    </h5>
+                                    <h5 *ngIf="itemDelCarro.esProducto == true">
+                                        <label for="" class="itemDelCarro-nombre">{{itemDelCarro.producto?.nombre_producto |
+                                            uppercase}} </label>
+                                        <label for="" class="itemDelCarro-valor-cantidad">${{itemDelCarro.valorUnitario |
+                                            currency:'CLP'}} (x{{itemDelCarro.cantidad}})</label>
+                                    </h5>
+                                </div>
+                            </div>
+                        </nz-collapse-panel>
+                    </nz-collapse>
+                </div>
+                <br>
+                <div>
+                    <h4 nz-title>Ingresar pago en efectivo</h4>
+                    <div>
+                        <input type="number" nz-input placeholder="Paga con..." [(ngModel)]="dineroConElQuePago"
+                            (ngModelChange)="onChangeDineroPago()">
+                        <br>
+                        <h4 nz-title>Total a pagar: ${{boletaAPagarSelected?.total}}</h4>
+                        <h4 nz-title>Por pagar: ${{dineroPorPagar}}</h4>
+                        <h4 nz-title>Vuelto: ${{vueltoAEntregar}}</h4>
+                    </div>
+                </div>
+            </ng-container>
+        </nz-modal>
+    </div>
+
+    <div *ngIf="resumenPago">
+        <nz-result nzTitle="Resumen del pago" nzStatus="success" nzSubTitle="Boleta #{{boletaAPagarSelected?.id_boleta}}">
+            <div nz-result-content>
+                <div class="desc">
+                    <h2 nz-title style="text-align: center;">Detalle de la boleta</h2>
+                    <div>
+                        <nz-descriptions nzBordered>
+                            <nz-descriptions-item nzTitle="RUT cliente">{{boletaAPagarSelected?.rutCliente}}
+                            </nz-descriptions-item>
+                        </nz-descriptions>
+                        <nz-descriptions nzBordered>
+                            <nz-descriptions-item nzTitle="Fecha de atención">{{boletaAPagarSelected?.fechaAtencion}}
+                            </nz-descriptions-item>
+                        </nz-descriptions>
+                        <nz-descriptions nzBordered>
+                            <nz-descriptions-item nzTitle="Hora de atención">{{boletaAPagarSelected?.horaAtencion}}
+                            </nz-descriptions-item>
+                        </nz-descriptions>
+                        <nz-descriptions nzBordered>
+                            <nz-descriptions-item nzTitle="Hora de emisión de boleta">{{boletaAPagarSelected?.horaEmision}}
+                            </nz-descriptions-item>
+                        </nz-descriptions>
+                        <nz-descriptions nzBordered>
+                            <nz-descriptions-item nzTitle="Subtotal">{{boletaAPagarSelected?.subtotal | currency : 'CLP'}}
+                            </nz-descriptions-item>
+                            <nz-descriptions-item nzTitle="Descuentos">{{boletaAPagarSelected?.descuentos | currency :
+                                'CLP'}}</nz-descriptions-item>
+                            <nz-descriptions-item nzTitle="Propina">{{boletaAPagarSelected?.extras | currency : 'CLP'}}
+                            </nz-descriptions-item>
+                        </nz-descriptions>
+                        <nz-descriptions nzBordered>
+                            <nz-descriptions-item nzTitle="Total a pagar">{{boletaAPagarSelected?.total | currency : 'CLP'}}
+                            </nz-descriptions-item>
+                        </nz-descriptions>
+                    </div>
                 </div>
             </div>
-        </ng-container>
-    </nz-modal>
+            <div nz-result-extra>
+                <button nz-button nzType="danger">Cerrar</button>
+            </div>
+        </nz-result>
+    </div>
 </div>
 
-<div *ngIf="resumenPago">
+<div *ngIf="rolUsuarioLogeado != 5 && rolUsuarioLogeado != 1">
     <nz-result
-    nzTitle="Resumen del pago"
-    nzStatus="success"
-    nzSubTitle="Boleta #{{boletaAPagarSelected?.id_boleta}}"
+      nzTitle="No posees los permisos necesarios"
+      nzStatus="403"
+      nzSubTitle="No puedes acceder a esta pestaña"
     >    
-    <div nz-result-content>
+      <!-- <div nz-result-content>
         <div class="desc">
-        <h2 nz-title style="text-align: center;">Detalle de la boleta</h2>
-        <div>
-            <nz-descriptions nzBordered>
-            <nz-descriptions-item nzTitle="RUT cliente">{{boletaAPagarSelected?.rutCliente}}</nz-descriptions-item>
-            </nz-descriptions>
-            <nz-descriptions nzBordered>
-            <nz-descriptions-item nzTitle="Fecha de atención">{{boletaAPagarSelected?.fechaAtencion}}</nz-descriptions-item>
-            </nz-descriptions>
-            <nz-descriptions nzBordered>
-            <nz-descriptions-item nzTitle="Hora de atención">{{boletaAPagarSelected?.horaAtencion}}</nz-descriptions-item>
-            </nz-descriptions>
-            <nz-descriptions nzBordered>
-            <nz-descriptions-item nzTitle="Hora de emisión de boleta">{{boletaAPagarSelected?.horaEmision}}</nz-descriptions-item>
-            </nz-descriptions>
-            <nz-descriptions nzBordered>
-            <nz-descriptions-item nzTitle="Subtotal">{{boletaAPagarSelected?.subtotal | currency : 'CLP'}}</nz-descriptions-item>
-            <nz-descriptions-item nzTitle="Descuentos">{{boletaAPagarSelected?.descuentos | currency : 'CLP'}}</nz-descriptions-item>
-            <nz-descriptions-item nzTitle="Propina">{{boletaAPagarSelected?.extras | currency : 'CLP'}}</nz-descriptions-item>
-            </nz-descriptions>
-            <nz-descriptions nzBordered>
-            <nz-descriptions-item nzTitle="Total a pagar">{{boletaAPagarSelected?.total | currency : 'CLP'}}</nz-descriptions-item>
-            </nz-descriptions>
+          <h4 nz-title>The content you submitted has the following error:</h4>
+          <p nz-paragraph>
+            <span nz-icon nzType="close-circle"></span>
+            Your account has been frozen
+            <a>Thaw immediately &gt;</a>
+          </p>
+          <p nz-paragraph>
+            <span nz-icon nzType="close-circle"></span>
+            Your account is not yet eligible to apply
+            <a>Apply immediately &gt;</a>
+          </p>
         </div>
-        </div>
-    </div>
-    <div nz-result-extra>
-        <button nz-button nzType="danger">Cerrar</button>
-    </div>
+      </div>
+      <div nz-result-extra>
+        <button nz-button nzType="primary">Go Console</button>
+        <button nz-button>Buy Again</button>
+      </div> -->
     </nz-result>
-</div>
+  </div>

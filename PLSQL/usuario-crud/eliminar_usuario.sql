@@ -6,7 +6,9 @@ DECLARE
 	
 BEGIN
 	-- select * from
-	delete from usuario  u where u.id_usuario = v_idUsuario;
+	update usuario u 
+	set eliminado = true
+	where u.id_usuario = v_idUsuario;
 
 	if not found then
 		RETURN 'El usuario no existe o ingresó mal el id.';

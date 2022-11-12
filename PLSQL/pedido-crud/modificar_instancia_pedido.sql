@@ -7,7 +7,7 @@ DECLARE
 BEGIN
 	update pedido
 	set id_estado_instancia = v_idEstadoInstancia
-	where id_pedido = v_idPedido;	 
+	where pedido.id_pedido = v_idPedido;	 
 
   RETURN 'Pedido ¨'|| v_idPedido ||'¨ actualizada satisfactoriamente';
 

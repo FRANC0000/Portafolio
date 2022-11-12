@@ -328,6 +328,7 @@ export class ClienteComponent implements OnInit {
 
   cerrarSesion(){
     this.router.navigate(['/login'])
+    localStorage.clear();
   }
 
   verDetallePlato(plato){

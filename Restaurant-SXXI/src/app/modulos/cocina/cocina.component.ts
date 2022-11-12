@@ -23,6 +23,9 @@ export class CocinaComponent implements OnInit {
     private fb: FormBuilder,
     private notification: NzNotificationService) { }
 
+  usuarioLogeado :string = localStorage.getItem('id_usuario');
+  rolUsuarioLogeado : string = localStorage.getItem('rol');
+
   listaPlatos : Plato[] = [];
   listaProductos : Producto[] = [];
   visibleDetallePlato = false;
@@ -64,6 +67,8 @@ export class CocinaComponent implements OnInit {
   cantidadProductoReceta : number = 1;
 
   ngOnInit() {
+    console.log('usuarioLogeado', this.usuarioLogeado);
+    console.log('rolUsuarioLogeado', this.rolUsuarioLogeado);
     this.obtenerPlatos();
     this.obtenerProductos();
     this.obtenerTipoPlato();
@@ -147,6 +152,7 @@ export class CocinaComponent implements OnInit {
 
   cerrarSesion(){
     this.router.navigate(['/login'])
+    localStorage.clear();
   }
   
   obtenerPlatos(){

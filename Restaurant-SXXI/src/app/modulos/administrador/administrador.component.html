@@ -1,4 +1,4 @@
-<div class="all-administrador">
+<div class="all-administrador" *ngIf="rolUsuarioLogeado == 1">
   <div class="datos-sesion">
         <div class="title-datos-sesion">
             <label>MÓDULO ADMINISTRADOR </label>
@@ -37,371 +37,389 @@
         </div>
       </div>
     </div>
+
+
+    <!-- CREAR USUARIO -->
+    <nz-modal nzTitle="Crear usuario" [nzWidth]="800" [nzContent]="crearUsuarioContent"
+      [(nzVisible)]="isVisibleCrearUsuario" (nzOnOk)="guardarCrearUsuario()" (nzOnCancel)="cerrarCrearUsuario()">
+      <ng-container #crearUsuarioContent>
+        <form nz-form [formGroup]="validateFormCrearUsuario" id="validateFormCrearUsuario" [nzLayout]="'inline'"
+          (ngSubmit)="enviarFormularioCrearUsuario()">
+          <div style="display: flex; justify-content: center;">
+            <nz-form-item>
+              <nz-form-label nzRequired nzFor="id_usuario">
+                ID usuario
+              </nz-form-label>
+              <nz-form-control nzErrorTip="Por favor ingrese su nombre de usuario">
+                <input nz-input type="text" min="0" name="id_usuario" id="id_usuario" placeholder="ID usuario"
+                  formControlName="id_usuario">
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+          <br>
+          <div nz-row clas="form-usuario">
+            <div nz-col nzSpan="12">
+              <nz-form-item>
+                <nz-form-label>
+                  RUT
+                </nz-form-label>
+                <nz-form-control>
+                  <input nz-input type="number" name="rut_usuario" id="rut_usuario" placeholder="12345678" maxlength="8"
+                    max="99999999" formControlName="rut_usuario" style="width: calc(100% - 40%);" minlength="7">
+                  -
+                  <input nz-input type="text" name="dv_usuario" id="dv_usuario" placeholder="1" maxlength="1"
+                    formControlName="dv_usuario" style="width: 33px;">
+                </nz-form-control>
+              </nz-form-item>
+              <nz-form-item>
+                <nz-form-label>
+                  Nombre
+                </nz-form-label>
+                <nz-form-control>
+                  <input nz-input type="text" name="nombre" id="nombre" placeholder="Nombre" formControlName="nombre">
+                </nz-form-control>
+              </nz-form-item>
+              <nz-form-item>
+                <nz-form-label>
+                  Apellido paterno
+                </nz-form-label>
+                <nz-form-control>
+                  <input nz-input type="text" name="apellido_paterno" id="apellido_paterno" placeholder="Apellido paterno"
+                    formControlName="apellido_paterno">
+                </nz-form-control>
+              </nz-form-item>
+              <nz-form-item>
+                <nz-form-label>
+                  Apellido materno
+                </nz-form-label>
+                <nz-form-control>
+                  <input nz-input type="text" name="apellido_materno" id="apellido_materno" placeholder="Apellido materno"
+                    formControlName="apellido_materno">
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+            <div nz-col nzSpan="12">
+              <nz-form-item>
+                <nz-form-label>
+                  Rol
+                </nz-form-label>
+                <nz-form-control>
+                  <nz-select [ngModel]="rolSelected" nzPlaceHolder="Elegir rol" name="rol" formControlName="rol">
+                    <ng-container *ngFor="let rol of listRoles">
+                      <nz-option [nzValue]="rol.id_rol" [nzLabel]="rol.nombre_rol"></nz-option>
+                    </ng-container>
+                  </nz-select>
+                </nz-form-control>
+              </nz-form-item>
+              <nz-form-item>
+                <nz-form-label>
+                  Correo
+                </nz-form-label>
+                <nz-form-control>
+                  <input nz-input type="email" name="correo" id="correo" placeholder="mail@mail.com"
+                    formControlName="correo">
+                </nz-form-control>
+              </nz-form-item>
+              <nz-form-item>
+                <nz-form-label>
+                  Constraseña
+                </nz-form-label>
+                <nz-form-control>
+                  <input nz-input type="password" name="contraseña" id="contraseña" formControlName="contrasena"
+                    minLength="6" placeholder="Contraseña">
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+          </div>
+        </form>
+      </ng-container>
+    </nz-modal>
+    
+    <!-- VER LISTADO DE USUARIO -->
+    <nz-modal nzTitle="Listado de usuarios" [nzContent]="listadoUsuariosContent" [nzWidth]="800"
+      [(nzVisible)]="isVisibleListadoUsuarios" (nzOnOk)="okListadoUsuarios()" (nzOnCancel)="okListadoUsuarios()"
+      [nzFooter]="null">
+    
+      <ng-container #listadoUsuariosContent>
+        <div *ngIf="existenUsuarios">
+          <div class="botones-listado-mesas" *ngIf="usuarioSelected != null && usuarioSelected != ''">
+            <span nz-icon nzType="edit" nzTheme="outline" (click)="modificarUsuario(usuarioSelected)"></span>
+            <span nz-icon nzType="delete" nzTheme="outline" nz-popconfirm
+              nzPopconfirmTitle="¿Seguro que quieres eliminar esta mesa?" nzPopconfirmPlacement="top"
+              (nzOnConfirm)="guardarEliminarUsuario(usuarioSelected.id_usuario)"></span>
+          </div>
+          <table>
+            <tr>
+              <th>ID usuario</th>
+              <th>RUT</th>
+              <th>Nombre</th>
+              <th>Rol</th>
+              <th>Correo</th>
+              <th>Eliminado</th>
+            </tr>
+            <tr *ngFor="let usuario of listUsuarios" class="mesa-row" (click)="seleccionarUsuario(usuario)"
+              [ngStyle]="{'background-color': usuario.id_usuario === usuarioSelected?.id_usuario ? 'rgba(81, 0, 195, 0.319)' : ''}">
+              <td>{{usuario.id_usuario}}</td>
+              <td>{{usuario.rut}}-{{usuario.dv}}</td>
+              <td>{{usuario.nombre | titlecase}} {{usuario.apellidoPaterno | titlecase}} {{usuario.apellidoMaterno |
+                titlecase}}</td>
+              <td>{{usuario.rol}}</td>
+              <td>{{usuario.correo}}</td>
+              <td *ngIf="usuario.eliminado == true">Si</td>
+              <td *ngIf="usuario.eliminado == false">No</td>
+            </tr>
+          </table>
+        </div>
+      </ng-container>
+    
+    </nz-modal>
+    
+    <!-- MODIFICAR USAURIO -->
+    <nz-modal nzTitle="Modificar usuario" [nzWidth]="800" [nzContent]="modificarUsuarioContent"
+      [(nzVisible)]="isVisibleModificarUsuario" (nzOnOk)="guardarModificarUsuario()"
+      (nzOnCancel)="cerrarModificarUsuario()">
+      <ng-container #modificarUsuarioContent>
+        <form nz-form [formGroup]="validateFormModificarUsuario" id="validateFormModificarUsuario" [nzLayout]="'inline'"
+          (ngSubmit)="guardarModificarUsuario()">
+          <div style="display: flex; justify-content: center;">
+            <nz-form-item>
+              <nz-form-label nzRequired nzFor="id_usuario">
+                Id usuario
+              </nz-form-label>
+              <nz-form-control nzErrorTip="Por favor ingrese el nombre a remplazar">
+                <input nz-input type="text" name="id_usuario" id="id_usuario" placeholder="id_usuario"
+                  formControlName="id_usuario" disabled>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+          <br>
+          <div nz-row clas="form-usuario">
+            <div nz-col nzSpan="12">
+              <nz-form-item>
+                <nz-form-label>
+                  Rut
+                </nz-form-label>
+                <nz-form-control>
+                  <input nz-input type="text" name="rut_usuario" id="rut_usuario" placeholder="11111111" maxlength="8"
+                    formControlName="rut_usuario" style="width: calc(100% - 40%);">
+                  -
+                  <input nz-input type="text" name="dv_usuario" id="dv_usuario" placeholder="1" maxlength="1"
+                    formControlName="dv_usuario" style="width: 33px;">
+                </nz-form-control>
+              </nz-form-item>
+              <nz-form-item>
+                <nz-form-label>
+                  Nombre
+                </nz-form-label>
+                <nz-form-control>
+                  <input nz-input type="text" name="nombre" id="nombre" placeholder="nombre" formControlName="nombre">
+                </nz-form-control>
+              </nz-form-item>
+              <nz-form-item>
+                <nz-form-label>
+                  Apellido paterno
+                </nz-form-label>
+                <nz-form-control>
+                  <input nz-input type="text" name="apellido_paterno" id="apellido_paterno" placeholder="apellido paterno"
+                    formControlName="apellido_paterno">
+                </nz-form-control>
+              </nz-form-item>
+              <nz-form-item>
+                <nz-form-label>
+                  Apellido materno
+                </nz-form-label>
+                <nz-form-control>
+                  <input nz-input type="text" name="apellido_materno" id="apellido_materno" placeholder="apellido materno"
+                    formControlName="apellido_materno">
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+            <div nz-col nzSpan="12">
+              <nz-form-item>
+                <nz-form-label>
+                  Rol
+                </nz-form-label>
+                <nz-form-control>
+                  <nz-select [ngModel]="rolSelected" nzPlaceHolder="Elegir rol" name="rol" formControlName="rol">
+                    <ng-container *ngFor="let rol of listRoles">
+                      <nz-option [nzValue]="rol.id_rol" [nzLabel]="rol.nombre_rol"></nz-option>
+                    </ng-container>
+                  </nz-select>
+                </nz-form-control>
+              </nz-form-item>
+              <nz-form-item>
+                <nz-form-label>
+                  Correo
+                </nz-form-label>
+                <nz-form-control>
+                  <input nz-input type="email" name="correo" id="correo" placeholder="mail@mail.com"
+                    formControlName="correo">
+                </nz-form-control>
+              </nz-form-item>
+              <nz-form-item>
+                <nz-form-label>
+                  Contraseña
+                </nz-form-label>
+                <nz-form-control>
+                  <input nz-input type="password" name="contraseña" id="contraseña" formControlName="contrasena">
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+          </div>
+        </form>
+      </ng-container>
+    </nz-modal>
+    
+    <!-- CREAR MESA -->
+    <nz-modal nzTitle="Crear mesa" [nzWidth]="800" [nzContent]="crearMesaContent" [(nzVisible)]="isVisibleCrearMesa"
+      (nzOnOk)="guardarCrearMesa()" (nzOnCancel)="cerrarCrearMesa()">
+      <ng-container #crearMesaContent>
+        <form nz-form [formGroup]="validateFormCrearMesa" id="validateFormCrearMesa" [nzLayout]="'inline'"
+          (ngSubmit)="guardarCrearMesa()">
+          <div style="display: flex; justify-content: center;">
+            <nz-form-item>
+              <nz-form-label>
+                Estado de la mesa
+              </nz-form-label>
+              <br>
+              <nz-form-control style="width: 100%;">
+                <nz-select nzAllowClear nzPlaceHolder="Disponible" [(ngModel)]="estadoMesaSeleccionado"
+                  formControlName="id_estado_mesa">
+                  <ng-container *ngFor="let eM of listadoEstadosMesas">
+                    <nz-option [nzLabel]="eM.nombre_estado_mesa" [nzValue]="eM.id_estado_mesa"></nz-option>
+                  </ng-container>
+                </nz-select>
+              </nz-form-control>
+            </nz-form-item>
+            <nz-form-item style="width: 120px;">
+              <nz-form-label>
+                Tipo de mesa
+              </nz-form-label>
+              <br>
+              <nz-form-control style="width: 100%;">
+                <nz-select nzAllowClear nzPlaceHolder="Familiar" [(ngModel)]="tipoMesaSeleccionado"
+                  formControlName="id_tipo_mesa">
+                  <ng-container *ngFor="let tM of listadoTiposMesas">
+                    <nz-option nzLabel="{{tM.nombre_tipo_mesa}} ({{tM.cantidad_asientos}})" [nzValue]="tM.id_tipo_mesa">
+                    </nz-option>
+                  </ng-container>
+                </nz-select>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+        </form>
+      </ng-container>
+    </nz-modal>
+    
+    <!-- VER LISTADO DE MESAS -->
+    <nz-modal nzTitle="Listado de mesas" [nzContent]="listadoMesasContent" [nzWidth]="800"
+      [(nzVisible)]="isVisibleListadoMesas" (nzOnOk)="okListadoMesas()" (nzOnCancel)="okListadoMesas()" [nzFooter]="null">
+    
+      <ng-container #listadoMesasContent>
+        <div>
+          <div class="botones-listado-mesas" *ngIf="mesaSelected != null && mesaSelected != ''">
+            <span nz-icon nzType="edit" nzTheme="outline" (click)="actualizarMesa(mesaSelected)"></span>
+            <span nz-icon nzType="delete" nzTheme="outline" nz-popconfirm
+              nzPopconfirmTitle="¿Seguro que quieres eliminar esta mesa?" nzPopconfirmPlacement="top"
+              (nzOnConfirm)="guardarEliminarMesa(mesaSelected.id_mesa)"></span>
+          </div>
+          <table>
+            <tr>
+              <th>#</th>
+              <th>Tipo de mesa</th>
+              <th>Cantidad asientos</th>
+              <th>Estado de mesa</th>
+            </tr>
+            <tr *ngFor="let mesa of listadoMesas" class="mesa-row" (click)="seleccionarMesa(mesa)"
+              [ngStyle]="{'background-color': mesa.id_mesa === mesaSelected?.id_mesa ? 'rgba(81, 0, 195, 0.319)' : ''}">
+              <td>{{mesa.id_mesa}}</td>
+              <td>{{mesa.nombre_tipo_mesa}}</td>
+              <td>{{mesa.cantidad_asientos}}</td>
+              <td>{{mesa.nombre_estado_mesa}}</td>
+            </tr>
+          </table>
+        </div>
+      </ng-container>
+    
+    </nz-modal>
+    
+    <!-- MODIFICAR MESA -->
+    <nz-modal nzTitle="Actualizar mesa" [nzWidth]="800" [nzContent]="actualizarMesaContent"
+      [(nzVisible)]="isVisibleActualizarMesa" (nzOnOk)="guardarActualizarMesa()" (nzOnCancel)="cerrarActualizarMesa()">
+      <ng-container #crearMesaContent>
+        <form nz-form [formGroup]="validateFormActualizarMesa" id="validateFormActualizarMesa" [nzLayout]="'inline'"
+          (ngSubmit)="guardarActualizarMesa()">
+          <div style="display: flex; justify-content: center;">
+            <nz-form-item>
+              <nz-form-label nzRequired nzFor="id_mesa">
+                Id mesa
+              </nz-form-label>
+              <br>
+              <nz-form-control nzErrorTip="Por favor ingrese número de mesa">
+                <input nz-input type="number" min="1" name="id_mesa" id="id_mesa" placeholder="1" formControlName="id_mesa"
+                  disabled value="mesaSelected.id_mesa">
+              </nz-form-control>
+            </nz-form-item>
+    
+            <nz-form-item>
+              <nz-form-label>
+                Estado de la mesa
+              </nz-form-label>
+              <br>
+              <nz-form-control style="width: 100%;">
+                <nz-select nzAllowClear nzPlaceHolder="Disponible" [(ngModel)]="estadoMesaSeleccionado"
+                  formControlName="id_estado_mesa">
+                  <ng-container *ngFor="let eM of listadoEstadosMesas">
+                    <nz-option [nzLabel]="eM.nombre_estado_mesa" [nzValue]="eM.id_estado_mesa"></nz-option>
+                  </ng-container>
+                </nz-select>
+              </nz-form-control>
+            </nz-form-item>
+            <nz-form-item style="width: 120px;">
+              <nz-form-label>
+                Tipo de mesa
+              </nz-form-label>
+              <br>
+              <nz-form-control style="width: 100%;">
+                <nz-select nzAllowClear nzPlaceHolder="Familiar" [(ngModel)]="tipoMesaSeleccionado"
+                  formControlName="id_tipo_mesa">
+                  <ng-container *ngFor="let tM of listadoTiposMesas">
+                    <nz-option nzLabel="{{tM.nombre_tipo_mesa}} ({{tM.cantidad_asientos}})" [nzValue]="tM.id_tipo_mesa">
+                    </nz-option>
+                  </ng-container>
+                </nz-select>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+        </form>
+      </ng-container>
+    </nz-modal>
 </div>
 
-<!-- CREAR USUARIO -->
-<nz-modal nzTitle="Crear usuario"
-[nzWidth]="800"
-[nzContent]="crearUsuarioContent"
-[(nzVisible)]="isVisibleCrearUsuario"  
-(nzOnOk)="guardarCrearUsuario()"
-(nzOnCancel)="cerrarCrearUsuario()">
-  <ng-container #crearUsuarioContent>
-    <form nz-form [formGroup]="validateFormCrearUsuario" id="validateFormCrearUsuario"
-    [nzLayout]="'inline'" (ngSubmit)="enviarFormularioCrearUsuario()">
-      <div style="display: flex; justify-content: center;">
-        <nz-form-item>
-          <nz-form-label nzRequired nzFor="id_usuario">
-            ID usuario
-          </nz-form-label>
-          <nz-form-control nzErrorTip="Por favor ingrese su nombre de usuario">
-            <input nz-input type="text" min="0" name="id_usuario" id="id_usuario" placeholder="ID usuario" formControlName="id_usuario">
-          </nz-form-control>
-        </nz-form-item>
+<div *ngIf="rolUsuarioLogeado != 1">
+  <nz-result
+    nzTitle="No posees los permisos necesarios"
+    nzStatus="403"
+    nzSubTitle="No puedes acceder a esta pestaña"
+  >    
+    <!-- <div nz-result-content>
+      <div class="desc">
+        <h4 nz-title>The content you submitted has the following error:</h4>
+        <p nz-paragraph>
+          <span nz-icon nzType="close-circle"></span>
+          Your account has been frozen
+          <a>Thaw immediately &gt;</a>
+        </p>
+        <p nz-paragraph>
+          <span nz-icon nzType="close-circle"></span>
+          Your account is not yet eligible to apply
+          <a>Apply immediately &gt;</a>
+        </p>
       </div>
-      <br>
-      <div nz-row clas="form-usuario">
-        <div nz-col nzSpan="12">
-          <nz-form-item>
-            <nz-form-label>
-              RUT
-            </nz-form-label>
-            <nz-form-control>
-              <input nz-input type="number" name="rut_usuario" id="rut_usuario" placeholder="12345678" maxlength="8" max="99999999"
-                formControlName="rut_usuario" style="width: calc(100% - 40%);" minlength="7">
-                -
-              <input nz-input type="text" name="dv_usuario" id="dv_usuario" placeholder="1" maxlength = "1"
-                  formControlName="dv_usuario" style="width: 33px;">
-            </nz-form-control>
-          </nz-form-item>
-          <nz-form-item>
-            <nz-form-label>
-              Nombre
-            </nz-form-label>
-            <nz-form-control>
-              <input nz-input type="text" name="nombre" id="nombre" placeholder="Nombre" formControlName="nombre">
-            </nz-form-control>
-          </nz-form-item>
-          <nz-form-item>
-            <nz-form-label>
-              Apellido paterno
-            </nz-form-label>
-            <nz-form-control>
-              <input nz-input type="text" name="apellido_paterno" id="apellido_paterno" placeholder="Apellido paterno" formControlName="apellido_paterno">
-            </nz-form-control>
-          </nz-form-item>
-          <nz-form-item>
-            <nz-form-label>
-              Apellido materno
-            </nz-form-label>
-            <nz-form-control>
-              <input nz-input type="text" name="apellido_materno" id="apellido_materno" placeholder="Apellido materno" formControlName="apellido_materno">
-            </nz-form-control>
-          </nz-form-item>
-        </div>
-        <div nz-col nzSpan="12">
-          <nz-form-item>
-            <nz-form-label>
-              Rol
-            </nz-form-label>
-            <nz-form-control>
-              <nz-select
-                [ngModel]="rolSelected"
-                nzPlaceHolder="Elegir rol"
-                name="rol"
-                formControlName="rol"
-              >
-              <ng-container *ngFor="let rol of listRoles">
-                <nz-option [nzValue]="rol.id_rol" [nzLabel]="rol.nombre_rol"></nz-option>
-              </ng-container>
-              </nz-select>
-            </nz-form-control>
-          </nz-form-item>
-          <nz-form-item>
-            <nz-form-label>
-              Correo
-            </nz-form-label>
-            <nz-form-control>
-              <input nz-input type="email" name="correo" id="correo" placeholder="mail@mail.com" formControlName="correo">
-            </nz-form-control>
-          </nz-form-item>
-          <nz-form-item>
-            <nz-form-label>
-              Constraseña
-            </nz-form-label>
-            <nz-form-control>
-              <input nz-input type="password" name="contraseña" id="contraseña" formControlName="contrasena"  minLength="6" placeholder="Contraseña">
-            </nz-form-control>
-          </nz-form-item>
-        </div>
-      </div>
-    </form>
-  </ng-container>
-</nz-modal>
-
-<!-- VER LISTADO DE USUARIO -->
-<nz-modal nzTitle="Listado de usuarios"
-[nzContent]="listadoUsuariosContent"
-[nzWidth]="800"
-[(nzVisible)]="isVisibleListadoUsuarios"
-(nzOnOk)="okListadoUsuarios()"
-(nzOnCancel)="okListadoUsuarios()"
-[nzFooter]="null">
-
-  <ng-container #listadoUsuariosContent>
-    <div *ngIf="existenUsuarios">
-      <div class="botones-listado-mesas" *ngIf="usuarioSelected != null && usuarioSelected != ''">
-        <span nz-icon nzType="edit" nzTheme="outline" (click)="modificarUsuario(usuarioSelected)"></span>
-        <span nz-icon nzType="delete" nzTheme="outline" nz-popconfirm
-          nzPopconfirmTitle="¿Seguro que quieres eliminar esta mesa?" nzPopconfirmPlacement="top"
-          (nzOnConfirm)="guardarEliminarUsuario(usuarioSelected.id_usuario)"></span>
-      </div>
-      <table>
-        <tr>
-          <th>ID usuario</th>
-          <th>RUT</th>
-          <th>Nombre</th>
-          <th>Rol</th>
-          <th>Correo</th>
-          <th>Eliminado</th>
-        </tr>      
-        <tr *ngFor="let usuario of listUsuarios" class="mesa-row" (click)="seleccionarUsuario(usuario)"
-        [ngStyle]="{'background-color': usuario.id_usuario === usuarioSelected?.id_usuario ? 'rgba(81, 0, 195, 0.319)' : ''}">
-          <td>{{usuario.id_usuario}}</td>
-          <td>{{usuario.rut}}-{{usuario.dv}}</td>
-          <td>{{usuario.nombre | titlecase}} {{usuario.apellidoPaterno | titlecase}} {{usuario.apellidoMaterno | titlecase}}</td>
-          <td>{{usuario.rol}}</td>
-          <td>{{usuario.correo}}</td>
-          <td *ngIf="usuario.eliminado == true">Si</td>
-          <td *ngIf="usuario.eliminado == false">No</td>
-        </tr>
-      </table>
     </div>
-  </ng-container>
-
-</nz-modal>
-
-<!-- MODIFICAR USAURIO -->
-<nz-modal nzTitle="Modificar usuario" [nzWidth]="800" [nzContent]="modificarUsuarioContent"
-  [(nzVisible)]="isVisibleModificarUsuario" (nzOnOk)="guardarModificarUsuario()"
-  (nzOnCancel)="cerrarModificarUsuario()">
-  <ng-container #modificarUsuarioContent>
-    <form nz-form [formGroup]="validateFormModificarUsuario" id="validateFormModificarUsuario" [nzLayout]="'inline'"
-      (ngSubmit)="guardarModificarUsuario()">
-      <div style="display: flex; justify-content: center;">
-        <nz-form-item>
-          <nz-form-label nzRequired nzFor="id_usuario">
-            Id usuario
-          </nz-form-label>
-          <nz-form-control nzErrorTip="Por favor ingrese el nombre a remplazar">
-            <input nz-input type="text" name="id_usuario" id="id_usuario" placeholder="id_usuario"
-              formControlName="id_usuario" disabled>
-          </nz-form-control>
-        </nz-form-item>
-      </div>
-      <br>
-      <div nz-row clas="form-usuario">
-        <div nz-col nzSpan="12">
-          <nz-form-item>
-            <nz-form-label>
-              Rut
-            </nz-form-label>
-            <nz-form-control>
-              <input nz-input type="text" name="rut_usuario" id="rut_usuario" placeholder="11111111" maxlength="8"
-                formControlName="rut_usuario" style="width: calc(100% - 40%);">
-              -
-              <input nz-input type="text" name="dv_usuario" id="dv_usuario" placeholder="1" maxlength="1"
-                formControlName="dv_usuario" style="width: 33px;">
-            </nz-form-control>
-          </nz-form-item>
-          <nz-form-item>
-            <nz-form-label>
-              Nombre
-            </nz-form-label>
-            <nz-form-control>
-              <input nz-input type="text" name="nombre" id="nombre" placeholder="nombre" formControlName="nombre">
-            </nz-form-control>
-          </nz-form-item>
-          <nz-form-item>
-            <nz-form-label>
-              Apellido paterno
-            </nz-form-label>
-            <nz-form-control>
-              <input nz-input type="text" name="apellido_paterno" id="apellido_paterno" placeholder="apellido paterno"
-                formControlName="apellido_paterno">
-            </nz-form-control>
-          </nz-form-item>
-          <nz-form-item>
-            <nz-form-label>
-              Apellido materno
-            </nz-form-label>
-            <nz-form-control>
-              <input nz-input type="text" name="apellido_materno" id="apellido_materno" placeholder="apellido materno"
-                formControlName="apellido_materno">
-            </nz-form-control>
-          </nz-form-item>
-        </div>
-        <div nz-col nzSpan="12">
-          <nz-form-item>
-            <nz-form-label>
-              Rol
-            </nz-form-label>
-            <nz-form-control>
-              <nz-select [ngModel]="rolSelected" nzPlaceHolder="Elegir rol" name="rol" formControlName="rol">
-                <ng-container *ngFor="let rol of listRoles">
-                  <nz-option [nzValue]="rol.id_rol" [nzLabel]="rol.nombre_rol"></nz-option>
-                </ng-container>
-              </nz-select>
-            </nz-form-control>
-          </nz-form-item>
-          <nz-form-item>
-            <nz-form-label>
-              Correo
-            </nz-form-label>
-            <nz-form-control>
-              <input nz-input type="email" name="correo" id="correo" placeholder="mail@mail.com"
-                formControlName="correo">
-            </nz-form-control>
-          </nz-form-item>
-          <nz-form-item>
-            <nz-form-label>
-              Contraseña
-            </nz-form-label>
-            <nz-form-control>
-              <input nz-input type="password" name="contraseña" id="contraseña" formControlName="contrasena">
-            </nz-form-control>
-          </nz-form-item>
-        </div>
-      </div>
-    </form>
-  </ng-container>
-</nz-modal>
-
-<!-- CREAR MESA -->
-<nz-modal nzTitle="Crear mesa" [nzWidth]="800" [nzContent]="crearMesaContent" [(nzVisible)]="isVisibleCrearMesa"
-    (nzOnOk)="guardarCrearMesa()" (nzOnCancel)="cerrarCrearMesa()">
-    <ng-container #crearMesaContent>
-        <form nz-form [formGroup]="validateFormCrearMesa" id="validateFormCrearMesa" [nzLayout]="'inline'"
-            (ngSubmit)="guardarCrearMesa()">
-            <div style="display: flex; justify-content: center;">
-                <nz-form-item>
-                    <nz-form-label>
-                        Estado de la mesa
-                    </nz-form-label>
-                    <br>
-                    <nz-form-control style="width: 100%;">
-                        <nz-select nzAllowClear nzPlaceHolder="Disponible"
-                            [(ngModel)]="estadoMesaSeleccionado" formControlName="id_estado_mesa">
-                            <ng-container *ngFor="let eM of listadoEstadosMesas">
-                                <nz-option [nzLabel]="eM.nombre_estado_mesa" [nzValue]="eM.id_estado_mesa"></nz-option>
-                            </ng-container>
-                        </nz-select>
-                    </nz-form-control>
-                </nz-form-item>
-                <nz-form-item style="width: 120px;">
-                    <nz-form-label>
-                        Tipo de mesa
-                    </nz-form-label>
-                    <br>
-                    <nz-form-control style="width: 100%;">
-                        <nz-select nzAllowClear nzPlaceHolder="Familiar"
-                            [(ngModel)]="tipoMesaSeleccionado" formControlName="id_tipo_mesa">
-                            <ng-container *ngFor="let tM of listadoTiposMesas">
-                                <nz-option nzLabel="{{tM.nombre_tipo_mesa}} ({{tM.cantidad_asientos}})" [nzValue]="tM.id_tipo_mesa"></nz-option>
-                            </ng-container>
-                        </nz-select>
-                    </nz-form-control>
-                </nz-form-item>
-            </div>
-        </form>
-    </ng-container>
-</nz-modal>
-
-<!-- VER LISTADO DE MESAS -->
-<nz-modal nzTitle="Listado de mesas"
-[nzContent]="listadoMesasContent"
-[nzWidth]="800"
-[(nzVisible)]="isVisibleListadoMesas"
-(nzOnOk)="okListadoMesas()"
-(nzOnCancel)="okListadoMesas()"
-[nzFooter]="null">
-
-  <ng-container #listadoMesasContent>
-    <div>
-      <div class="botones-listado-mesas" *ngIf="mesaSelected != null && mesaSelected != ''">
-        <span nz-icon nzType="edit" nzTheme="outline" (click)="actualizarMesa(mesaSelected)"></span>
-        <span nz-icon nzType="delete" nzTheme="outline" nz-popconfirm
-          nzPopconfirmTitle="¿Seguro que quieres eliminar esta mesa?" nzPopconfirmPlacement="top"
-          (nzOnConfirm)="guardarEliminarMesa(mesaSelected.id_mesa)"></span>
-      </div>
-      <table>
-        <tr>
-          <th>#</th>
-          <th>Tipo de mesa</th>
-          <th>Cantidad asientos</th>
-          <th>Estado de mesa</th>
-        </tr>      
-        <tr *ngFor="let mesa of listadoMesas" class="mesa-row" (click)="seleccionarMesa(mesa)"
-        [ngStyle]="{'background-color': mesa.id_mesa === mesaSelected?.id_mesa ? 'rgba(81, 0, 195, 0.319)' : ''}">
-          <td>{{mesa.id_mesa}}</td>
-          <td>{{mesa.nombre_tipo_mesa}}</td>
-          <td>{{mesa.cantidad_asientos}}</td>
-          <td>{{mesa.nombre_estado_mesa}}</td>
-        </tr>
-      </table>
-    </div>
-  </ng-container>
-
-</nz-modal>
-
-<!-- MODIFICAR MESA -->
-<nz-modal nzTitle="Actualizar mesa" [nzWidth]="800" [nzContent]="actualizarMesaContent"
-    [(nzVisible)]="isVisibleActualizarMesa" (nzOnOk)="guardarActualizarMesa()" (nzOnCancel)="cerrarActualizarMesa()">
-    <ng-container #crearMesaContent>
-        <form nz-form [formGroup]="validateFormActualizarMesa" id="validateFormActualizarMesa" [nzLayout]="'inline'"
-            (ngSubmit)="guardarActualizarMesa()">
-            <div style="display: flex; justify-content: center;">
-                <nz-form-item>
-                    <nz-form-label nzRequired nzFor="id_mesa">
-                        Id mesa
-                    </nz-form-label>
-                    <br>
-                    <nz-form-control nzErrorTip="Por favor ingrese número de mesa">
-                        <input nz-input type="number" min="1" name="id_mesa" id="id_mesa" placeholder="1"
-                            formControlName="id_mesa" disabled value="mesaSelected.id_mesa">
-                    </nz-form-control>
-                </nz-form-item>
-
-                <nz-form-item>
-                    <nz-form-label>
-                        Estado de la mesa
-                    </nz-form-label>
-                    <br>
-                    <nz-form-control style="width: 100%;">
-                        <nz-select nzAllowClear nzPlaceHolder="Disponible" [(ngModel)]="estadoMesaSeleccionado"
-                            formControlName="id_estado_mesa">
-                            <ng-container *ngFor="let eM of listadoEstadosMesas">
-                                <nz-option [nzLabel]="eM.nombre_estado_mesa" [nzValue]="eM.id_estado_mesa"></nz-option>
-                            </ng-container>
-                        </nz-select>
-                    </nz-form-control>
-                </nz-form-item>
-                <nz-form-item style="width: 120px;">
-                    <nz-form-label>
-                        Tipo de mesa
-                    </nz-form-label>
-                    <br>
-                    <nz-form-control style="width: 100%;">
-                        <nz-select nzAllowClear nzPlaceHolder="Familiar" [(ngModel)]="tipoMesaSeleccionado"
-                            formControlName="id_tipo_mesa">
-                            <ng-container *ngFor="let tM of listadoTiposMesas">
-                                <nz-option nzLabel="{{tM.nombre_tipo_mesa}} ({{tM.cantidad_asientos}})"
-                                    [nzValue]="tM.id_tipo_mesa"></nz-option>
-                            </ng-container>
-                        </nz-select>
-                    </nz-form-control>
-                </nz-form-item>
-            </div>
-        </form>
-    </ng-container>
-</nz-modal>
+    <div nz-result-extra>
+      <button nz-button nzType="primary">Go Console</button>
+      <button nz-button>Buy Again</button>
+    </div> -->
+  </nz-result>
+</div>

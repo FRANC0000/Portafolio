@@ -46,6 +46,7 @@ import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
 import { NzRadioModule } from 'ng-zorro-antd/radio';
 import { NzTransferModule } from 'ng-zorro-antd/transfer';
 import { NzTableModule } from 'ng-zorro-antd/table';
+import { AdministradorComponent } from './modulos/administrador/administrador.component';
 
 registerLocaleData(es);
 
@@ -59,7 +60,8 @@ registerLocaleData(es);
     CocinaComponent,
     ClienteComponent,
     MenuComponent,
-    SafePipe
+    SafePipe,
+    AdministradorComponent
   ],
   imports: [
     BrowserModule,

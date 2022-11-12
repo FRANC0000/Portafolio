@@ -11,6 +11,10 @@ import { AdministadorService } from './administador.service';
   templateUrl: './administrador.component.html',
   styleUrls: ['./administrador.component.scss']
 })
+
+
+
+
 export class AdministradorComponent implements OnInit {
 
   constructor(
@@ -18,7 +22,12 @@ export class AdministradorComponent implements OnInit {
     private fb: FormBuilder,
     private notification: NzNotificationService,
     private router: Router
-  ) { }
+  ) {
+    
+   }
+
+  usuarioLogeado :string = localStorage.getItem('id_usuario');
+  rolUsuarioLogeado : string = localStorage.getItem('rol');
 
   title = 'Restaurant-SXXI';
   listUsuarios : user[] = [];
@@ -46,6 +55,8 @@ export class AdministradorComponent implements OnInit {
   validateFormActualizarMesa : FormGroup;
 
   ngOnInit() {
+    console.log('usuarioLogeado', this.usuarioLogeado);
+    console.log('rolUsuarioLogeado', this.rolUsuarioLogeado);
     this.obtenerRoles();
     this.obtenerMesas();
     this.obtenerEstadosMesas();
@@ -223,6 +234,7 @@ export class AdministradorComponent implements OnInit {
 
   cerrarSesion(){
     this.router.navigate(['/login'])
+    localStorage.clear();
   }
   
   guardarModificarUsuario(){

@@ -19,6 +19,7 @@ export class LoginComponent implements OnInit {
     private router: Router) { }
 
   ngOnInit() {
+    localStorage.clear();
     this.validateFormIniciarSesion = this.fb.group({
       id_usuario : [null, [Validators.required]],
       contrasena: [null, [Validators.required]]
@@ -57,12 +58,18 @@ export class LoginComponent implements OnInit {
               
               if (resp['rol'] == 1){
                 this.router.navigate(['/administrador'])
+                localStorage.setItem('id_usuario', resp['id_usuario'])
+                localStorage.setItem('rol', resp['rol'])
               }
               else if (resp['rol'] == 2){
                 this.router.navigate(['/bodega'])
+                localStorage.setItem('id_usuario', resp['id_usuario'])
+                localStorage.setItem('rol', resp['rol'])
               }
               else if (resp['rol'] == 3){
                 this.router.navigate(['/cocina'])
+                localStorage.setItem('id_usuario', resp['id_usuario'])
+                localStorage.setItem('rol', resp['rol'])
               }
               else if (resp['rol'] == 4){
                 var matches = resp['id_usuario'].match(/(\d+)/);
@@ -71,6 +78,8 @@ export class LoginComponent implements OnInit {
               }
               else if (resp['rol'] == 5){
                 this.router.navigate(['/finanzas'])
+                localStorage.setItem('id_usuario', resp['id_usuario'])
+                localStorage.setItem('rol', resp['rol'])
               }
               
             })

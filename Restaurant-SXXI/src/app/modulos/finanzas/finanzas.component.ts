@@ -14,6 +14,9 @@ export class FinanzasComponent implements OnInit {
   constructor(private finanzasService : FinanzasService,
     private router: Router) { }
 
+  usuarioLogeado :string = localStorage.getItem('id_usuario');
+  rolUsuarioLogeado : string = localStorage.getItem('rol');
+
   boletasPorPagarEnCaja = [];
   boletaAPagarSelected : Boleta;
   pedidoEnBoleta = [];
@@ -21,9 +24,11 @@ export class FinanzasComponent implements OnInit {
   dineroConElQuePago : number;
   dineroPorPagar : number;
   vueltoAEntregar : number;
-  resumenPago = false;
+  resumenPago = true;
 
   ngOnInit() {
+    console.log('usuarioLogeado', this.usuarioLogeado);
+    console.log('rolUsuarioLogeado', this.rolUsuarioLogeado);
     this.obtenerBoletasPorPagarEnCaja();
   }
 
@@ -66,6 +71,7 @@ export class FinanzasComponent implements OnInit {
 
   cerrarSesion(){
     this.router.navigate(['/login'])
+    localStorage.clear();
   }
 
   cancelarAbrirCaja(){
