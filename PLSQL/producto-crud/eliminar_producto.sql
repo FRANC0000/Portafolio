@@ -6,7 +6,9 @@ DECLARE
 
 BEGIN
 
-  DELETE FROM producto WHERE producto.id_producto = v_id_producto;
+  update producto set
+  eliminado = true
+  WHERE producto.id_producto = v_id_producto;
   RETURN 'Producto eliminado';
 
 END;

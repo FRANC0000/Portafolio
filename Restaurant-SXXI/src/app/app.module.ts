@@ -47,6 +47,7 @@ import { NzRadioModule } from 'ng-zorro-antd/radio';
 import { NzTransferModule } from 'ng-zorro-antd/transfer';
 import { NzTableModule } from 'ng-zorro-antd/table';
 import { AdministradorComponent } from './modulos/administrador/administrador.component';
+import { NzPaginationModule } from 'ng-zorro-antd/pagination';
 
 registerLocaleData(es);
 
@@ -96,7 +97,8 @@ registerLocaleData(es);
     NzCheckboxModule,
     NzRadioModule,
     NzTransferModule,
-    NzTableModule
+    NzTableModule,
+    NzPaginationModule
   ],
   providers: [{ provide: NZ_I18N, useValue: es_ES }],
   bootstrap: [AppComponent]

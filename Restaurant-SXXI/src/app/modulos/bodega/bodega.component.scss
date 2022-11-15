@@ -44,3 +44,23 @@
     border-radius: 20px 20px 0px 0px;
     padding: 16px 20px;
 }
+
+.mesa-row:hover{
+    background-color: rgba(81, 0, 195, 0.319);
+  }
+
+  table {
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+  }
+  
+  td, th {
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 8px;
+  }
+  
+  tr:nth-child(even) {
+    background-color: #f1f1f1;
+  }

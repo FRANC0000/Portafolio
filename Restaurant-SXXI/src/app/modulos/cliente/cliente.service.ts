@@ -80,4 +80,16 @@ export class ClienteService {
       'http://localhost:8085/restaurantSXXI/rest-rsxii/boleta/boletaAModificar', boleta, {headers : this.headers}
     );
   }
+
+  public crearCarteraPagos(cart){
+    return this.http.post(
+      'http://localhost:8085/restaurantSXXI/rest-rsxii/cartera/crearCarteraPagos', cart, {headers : this.headers}
+    );
+  }
+
+  public crearTransaccion(trans){
+    return this.http.post(
+      'http://localhost:8085/restaurantSXXI/rest-rsxii/transaccion/crearTransaccion', trans, {headers : this.headers}
+    );
+  }
 }

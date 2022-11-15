@@ -78,5 +78,96 @@ export class AdministadorService {
     return this.http.post(
       'http://localhost:8085/restaurantSXXI/rest-rsxii/mesa/eliminarMesa', mesa, { responseType : 'text'}
     );
+  }
+  
+  public modificarProducto(productoAModificar) {
+    return this.http.post(
+      'http://localhost:8085/restaurantSXXI/rest-rsxii/producto/modificarProducto', productoAModificar, { responseType : 'text'}
+    );
+  }
+
+  public subirImagenProducto(file) {
+    return this.http.post(
+      'http://localhost:8085/restaurantSXXI/producto/save', file
+    );
+  }
+
+  public obtenerProductos(){
+    return this.http.get(
+      'http://localhost:8085/restaurantSXXI/rest-rsxii/producto/obtenerProductos'
+    );
+  }
+
+  public modificarReceta(unaReceta){
+    return this.http.post(
+      'http://localhost:8085/restaurantSXXI/rest-rsxii/receta/modificarReceta', unaReceta,{responseType : 'text'}
+    );
+  }
+
+  public obtenerRecetas() {
+    return this.http.get(
+      'http://localhost:8085/restaurantSXXI/rest-rsxii/receta/obtenerRecetas'
+    );
+  }
+  
+  public crearReceta(unaReceta) {
+    return this.http.post(
+      'http://localhost:8085/restaurantSXXI/rest-rsxii/receta/crearReceta', unaReceta, { responseType : 'text' }
+    );
+  }
+
+  public crearProducto(unProducto) {
+    return this.http.post(
+      'http://localhost:8085/restaurantSXXI/rest-rsxii/producto/crearProducto', unProducto, { responseType : 'text' }
+    );
+  }
+
+  public obtenerTipoProducto() {
+    return this.http.get(
+      'http://localhost:8085/restaurantSXXI/rest-rsxii/producto/obtenerTipoProducto', { headers: this.headers }
+    );
+  }
+
+  public eliminarProducto(productoAEliminar) {
+    return this.http.post(
+      'http://localhost:8085/restaurantSXXI/rest-rsxii/producto/eliminarProducto', productoAEliminar, { responseType : 'text' }
+    );
+  }
+
+  public obtenerClientes() {
+    return this.http.get(
+      'http://localhost:8085/restaurantSXXI/rest-rsxii/cliente/obtenerClientes',
+      { headers : this.headers}
+    );
+  }
+
+  public obtenerReporteStock() {
+    return this.http.get(
+      'http://localhost:8085/restaurantSXXI/rest-rsxii/reporte/obtenerReporteStock' //asi se tiene que llamar en el controller
+    );
+  } 
+
+  public crearReporte(reporte) {
+    return this.http.post(
+      'http://localhost:8085/restaurantSXXI/rest-rsxii/reporte/crearReporte', reporte, {responseType: 'text'}
+    );
+  } 
+  
+  public obtenerTipoReporte() {
+    return this.http.get(
+      'http://localhost:8085/restaurantSXXI/rest-rsxii/reporte/obtenerTipoReporte' //asi se tiene que llamar en el controller
+    );
+  } 
+
+  public obtenerReportes() {
+    return this.http.get(
+      'http://localhost:8085/restaurantSXXI/rest-rsxii/reporte/obtenerReportes' //asi se tiene que llamar en el controller
+    );
+  } 
+
+  public eliminarReporte(id_reporte) {
+    return this.http.post(
+      'http://localhost:8085/restaurantSXXI/rest-rsxii/reporte/eliminarReporte', id_reporte , {responseType : 'text'} //asi se tiene que llamar en el controller
+    );
   } 
 }

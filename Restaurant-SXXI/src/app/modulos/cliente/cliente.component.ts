@@ -158,11 +158,11 @@ export class ClienteComponent implements OnInit {
   }
 
   obtenerPedidosPorIdBoleta(idBoleta){
-    this.pedidoEnBoleta = [];
     const id_boleta = {
       "id_boleta" : idBoleta
     }
     this.clienteService.obtenerPedidosPorIdBoleta(id_boleta).subscribe(resp=>{
+      this.pedidoEnBoleta = [];
       // console.log('resp obtenerPedidosPorIdBoleta', resp);
       let pedidos = Object(resp["pedidos"]);
       let sumaPedidosEntregados = 0;
@@ -550,6 +550,7 @@ export class ClienteComponent implements OnInit {
         this.nzNotificacionService.create(
           'success', 'Tarjeta válida', 'Pago aprobado'
         );
+        
         this.boletaAIngresar.idEstadoBoleta = 3
         console.log('boletaAIngresar', this.boletaAIngresar);
         const boleta = {
@@ -557,6 +558,35 @@ export class ClienteComponent implements OnInit {
         }
         this.clienteService.modificarBoleta(boleta).subscribe(resp =>{
           console.log('resp modificarBoleta', resp);
+
+          const carteraPagos = {
+            "rut_cliente" : this.clienteObjectParam.rut_cliente,
+            "nro_tarjeta" : this.validateFormPagoTarjeta.value.numero_tarjeta,
+            "mes_exp" : this.validateFormPagoTarjeta.value.mes_expiracion,
+            "anno_exp" : this.validateFormPagoTarjeta.value.ano_expiracion,
+            "cvv" : this.validateFormPagoTarjeta.value.cvv,
+            "email" : this.validateFormPagoTarjeta.value.email,
+            "nombre_titular" : this.validateFormPagoTarjeta.value.nombre_titular,
+            "rut_titular" : this.validateFormPagoTarjeta.value.rut_titular,
+          }
+  
+          console.log('carteraPagos', carteraPagos);
+  
+          this.clienteService.crearCarteraPagos(carteraPagos).subscribe(resp2=>{
+            console.log('resp', resp2);
+  
+            const transaccion = {
+              "rut_cliente" : this.clienteObjectParam.rut_cliente,
+              "id_boleta" : this.boletaAIngresar.id_boleta,
+              "valor" : this.boletaAIngresar.total,
+              "id_cartera_pagos" : resp2,
+            }
+  
+            this.clienteService.crearTransaccion(transaccion).subscribe(resp3 =>{
+              console.log('resp', resp3);
+            })
+          })
+
           this.visiblePedirCuenta = false;
           this.mostrarDetalleBoletaFinal();
           // this.cancelarReserva();

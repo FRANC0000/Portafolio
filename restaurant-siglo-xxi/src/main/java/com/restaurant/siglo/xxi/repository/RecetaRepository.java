@@ -1,5 +1,7 @@
 package com.restaurant.siglo.xxi.repository;
 
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -14,11 +16,15 @@ public interface RecetaRepository extends JpaRepository<Receta, Integer>{
 			@Param("complejidad") String complejidad,
 			@Param("tiempo_preparacion") int tiempo_preparacion);
 	
-	@Query(value = "select crear_receta(:comentario, :complejidad, :tiempoPreparacion) ", nativeQuery = true)
+	@Query(value = "select crear_receta(:comentario, :complejidad, :tiempoPreparacion, :id_plato) ", nativeQuery = true)
     String crearReceta(@Param("comentario") String comentario,
             @Param("complejidad") String complejidad,
-            @Param("tiempoPreparacion") int tiempoPreparacion);
+            @Param("tiempoPreparacion") int tiempoPreparacion,
+            @Param("id_plato") int id_plato);
 	
 	@Query(value = "select eliminar_receta(:id_receta) ", nativeQuery = true)
 	 String eliminarReceta(@Param("id_receta") int id_receta);
+	
+	@Query(name = "obtenerRecetasPorIdPlato", nativeQuery = true)
+	List<Receta> obtenerRecetasPorIdPlato(@Param("id_plato") int id_plato);
 }

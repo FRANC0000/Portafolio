@@ -86,11 +86,17 @@
                         <input type="number" nz-input placeholder="Paga con..." [(ngModel)]="dineroConElQuePago"
                             (ngModelChange)="onChangeDineroPago()">
                         <br>
-                        <h4 nz-title>Total a pagar: ${{boletaAPagarSelected?.total}}</h4>
-                        <h4 nz-title>Por pagar: ${{dineroPorPagar}}</h4>
-                        <h4 nz-title>Vuelto: ${{vueltoAEntregar}}</h4>
+                        <h4 nz-title>Total a pagar: ${{boletaAPagarSelected?.total | currency : 'CLP'}}</h4>
+                        <h4 nz-title>Por pagar: ${{dineroPorPagar | currency : 'CLP'}}</h4>
+                        <h4 nz-title>Vuelto: ${{vueltoAEntregar | currency : 'CLP'}}</h4>
                     </div>
                 </div>
+            </ng-container>
+        </nz-modal>
+
+        <nz-modal [(nzVisible)]="isVisibleEntregarVuelto" nzTitle="Entregar vuelto" (nzOnCancel)="cancelarEntregarVuelto()" (nzOnOk)="okEntregarVuelto()">
+            <ng-container>
+                <h4 nz-title> Confirmo que he entregado el vuelto ${{vueltoAEntregar | currency : 'CLP'}} correctamente</h4>
             </ng-container>
         </nz-modal>
     </div>
@@ -133,7 +139,7 @@
                 </div>
             </div>
             <div nz-result-extra>
-                <button nz-button nzType="danger">Cerrar</button>
+                <button nz-button nzType="danger" (click)="cerrarResumenPago()">Cerrar</button>
             </div>
         </nz-result>
     </div>

@@ -88,7 +88,7 @@ tr:nth-child(even) {
 
 .grid{
   gap: 20px;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(6, 1fr);
   display: grid;
 }
 
@@ -143,4 +143,74 @@ tr:nth-child(even) {
     span:hover{
         background-color: rgba(81, 0, 195, 0.683);
     }
+}
+
+.botones-modificar{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 50px;
+  font-size: 30px;
+  margin: 10px 0px;
+
+  span{
+      margin: 0px 10px;
+      padding: 10px;
+      background-color: rgba(81, 0, 195, 0.319);
+      border-radius: 50px;
+      box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
+  }
+
+  span:hover{
+      background-color: rgba(81, 0, 195, 0.683);
+  }
+}
+
+/* subir imagen */
+.file-select {
+  position: relative;
+  display: inline-block;
+}
+
+.file-select:hover{
+  background-color: rgba(81, 0, 195, 0.657);
+  border-radius: 3px;
+}
+
+.file-select::before {
+  background-color: rgba(81, 0, 195, 0.434);
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 3px;
+  content: 'Seleccionar';
+  /* testo por defecto */
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+}
+
+.file-select input[type="file"] {
+  opacity: 0;
+  width: 200px;
+  height: 32px;
+  display: inline-block;
+}
+
+#src-file1::before {
+  content: 'Seleccionar imagen';
+}
+
+::ng-deep nz-form-control.nz-control-crear-producto{
+  width: calc(100% - 150px);
+}
+
+::ng-deep nz-form-label.nz-label-crear-producto{
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  width: 150px;
 }

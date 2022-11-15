@@ -213,6 +213,7 @@ export class CocinaComponent implements OnInit {
     })
 
     console.log('Crear Plato');
+    this.crearReceta();
   }
 
   crearReceta(){
@@ -226,10 +227,9 @@ export class CocinaComponent implements OnInit {
   }
   verPlatos(){
     console.log('verPlatos');
-    
   }
 
-  guardarCrearReceta(){
+  guardarCrearReceta(id_plato){
     console.log('guardarCrearReceta');
     console.log('valid ', this.validateFormCrearReceta.valid);
     if (this.validateFormCrearReceta.valid && this.listProductosReceta.length > 0){
@@ -241,14 +241,16 @@ export class CocinaComponent implements OnInit {
         comentario: this.validateFormCrearReceta.value.comentario,
         complejidad : this.validateFormCrearReceta.value.complejidad,
         tiempoPreparacion : this.validateFormCrearReceta.value.tiempo_preparacion,
-        productosEnReceta : this.listProductosReceta
+        productosEnReceta : this.listProductosReceta,
+        id_plato : id_plato
       }
       console.log('UnaReceta', unaReceta);
-      // this.cocinaService.crearReceta(unaReceta).subscribe(resp => {
-      //   console.log('respuesta a mi servicio crearReceta', resp);
-      //   // this.obtenerRecetas();
-      //   this.isVisibleCrearReceta = false;
-      // })
+      this.cocinaService.crearReceta(unaReceta).subscribe(resp => {
+        console.log('respuesta a mi servicio crearReceta', resp);
+        this.obtenerRecetas();
+        this.isVisibleCrearReceta = false;
+        this.cerrarCrearReceta();
+      })
       this.notification.create(
         'success', 'Receta creada', ''
       )
@@ -264,6 +266,8 @@ export class CocinaComponent implements OnInit {
 
   cerrarCrearReceta(){
     this.isVisibleCrearReceta = false;
+    this.validateFormCrearReceta.reset();
+    this.listProductosReceta = []
   }
 
   obtenerRecetas(){
@@ -390,6 +394,8 @@ export class CocinaComponent implements OnInit {
           'success', 'Plato creado', resp
         );
 
+        this.guardarCrearReceta(resp);
+
         this.formDataPlato.append("id_plato", resp);
         this.cocinaService.subirImagenPlato(this.formDataPlato).subscribe(resp=>{
         console.log(resp)
@@ -433,6 +439,7 @@ export class CocinaComponent implements OnInit {
   cerrarCrearPlato(){
     this.isVisibleCrearPlato = false;
     this.validateFormCrearPlato.reset();
+    this.cerrarCrearReceta()
   }
 
   obtenerTipoPlato(){

@@ -215,9 +215,9 @@
           <div *ngIf="item.esProducto" class="carrito-row">
             <div class="img-plato-carrito">
               <img *ngIf="item.producto.nombre_imagen != undefined"
-                src="http://localhost:8085/restaurantSXXI/imagenes-rxxi/platos/{{item.producto.nombre_imagen}}" alt=""
+                src="http://localhost:8085/restaurantSXXI/imagenes-rxxi/productos/{{item.producto.nombre_imagen}}" alt=""
                 style="width: 100%;">
-              <img *ngIf="item.nombre_imagen == undefined" src="assets/img-platos/nodisponible.png" alt=""
+              <img *ngIf="item.producto.nombre_imagen == undefined" src="assets/img-platos/nodisponible.png" alt=""
                 style="width: 100%;">
             </div>
             <div class="plato-carrito">
@@ -416,7 +416,6 @@
           </div>
         </div>
       </div>
-
       <div class="footer-carrito-boleta">
         <h2>Total a pagar : ${{boletaAIngresar?.total | currency:'CLP'}}</h2>
         <br>

@@ -53,9 +53,10 @@ public class RecetaServiceImpl implements RecetaService{
             String comentario = receta.get("comentario").toString();
             String complejidad  = receta.get("complejidad").toString();
             int tiempoPreparacion = Integer.parseInt(receta.get("tiempoPreparacion").toString());
+            int id_plato = Integer.parseInt(receta.get("id_plato").toString());
             List<Map<String,Object>> productosEnReceta = (List<Map<String, Object>>) receta.get("productosEnReceta");
             
-            resp = recetaRepository.crearReceta(comentario, complejidad,tiempoPreparacion); 
+            resp = recetaRepository.crearReceta(comentario, complejidad,tiempoPreparacion, id_plato); 
             
             productosRecetaService.crearProductosEnUnaReceta(Integer.parseInt(resp), productosEnReceta);
             

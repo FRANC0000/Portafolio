@@ -34,6 +34,8 @@ public class Producto {
 	@Column(nullable = true)
 	boolean eliminado;
 	
+	int stock_ideal;
+	
 	public int getId_producto() {
 		return id_producto;
 	}
@@ -101,6 +103,12 @@ public class Producto {
     public void setNombre_archivo(String nombre_archivo) {
         this.nombre_imagen = nombre_archivo;
     }
+    public int getStock_ideal() {
+		return stock_ideal;
+	}
+	public void setStock_ideal(int stock_ideal) {
+		this.stock_ideal = stock_ideal;
+	}
 	
 	
 }

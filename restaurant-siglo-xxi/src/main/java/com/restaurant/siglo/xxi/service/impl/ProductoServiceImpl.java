@@ -48,6 +48,7 @@ public class ProductoServiceImpl implements ProductoService{
                 productos.put("tipo_producto_comentario", producto.getTipoProducto().getComentario());
                 productos.put("nombre_tipo_producto", producto.getTipoProducto().getNombre_tipo_producto());
                 productos.put("nombre_imagen", producto.getNombre_archivo());
+                productos.put("stock_ideal",producto.getStock_ideal());
                 listProductos.put(productos);
             } catch (JSONException e) {
                 // TODO Auto-generated catch block
@@ -73,9 +74,10 @@ public class ProductoServiceImpl implements ProductoService{
 		int stock_producto = Integer.parseInt(producto.get("stock_producto").toString());
 		int valor_unitario = Integer.parseInt(producto.get("valor_unitario").toString());
 		int tipo_producto = Integer.parseInt(producto.get("tipo_producto").toString());
+		int stock_ideal = Integer.parseInt(producto.get("stock_ideal").toString());
 
 		String resp = productoRepository.crearProducto(comentario, fecha_ingreso_producto_format, fecha_vencimiento_format,
-				medida_producto, nombre_producto, stock_producto, valor_unitario, tipo_producto); 
+				medida_producto, nombre_producto, stock_producto, valor_unitario, tipo_producto, stock_ideal); 
 		
 		return resp;
 	}
@@ -120,6 +122,7 @@ public class ProductoServiceImpl implements ProductoService{
 		int stock_producto = Integer.parseInt(producto.get("stock_producto").toString());
 		int valor_unitario = Integer.parseInt(producto.get("valor_unitario").toString());
 		int tipo_producto = Integer.parseInt(producto.get("tipo_producto").toString());
+		int stock_ideal = Integer.parseInt(producto.get("stock_ideal").toString());
 		String resp = "";
 		boolean existeProducto = productoRepository.existsById(id_producto);
 		
@@ -127,7 +130,7 @@ public class ProductoServiceImpl implements ProductoService{
 			System.out.println("Modificar producto");
 			try {
 				productoRepository.modificarProducto(id_producto, comentario, fecha_ingreso_producto_format, fecha_vencimiento_format,
-						medida_producto, nombre_producto, stock_producto, valor_unitario, tipo_producto);
+						medida_producto, nombre_producto, stock_producto, valor_unitario, tipo_producto, stock_ideal);
 				resp = "Se modificó correctamente el producto";
 			} catch (Exception e) {
 				// TODO: handle exception
@@ -162,6 +165,7 @@ public class ProductoServiceImpl implements ProductoService{
             resp.put("tipo_producto", unProducto.getTipoProducto().getNombre_tipo_producto());
             resp.put("tipo_producto", unProducto.getTipoProducto().getComentario());
             resp.put("eliminado", unProducto.isEliminado());
+            resp.put("stock_ideal", unProducto.getStock_ideal());
             
         } catch (Exception e) {
             return "Producto no existe. \n"

@@ -2,6 +2,7 @@ package com.restaurant.siglo.xxi.clases;
 
 import java.sql.Timestamp;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -28,6 +29,9 @@ public class Reporte {
 	Timestamp fecha_creacion;
 	String nombre_creacion;
 	String extension;
+	
+	@Column(nullable = true)
+	boolean eliminado;
 	
 	public Reporte() {};
 	
@@ -89,6 +93,27 @@ public class Reporte {
 	public void setExtension(String extension) {
 		this.extension = extension;
 	}
-	
-	
+	public boolean isEliminado() {
+		return eliminado;
+	}
+
+	public void setEliminado(boolean eliminado) {
+		this.eliminado = eliminado;
+	}
+
+	public TipoReporte getTipo_reporte() {
+		return tipo_reporte;
+	}
+
+	public void setTipo_reporte(TipoReporte tipo_reporte) {
+		this.tipo_reporte = tipo_reporte;
+	}
+
+	public Usuario getUsuario() {
+		return usuario;
+	}
+
+	public void setUsuario(Usuario usuario) {
+		this.usuario = usuario;
+	}
 }

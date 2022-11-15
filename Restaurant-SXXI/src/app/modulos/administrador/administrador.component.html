@@ -10,6 +10,32 @@
     <div class="menu">
       <div class="grid">
         <div class="funcionalidades">
+          <h3>Módulos</h3>
+          <div class="card" (click)="navegarACocina()"> 
+            <h3>Navegar a Cocina</h3>
+          </div>
+        </div>
+        <div class="funcionalidades">
+          <br>
+          <div class="card"(click)="navegarAFinanzas()">
+            <h3>Navegar a Finanzas</h3>
+          </div>
+        </div>
+        <div class="funcionalidades">
+          <br>
+          <div class="card"(click)="navegarABodega()">
+            <h3>Navegar a Bodega</h3>
+          </div>
+        </div>
+        <div class="funcionalidades">
+          <br>
+          <div class="card" (click)="navegarAMesas()">
+            <h3>Navegar a Mesas</h3>
+          </div>
+        </div>
+      </div>
+      <div class="grid">
+        <div class="funcionalidades">
           <h3>Usuarios</h3>
           <div class="card" (click)="crearUsuario()"> 
             <h3>Crear un usuario</h3>
@@ -25,14 +51,56 @@
       <div class="grid">
         <div class="funcionalidades">
           <h3>Mesas</h3>
-          <div class="card"(click)="crearMesa()">
-            <h3>Crear mesa</h3>
+          <div class="card" (click)="mostrarMesas()"> 
+            <h3>Mostrar listado de mesas</h3>
           </div>
         </div>
         <div class="funcionalidades">
           <br>
-          <div class="card" (click)="mostrarMesas()"> 
-            <h3>Mostrar listado de mesas</h3>
+          <div class="card"(click)="crearMesa()">
+            <h3>Crear mesa</h3>
+          </div>
+        </div>
+      </div>
+      <div class="grid">
+        <div class="funcionalidades">
+          <h3>Productos</h3>
+          <div class="card" (click)="mostrarProductos()"> 
+            <h3>Mostrar listado de productos</h3>
+          </div>
+        </div>
+        <div class="funcionalidades">
+          <br>
+          <div class="card"(click)="crearProducto()">
+            <h3>Crear producto</h3>
+          </div>
+        </div>
+      </div>
+      <div class="grid">
+        <div class="funcionalidades">
+          <h3>Clientes</h3>
+          <div class="card" (click)="mostrarClientes()"> 
+            <h3>Mostrar listado de clientes</h3>
+          </div>
+        </div>
+        <!-- <div class="funcionalidades">
+          <br>
+          <div class="card"(click)="crearProducto()">
+            <h3>Crear producto</h3>
+          </div>
+        </div> -->
+      </div>
+      <div class="grid">
+        <div class="funcionalidades">
+          <h3>Reportes</h3>
+          <div class="card" (click)="mostrarReportes()">
+            <h3>Historial de reportes</h3>
+          </div>
+        </div>
+        <div class="funcionalidades">
+          <br>
+          <div class="card" (click)="crearReporte()"> 
+            <h3>Creación de reportes</h3>
           </div>
         </div>
       </div>
@@ -106,7 +174,7 @@
                 <nz-form-control>
                   <nz-select [ngModel]="rolSelected" nzPlaceHolder="Elegir rol" name="rol" formControlName="rol">
                     <ng-container *ngFor="let rol of listRoles">
-                      <nz-option [nzValue]="rol.id_rol" [nzLabel]="rol.nombre_rol"></nz-option>
+                      <nz-option [nzValue]="rol.id_rol" [nzLabel]="rol.nombre_rol" *ngIf="rol.id_rol != 4"></nz-option>
                     </ng-container>
                   </nz-select>
                 </nz-form-control>
@@ -145,7 +213,7 @@
           <div class="botones-listado-mesas" *ngIf="usuarioSelected != null && usuarioSelected != ''">
             <span nz-icon nzType="edit" nzTheme="outline" (click)="modificarUsuario(usuarioSelected)"></span>
             <span nz-icon nzType="delete" nzTheme="outline" nz-popconfirm
-              nzPopconfirmTitle="¿Seguro que quieres eliminar esta mesa?" nzPopconfirmPlacement="top"
+              nzPopconfirmTitle="¿Seguro que quieres eliminar este usuario?" nzPopconfirmPlacement="top"
               (nzOnConfirm)="guardarEliminarUsuario(usuarioSelected.id_usuario)"></span>
           </div>
           <table>
@@ -394,6 +462,725 @@
         </form>
       </ng-container>
     </nz-modal>
+
+    
+    <!-- VER DETALLE RECETA -->
+    <nz-drawer [nzWidth]="550" [nzClosable]="false" [nzVisible]="visibleDetalleReceta" nzPlacement="right"
+      nzTitle="Detalle de receta" (nzOnClose)="cerrarDrawerDetalleReceta()"
+      style="background-color: rgba(81, 0, 195, 0.319);">
+      <ng-container>
+        <div class="all-detalle-plato">
+          <div class="header-detalle-plato">
+            <div class="botones-modificar">
+              <span *ngIf="!isVisibleModificarReceta" nz-icon nzType="edit" nzTheme="outline"
+                (click)="modificarReceta(recetaSelected)"></span>
+              <span *ngIf="!isVisibleModificarReceta" nz-icon nzType="delete" nzTheme="outline" nz-popconfirm
+                nzPopconfirmTitle="¿Seguro que quieres eliminar la receta?" nzPopconfirmPlacement="top"
+                (nzOnConfirm)="guardarEliminarReceta(recetaSelected.id_receta)"></span>
+
+              <span *ngIf="isVisibleModificarReceta" nz-icon nzType="check" nzTheme="outline" nz-popconfirm
+                nzPopconfirmTitle="¿Seguro que quieres actualizar la receta?" nzPopconfirmPlacement="top"
+                (nzOnConfirm)="guardarModificarReceta(recetaSelected.id_receta)"></span>
+              <span *ngIf="isVisibleModificarReceta" nz-icon nzType="close" nzTheme="outline"
+                (click)="cerrarModificarReceta()"></span>
+            </div>
+            <div *ngIf="!isVisibleModificarReceta">
+              <div class="name-detalle-plato">
+                <h3>Receta #{{recetaSelected?.id_receta}}</h3>
+              </div>
+              <div class="desc-detalle-plato">
+                <h5>Tiempo de preparación: {{recetaSelected?.tiempoPreparacion}}</h5>
+                <h5>Complejidad: {{recetaSelected?.complejidad}}</h5>
+                <h5>Comentario: {{recetaSelected?.comentario}}</h5>
+              </div>
+              <br>
+              <div class="desc-detalle-plato">
+                <h4>Productos que utiliza esta receta:</h4>
+                <div>
+                  <nz-table #basicTable nzData="null" [nzShowPagination]="false">
+                    <thead>
+                      <tr>
+                        <th>Nombre</th>
+                        <th>Cantidad</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let prod of recetaSelected?.productosEnUnaReceta">
+                        <td>{{prod.producto.nombre_producto}}</td>
+                        <td>(x{{prod.cantidad}})</td>
+                      </tr>
+                    </tbody>
+                  </nz-table>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div *ngIf="isVisibleModificarReceta">
+            <form nz-form [formGroup]="validateFormModificarReceta" id="validateFormModificarReceta"
+              (ngSubmit)="(guardarModificarReceta)">
+              <div>
+                <nz-form-item>
+                  <nz-form-label nzRequired nzFor="id_receta">
+                    Id receta
+                  </nz-form-label>
+                  <nz-form-control nzErrorTip="Por favor ingrese la nuevo id de receta">
+                    <input nz-input type="text" name="id_receta" id="id_receta" placeholder="id_receta" disabled
+                      value="{{recetaSelected.id_receta}}">
+                  </nz-form-control>
+                </nz-form-item>
+                <nz-form-item>
+                  <nz-form-label nzRequired nzFor="comentario">
+                    Comentario
+                  </nz-form-label>
+                  <nz-form-control nzErrorTip="Por favor ingrese un nuevo comentario">
+                    <input nz-input type="text" name="comentario" id="comentario" placeholder="comentario"
+                      formControlName="comentario">
+                  </nz-form-control>
+                </nz-form-item>
+                <nz-form-item>
+                  <nz-form-label nzRequired nzFor="complejidad">
+                    Complejidad
+                  </nz-form-label>
+                  <nz-form-control nzErrorTip="Por favor indique la nueva complejidad">
+                    <nz-select nzPlaceHolder="Elegir complejidad" name="complejidad" formControlName="complejidad"
+                      style="width: 200px">
+                      <nz-option nzValue="Fácil" nzLabel="Fácil"></nz-option>
+                      <nz-option nzValue="Mediana" nzLabel="Mediana"></nz-option>
+                      <nz-option nzValue="Difícil" nzLabel="Difícil"></nz-option>
+                    </nz-select>
+                  </nz-form-control>
+                </nz-form-item>
+                <nz-form-item>
+                  <nz-form-label nzRequired nzFor="tiempo_preparacion">
+                    Tiempo preparación
+                  </nz-form-label>
+                  <nz-form-control nzErrorTip="Por favor ingrese el tiepo de tiempo de preparacion">
+                    <nz-select nzPlaceHolder="Elegir tiempo" name="tiempo_preparacion" formControlName="tiempo_preparacion"
+                      style="width: 200px">
+                      <nz-option nzValue="10" nzLabel="10"></nz-option>
+                      <nz-option nzValue="20" nzLabel="20"></nz-option>
+                      <nz-option nzValue="30" nzLabel="30"></nz-option>
+                      <nz-option nzValue="60" nzLabel="60"></nz-option>
+                    </nz-select>
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+            </form>
+          </div>
+        </div>
+      </ng-container>
+    </nz-drawer>
+
+    <!-- CREAR RECETA -->
+    <nz-modal nzTitle="Crear receta" [nzWidth]="800" [nzContent]="crearRecetaContent" [(nzVisible)]="isVisibleCrearReceta"
+      (nzOnOk)="guardarCrearReceta()" (nzOnCancel)="cerrarCrearReceta()">
+      <ng-container #crearRecetaContent>
+        <form nz-form [formGroup]="validateFormCrearReceta" id="validateFormCrearReceta" [nzLayout]="'inline'"
+          (ngSubmit)="(guardarCrearReceta)">
+          <div style="display: flex; justify-content: center;">
+            <nz-form-item>
+              <nz-form-label nzFor="complejidad">
+                Complejidad
+              </nz-form-label>
+              <nz-form-control nzErrorTip="Por favor ingrese la complejidad de la receta">
+                <nz-select nzPlaceHolder="Elegir complejidad" name="complejidad" formControlName="complejidad"
+                  style="width: 200px">
+                  <nz-option nzValue="Fácil" nzLabel="Fácil"></nz-option>
+                  <nz-option nzValue="Mediana" nzLabel="Mediana"></nz-option>
+                  <nz-option nzValue="Difícil" nzLabel="Difícil"></nz-option>
+                </nz-select>
+              </nz-form-control>
+            </nz-form-item>
+            <nz-form-item>
+              <nz-form-label nzFor="tiempo_preparacion">
+                Tiempo de preparación
+              </nz-form-label>
+              <nz-form-control nzErrorTip="Por favor ingrese el tiempo de preparacion">
+                <nz-select nzPlaceHolder="Elegir tiempo" name="tiempo_preparacion" formControlName="tiempo_preparacion"
+                  style="width: 200px">
+                  <nz-option nzValue="10" nzLabel="10"></nz-option>
+                  <nz-option nzValue="20" nzLabel="20"></nz-option>
+                  <nz-option nzValue="30" nzLabel="30"></nz-option>
+                  <nz-option nzValue="60" nzLabel="60"></nz-option>
+                </nz-select>
+              </nz-form-control>
+            </nz-form-item>
+            <nz-form-item>
+              <nz-form-label nzFor="comentario">
+                Comentario
+              </nz-form-label>
+              <nz-form-control nzErrorTip="Por favor ingrese un comentario">
+                <textarea rows="2" nz-input name="comentario" id="comentario"
+                  placeholder="Añadir un comentario a la receta..." formControlName="comentario">
+                            </textarea>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+          <br>
+          <div nz-row>
+            <div nz-col nzSpan="11">
+              <div>
+                <h3 nz-title>Ingredientes disponibles</h3>
+                <nz-table #basicTable nzData="null" [nzShowPagination]="false">
+                  <thead>
+                    <tr>
+                      <th>Nombre</th>
+                      <th>Acción</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let prod of listaProductos">
+                      <td *ngIf="prod.nombre_tipo_producto.toLowerCase().includes('ingrediente')">{{ prod.nombre_producto}}
+                      </td>
+                      <td *ngIf="prod.nombre_tipo_producto.toLowerCase().includes('ingrediente')">
+                        <a (click)="mostrarModalAgregarIngrediente(prod)" [id]="prod.id_producto">Agregar ingrediente</a>
+                      </td>
+                    </tr>
+                  </tbody>
+                </nz-table>
+              </div>
+            </div>
+            <div nz-col nzSpan="2"></div>
+            <div nz-col nzSpan="11">
+              <div>
+                <h3 nz-title>Ingredientes de esta receta</h3>
+                <nz-table #basicTable nzData="null" [nzShowPagination]="false">
+                  <thead>
+                    <tr>
+                      <th>Nombre</th>
+                      <th>Acción</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let prod of listProductosReceta">
+                      <td>{{ prod.nombre_producto }} (x{{prod.cantidad}})</td>
+                      <td>
+                        <a (click)="quitarIngredienteDeReceta(prod)">Quitar</a>
+                        <nz-divider nzType="vertical"></nz-divider>
+                        <a (click)="modificarIngredienteDeReceta(prod)">Modificar</a>
+                      </td>
+                    </tr>
+                  </tbody>
+                </nz-table>
+              </div>
+            </div>
+          </div>
+
+
+        </form>
+      </ng-container>
+    </nz-modal>
+
+    <!-- CREAR PRODUCTO -->
+    <nz-modal nzTitle="Crear Producto" [nzWidth]="800" [nzContent]="crearProductoContent"
+      [(nzVisible)]="isVisibleCrearProducto" (nzOnOk)="guardarCrearProducto()" (nzOnCancel)="cerrarCrearProducto()">
+      <div>
+        <ng-container #crearProductoContent>
+          <form nz-form [formGroup]="validateFormCrearProducto" id="validateFormCrearProducto" [nzLayout]="'inline'">
+            <div nz-row clas="form-usuario">
+              <div nz-col nzSpan="12">
+                <nz-form-item>
+                  <nz-form-label class="nz-label-crear-producto">
+                    Nombre
+                  </nz-form-label>
+                  <nz-form-control class="nz-control-crear-producto">
+                    <input nz-input type="text" name="nombre_producto" id="nombre_producto" placeholder="Nombre producto"
+                      formControlName="nombre_producto">
+                  </nz-form-control>
+                </nz-form-item>
+                <nz-form-item>
+                  <nz-form-label class="nz-label-crear-producto">
+                    Medida
+                  </nz-form-label>
+                  <nz-form-control class="nz-control-crear-producto" style="width: 182px;">
+                    <nz-select nzPlaceHolder="Elegir medida de producto" name="medida_producto"
+                      formControlName="medida_producto">
+                      <nz-option nzValue="cc" nzLabel="CC centímetros cúbicos"></nz-option>
+                      <nz-option nzValue="lts" nzLabel="Litros"></nz-option>
+                      <nz-option nzValue="kg" nzLabel="Kilogramo"></nz-option>
+                      <nz-option nzValue="gr" nzLabel="Gramos"></nz-option>
+                    </nz-select>
+                  </nz-form-control>
+                </nz-form-item>
+                <nz-form-item>
+                  <nz-form-label class="nz-label-crear-producto">
+                    Stock
+                  </nz-form-label>
+                  <nz-form-control class="nz-control-crear-producto">
+                    <input nz-input type="number" min=0 name="stock_producto" id="stock_producto"
+                      formControlName="stock_producto">
+                  </nz-form-control>
+                </nz-form-item>
+                <nz-form-item>
+                  <nz-form-label class="nz-label-crear-producto">
+                      Stock Ideal
+                  </nz-form-label>
+                  <nz-form-control class="nz-control-crear-producto">
+                      <input nz-input type="number" min=0 name="stock_ideal" id="stock_ideal" formControlName="stock_ideal">
+                  </nz-form-control>
+                </nz-form-item>
+                <nz-form-item>
+                  <nz-form-label class="nz-label-crear-producto">
+                    Valor unitario
+                  </nz-form-label>
+                  <nz-form-control class="nz-control-crear-producto">
+                    <input nz-input type="number" min=0 name="valor_unitario" id="valor_unitario"
+                      formControlName="valor_unitario">
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+
+              <div nz-col nzSpan="12">
+                <nz-form-item>
+                  <nz-form-label class="nz-label-crear-producto">
+                    Tipo de producto
+                  </nz-form-label>
+                  <nz-form-control class="nz-control-crear-producto" style="width: 200px;">
+                    <nz-select nzPlaceHolder="Elegir tipo de producto" name="tipo_producto" formControlName="tipo_producto">
+                      <ng-container *ngFor="let tipo of listaTipoProducto">
+                        <nz-option [nzValue]="tipo.id_tipo_producto" [nzLabel]="tipo.nombre_tipo_producto"></nz-option>
+                      </ng-container>
+                    </nz-select>
+                  </nz-form-control>
+                </nz-form-item>
+                <nz-form-item>
+                  <nz-form-label class="nz-label-crear-producto">
+                    Fecha ingreso producto
+                  </nz-form-label>
+                  <nz-form-control class="nz-control-crear-producto">
+                    <input nz-input type="text" name="fecha_ingreso_producto" id="fecha_ingreso_producto" disabled
+                      formControlName="fecha_ingreso_producto">
+                  </nz-form-control>
+                </nz-form-item>
+                <nz-form-item>
+                  <nz-form-label class="nz-label-crear-producto">
+                    Fecha vencimiento producto
+                  </nz-form-label>
+                  <nz-form-control class="nz-control-crear-producto">
+                    <nz-date-picker formControlName="fecha_vencimiento" nzFormat="dd/MM/yyyy"></nz-date-picker>
+                  </nz-form-control>
+                </nz-form-item>
+                <nz-form-item>
+                  <nz-form-label class="nz-label-crear-producto">
+                    Adjuntar imagen
+                  </nz-form-label>
+                  <nz-form-control class="nz-control-crear-producto">
+                    <!-- <input type="file" class="custom-file-input"  #fileUpload> -->
+                    <div class="file-select" id="src-file1">
+                      <input type="file" name="src-file1" aria-label="Archivo" (change)="onFileSelectedProducto($event)">
+                    </div>
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+            </div>
+            <div style="width: 100%; text-align: center;">
+              <br>
+              <nz-form-item style="width: 100%">
+                <nz-form-label>
+                  Comentario
+                </nz-form-label>
+                <nz-form-control style="width: 80%">
+                  <textarea rows="2" nz-input name="comentario" id="comentario" placeholder="Comentario del producto"
+                    formControlName="comentario">
+                                </textarea>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+          </form>
+        </ng-container>
+      </div>
+    </nz-modal>
+
+    <!-- CREAR PRODUCTOS RECETA -->
+    <nz-modal [(nzVisible)]="isVisibleCrearProductoReceta" nzTitle="Ingresar producto en receta"
+      (nzOnCancel)="cancelarCrearProductoReceta()" (nzOnOk)="guardarProductoEnReceta()">
+      <ng-container>
+        <form nz-form [formGroup]="validateFormCrearProductosReceta" id="validateFormCrearProductosReceta"
+          [nzLayout]="'inline'">
+          <div nz-row class="form-plato">
+            <div style="display: grid;">
+              <nz-form-item>
+                <nz-form-label class="nz-label-crear-productos-receta">
+                  Nombre
+                </nz-form-label>
+                <nz-form-control class="nz-control-crear-productos-receta">
+                  <input nz-input type="text" name="nombre_producto" id="nombre_producto" formControlName="nombre_producto"
+                    disabled>
+                </nz-form-control>
+              </nz-form-item>
+              <nz-form-item>
+                <nz-form-label class="nz-label-crear-productos-receta">
+                  Cantidad
+                </nz-form-label>
+                <nz-form-control class="nz-control-crear-productos-receta">
+                  <div style="display: flex; align-items: center;">
+                    <input nz-input type="text" disabled [value]="cantidadProductoReceta" style="width: 100px;">
+                    <span nz-icon nzType="minus-circle" nzTheme="outline" (click)="quitarCantidadProductoReceta()"
+                      style="font-size: x-large"></span>
+                    <span nz-icon nzType="plus-circle" nzTheme="outline" (click)="agregarCantidadProductoReceta()"
+                      style="font-size: x-large"></span>
+                  </div>
+                </nz-form-control>
+              </nz-form-item>
+              <nz-form-item>
+                <nz-form-label class="nz-label-crear-productos-receta">
+                  Comentario
+                </nz-form-label>
+                <nz-form-control class="nz-control-crear-productos-receta">
+                  <textarea rows="2" nz-input name="comentario" id="comentario"
+                    placeholder="Añadir un descripción a este producto en una receta..." formControlName="comentario">
+                                </textarea>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+          </div>
+        </form>
+      </ng-container>
+    </nz-modal>
+
+    <!-- VER LISTADO DE PRODUCTOS -->
+    <nz-modal nzTitle="Listado de productos" [nzContent]="listadoProductosContent" [nzWidth]="1000"
+      [(nzVisible)]="isVisibleListadoProductos" (nzOnOk)="okListadoProductos()" (nzOnCancel)="okListadoProductos()" [nzFooter]="null">
+    
+      <ng-container #listadoProductosContent>
+        <div>
+          <!-- <div class="botones-listado-mesas" *ngIf="productoSelected != null && productoSelected != ''">
+            <span nz-icon nzType="edit" nzTheme="outline" (click)="modificarProducto(productoSelected)"></span>
+            <span nz-icon nzType="delete" nzTheme="outline" nz-popconfirm
+              nzPopconfirmTitle="¿Seguro que quieres eliminar este producto?" nzPopconfirmPlacement="top"
+              (nzOnConfirm)="guardarEliminarProducto(productoSelected.id_producto)"></span>
+          </div> -->
+          <table>
+            <tr>
+              <th>#</th>
+              <th>Nombre producto</th>
+              <th>Tipo de producto</th>
+              <th>Fecha vencimiento</th>
+              <th>Comentario</th>
+
+              <th>Acción</th>
+            </tr>
+            <tr *ngFor="let prod of listaProductos" class="mesa-row" (click)="seleccionarProducto(prod)">
+              <td>{{prod.id_producto}}</td>
+              <td>{{prod.nombre_producto}}</td>
+              <td>{{prod.nombre_tipo_producto}}</td>
+              <td>{{prod.fecha_vencimiento}}</td>
+              <td>{{prod.comentario}}</td>
+
+              <td><a (click)="verDetalleProducto(producto)">Detalle</a></td>
+            </tr>
+          </table>
+        </div>
+      </ng-container>
+    
+    </nz-modal>
+
+    <!-- VER DETALLE PRODUCTO -->
+    <nz-drawer [nzWidth]="550" [nzClosable]="false" [nzVisible]="visibleDetalleProdcuto" nzPlacement="right"
+      nzTitle="Detalle del producto" (nzOnClose)="cerrarDrawerDetalleProducto()"
+      style="background-color: rgba(81, 0, 195, 0.319);">
+      <ng-container>
+        <div class="all-detalle-plato">
+          <div class="img-detalle-plato">
+            <img *ngIf="productoSelected?.nombre_imagen != undefined"
+              src="http://localhost:8085/restaurantSXXI/imagenes-rxxi/productos/{{productoSelected.nombre_imagen}}" alt=""
+              style="height: 300px; width: 100%;">
+            <img *ngIf="productoSelected?.nombre_imagen == undefined" src="assets/img-platos/nodisponible.png" alt=""
+              style="height: 300px; width: 100%;">
+          </div>
+          <div class="botones-modificar">
+            <span *ngIf="!isVisibleModificarProducto" nz-icon nzType="edit" nzTheme="outline"
+              (click)="modificarProducto(productoSelected)"></span>
+            <span *ngIf="!isVisibleModificarProducto" nz-icon nzType="delete" nzTheme="outline" nz-popconfirm
+              nzPopconfirmTitle="¿Seguro que quieres eliminar el producto?" nzPopconfirmPlacement="top"
+              (nzOnConfirm)="guardarEliminarProducto(productoSelected.id_producto)"></span>
+
+            <span *ngIf="isVisibleModificarProducto" nz-icon nzType="check" nzTheme="outline" nz-popconfirm
+              nzPopconfirmTitle="¿Seguro que quieres actualizar el plato?" nzPopconfirmPlacement="top"
+              (nzOnConfirm)="guardarModificarProducto(productoSelected.id_producto)"></span>
+            <span *ngIf="isVisibleModificarProducto" nz-icon nzType="close" nzTheme="outline"
+              (click)="cerrarModificarProducto()"></span>
+
+          </div>
+          <div class="header-detalle-plato" *ngIf="!isVisibleModificarProducto">
+            <div class="name-detalle-plato">
+              <h3>{{productoSelected?.nombre_producto | uppercase}}</h3>
+            </div>
+            <div class="desc-detalle-plato">
+              <h5>{{productoSelected?.comentario}}</h5>
+              <h5>Tipo de producto: {{productoSelected?.nombre_tipo_producto}}</h5>
+              <h5>Valor: ${{productoSelected?.valor_unitario | currency:'CLP'}}</h5>
+              <h5 *ngIf="productoSelected?.stock_producto > 0">Stock disponible: {{productoSelected?.stock_producto}}</h5>
+              <h5 *ngIf="productoSelected?.stock_producto == 0" style="color: red;">Stock disponible:
+                {{productoSelected?.stock_producto}}</h5>
+              <h5>Fecha ingreso: {{productoSelected?.fecha_ingreso_producto}}</h5>
+              <h5>Fecha vencimiento: {{productoSelected?.fecha_vencimiento}}</h5>
+              <h5>Medida: {{productoSelected?.medida_producto}}</h5>
+              <h5>Tipo de producto: {{productoSelected?.tipo_producto_comentario}}</h5>
+            </div>
+          </div>
+          <div *ngIf="isVisibleModificarProducto">
+            <form nz-form [formGroup]="validateFormModificarProducto" [nzLayout]="'inline'"
+              id="validateFormModificarProducto">
+              <div nz-row class="form-plato">
+                <div nz-col nzSpan="24" class="modificar-content-form">
+                  <nz-form-item>
+                    <nz-form-label nzFor="id_producto" class="nz-label-modificar-producto">
+                      Id producto
+                    </nz-form-label>
+                    <nz-form-control class="nz-control-modificar-producto">
+                      <input nz-input type="text" name="id_producto" id="id_producto" placeholder="id_producto"
+                        formControlName="id_producto" disabled>
+                    </nz-form-control>
+                  </nz-form-item>
+                  <nz-form-item>
+                    <nz-form-label class="nz-label-modificar-producto" nzFor="fecha_ingreso_producto">
+                      Fecha de ingreso
+                    </nz-form-label>
+                    <nz-form-control class="nz-control-modificar-producto">
+                      <nz-date-picker formControlName="fecha_ingreso_producto" nzFormat="dd/MM/yyyy"></nz-date-picker>
+                    </nz-form-control>
+                  </nz-form-item>
+                  <nz-form-item>
+                    <nz-form-label class="nz-label-modificar-producto" nzFor="fecha_vencimiento">
+                      Fecha de vencimiento
+                    </nz-form-label>
+                    <nz-form-control class="nz-control-modificar-producto">
+                      <nz-date-picker formControlName="fecha_vencimiento" nzFormat="dd/MM/yyyy"></nz-date-picker>
+                    </nz-form-control>
+                  </nz-form-item>
+                  <nz-form-item>
+                    <nz-form-label class="nz-label-modificar-producto" nzFor="nombre_producto">
+                      Nombre producto
+                    </nz-form-label>
+                    <nz-form-control class="nz-control-modificar-producto">
+                      <input nz-input type="text" name="nombre_producto" id="nombre_producto" placeholder="nombre_producto"
+                        formControlName="nombre_producto">
+                    </nz-form-control>
+                  </nz-form-item>
+                  <nz-form-item>
+                    <nz-form-label class="nz-label-modificar-producto" nzFor="medida_producto">
+                      Medida
+                    </nz-form-label>
+                    <nz-form-control class="nz-control-modificar-producto">
+                      <nz-select nzPlaceHolder="Elegir medida de producto" name="medida_producto"
+                        formControlName="medida_producto">
+                        <nz-option nzValue="cc" nzLabel="CC centímetros cúbicos"></nz-option>
+                        <nz-option nzValue="lts" nzLabel="Litros"></nz-option>
+                        <nz-option nzValue="kg" nzLabel="Kilogramo"></nz-option>
+                        <nz-option nzValue="gr" nzLabel="Gramos"></nz-option>
+                      </nz-select>
+                    </nz-form-control>
+                  </nz-form-item>
+                  <nz-form-item>
+                    <nz-form-label class="nz-label-modificar-producto">
+                      Stock
+                    </nz-form-label>
+                    <nz-form-control class="nz-control-modificar-producto">
+                      <input nz-input type="number" min=0 name="stock_producto" id="stock_producto"
+                        formControlName="stock_producto">
+                    </nz-form-control>
+                  </nz-form-item>
+                  <nz-form-item>
+                    <nz-form-label class="nz-label-crear-producto">
+                        Stock Ideal
+                    </nz-form-label>
+                    <nz-form-control class="nz-control-crear-producto">
+                        <input nz-input type="number" min=0 name="stock_ideal" id="stock_ideal" formControlName="stock_ideal">
+                    </nz-form-control>
+                </nz-form-item>
+                  <nz-form-item>
+                    <nz-form-label class="nz-label-modificar-producto">
+                      Valor unitario
+                    </nz-form-label>
+                    <nz-form-control class="nz-control-modificar-producto">
+                      <input nz-input type="number" min=0 name="valor_unitario" id="valor_unitario"
+                        formControlName="valor_unitario">
+                    </nz-form-control>
+                  </nz-form-item>
+                  <nz-form-item>
+                    <nz-form-label class="nz-label-modificar-producto" nzFor="comentario">
+                      Comentario
+                    </nz-form-label>
+                    <nz-form-control nzErrorTip="Por favor ingrese un nuevo comentario"
+                      class="nz-control-modificar-producto">
+                      <input nz-input type="text" name="comentario" id="comentario" placeholder="comentario"
+                        formControlName="comentario">
+                    </nz-form-control>
+                  </nz-form-item>
+                  <nz-form-item>
+                    <nz-form-label class="nz-label-modificar-producto">
+                      Tipo de producto
+                    </nz-form-label>
+                    <nz-form-control class="nz-control-modificar-producto">
+                      <nz-select nzPlaceHolder="Elegir tipo de producto" name="tipo_producto"
+                        formControlName="tipo_producto">
+                        <ng-container *ngFor="let tipo of listaTipoProducto">
+                          <nz-option [nzValue]="tipo.id_tipo_producto" [nzLabel]="tipo.nombre_tipo_producto"></nz-option>
+                        </ng-container>
+                      </nz-select>
+                    </nz-form-control>
+                  </nz-form-item>
+                  <nz-form-item>
+                    <nz-form-label class="nz-label-modificar-producto">
+                      Adjuntar imagen
+                    </nz-form-label>
+                    <nz-form-control class="nz-control-modificar-producto">
+                      <div class="file-select" id="src-file1">
+                        <input type="file" name="src-file1" aria-label="Archivo" (change)="onFileSelectedProducto($event)">
+                      </div>
+                    </nz-form-control>
+                  </nz-form-item>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </ng-container>
+    </nz-drawer>
+
+     <!-- VER LISTADO DE CLIENTES -->
+     <nz-modal nzTitle="Listado de clientes" [nzContent]="listadoClientesContent" [nzWidth]="800"
+     [(nzVisible)]="isVisibleListadoClientes" (nzOnOk)="okListadoClientes()" (nzOnCancel)="okListadoClientes()" [nzFooter]="null">
+   
+     <ng-container #listadoClientesContent>
+       <div>
+         <!-- <div class="botones-listado-mesas" *ngIf="productoSelected != null && productoSelected != ''">
+           <span nz-icon nzType="edit" nzTheme="outline" (click)="modificarProducto(productoSelected)"></span>
+           <span nz-icon nzType="delete" nzTheme="outline" nz-popconfirm
+             nzPopconfirmTitle="¿Seguro que quieres eliminar este producto?" nzPopconfirmPlacement="top"
+             (nzOnConfirm)="guardarEliminarProducto(productoSelected.id_producto)"></span>
+         </div> -->
+         <table>
+           <tr>
+             <th>#</th>
+             <th>Nombre cliente</th>
+             <th>RUT cliente</th>
+             <th>Fecha ingreso</th>
+           </tr>
+           <tr *ngFor="let cli of listClientes; let i = index;" class="mesa-row">
+             <td>{{i + 1}}</td>
+             <td>{{cli.nombre_cliente}}</td>
+             <td>{{cli.rut_cliente}}-{{cli.dv_cliente}}</td>
+             <td>{{cli.fecha_ingreso}}</td>
+           </tr>
+         </table>
+       </div>
+     </ng-container>
+   
+   </nz-modal>
+
+   <!-- CREAR REPORTE -->
+  <nz-modal nzTitle="Crear reporte" [nzWidth]="800" [nzContent]="crearReporteContent" [(nzVisible)]="isVisibleCrearReporte" (nzOnOk)="guardarCrearReporte()" (nzOnCancel)="cerrarCrearReporte()">
+    <ng-container #crearReporteContent>
+        <form nz-form [formGroup]="validateFormCrearReporte" id="validateFormCrearReporte" [nzLayout]="'inline'">
+            <div nz-row clas="form-usuario">
+                <div nz-col nzSpan="24">
+                    <nz-form-item>
+                        <nz-form-label>
+                            Título del reporte
+                        </nz-form-label>
+                        <nz-form-control>
+                            <input nz-input type="text" name="titulo_reporte" id="titulo_reporte" placeholder="Pon un títutlo" formControlName="titulo_reporte">
+                        </nz-form-control>
+                    </nz-form-item>
+                    <nz-form-item>
+                        <nz-form-label>
+                            Tipo reporte
+                        </nz-form-label>
+                        <nz-form-control>
+                            <nz-select nzPlaceHolder="Elegir tipo de reporte" name="id_tipo_reporte" formControlName="id_tipo_reporte">
+                                <ng-container *ngFor="let tr of listTipoReportes">
+                                    <nz-option [nzValue]="tr.id_tipo_reporte" [nzLabel]="tr.nombre_tipo_reporte"></nz-option>
+                                </ng-container>
+                            </nz-select>
+                        </nz-form-control>
+                    </nz-form-item>
+                    <nz-form-item>
+                        <nz-form-label>
+                            Comentario
+                        </nz-form-label>
+                        <nz-form-control>
+                            <input nz-input type="text" name="comentario" id="comentario" placeholder="Pon un comentario" formControlName="comentario">
+                        </nz-form-control>
+                    </nz-form-item>
+                </div>
+            </div>
+        </form>
+    </ng-container>
+  </nz-modal>
+
+   <!-- VER LISTADO DE REPORTES -->
+    <nz-modal nzTitle="Listado de reportes" [nzContent]="listadoReportesContent" [nzWidth]="800" [(nzVisible)]="isVisibleVerReportes" (nzOnOk)="okVerReportes()" (nzOnCancel)="okVerReportes()" [nzFooter]="null">
+
+      <ng-container #listadoReportesContent>
+          <div>
+              <!-- <div class="botones-listado-mesas" *ngIf="usuarioSelected != null && usuarioSelected != ''">
+                <span nz-icon nzType="edit" nzTheme="outline" (click)="modificarUsuario(usuarioSelected)"></span>
+                <span nz-icon nzType="delete" nzTheme="outline" nz-popconfirm nzPopconfirmTitle="¿Seguro que quieres eliminar esta mesa?" nzPopconfirmPlacement="top" (nzOnConfirm)="guardarEliminarUsuario(usuarioSelected.id_usuario)"></span>
+            </div> -->
+              <table>
+                  <tr>
+                      <th>ID reporte</th>
+                      <th>Título</th>
+                      <th>Fecha creación</th>
+                      <th>Tipo</th>
+                      <th>Acción</th>
+                  </tr>
+                  <tr *ngFor="let reporte of listReportes" class="mesa-row">
+                      <td>{{reporte.id_reporte}}</td>
+                      <td>{{reporte.titulo_reporte}}</td>
+                      <td>{{reporte.fecha_creacion | date : 'dd/MM/yyyy'}}</td>
+                      <td>{{reporte.nombre_tipo_reporte}}</td>
+                      <td>
+                          <a nz-popconfirm
+                          nzPopconfirmTitle="¿Seguro que quieres eliminar este reporte?" nzPopconfirmPlacement="top"
+                          (nzOnConfirm)="eliminarReporte(reporte.id_reporte)">Eliminar</a>
+                          <a>Descargar archivo</a>
+                      </td>
+
+                  </tr>
+              </table>
+          </div>
+      </ng-container>
+
+    </nz-modal>
+
+    <!-- VER DETALLE REPORTE -->
+    <nz-modal nzTitle="Detalle de reporte" [nzContent]="detalleReportesContent" [nzWidth]="1000" [(nzVisible)]="mostrarDetalleVistaReporte" (nzOnOk)="guardarNuevoReporteConDetalle()" (nzOnCancel)="okDetalleReporte()">
+
+      <ng-container #detalleReportesContent>
+          <div>
+            <h3 nz-title> Reporte de stock de productos </h3>
+            <table>
+              <tr>
+                  <th>#</th>
+                  <th>ID</th>
+                  <th>Nombre</th>
+                  <th>Medida</th>
+                  <th>Stock ideal</th>
+                  <th>Stock actual</th>
+                  <th>%Respecto ideal</th>
+                  <th>%Productos faltantes</th>
+                  <th>Valor unitario</th>
+              </tr>
+              <tr *ngFor="let row of valoresRespuestaObtenerReporte; let i = index;" class="mesa-row">
+                  <td>{{i+1}}</td>
+                  <td>{{row[0]}}</td>
+                  <td>{{row[1]}}</td>
+                  <td>{{row[2]}}</td>
+                  <td>{{row[3]}}</td>
+                  <td>{{row[4]}}</td>
+                  <td>{{row[5]}}%</td>
+                  <td>{{row[6]}}</td>
+                  <td>{{row[7]}}</td>
+              </tr>
+          </table>
+          </div>
+      </ng-container>
+
+    </nz-modal>
+
 </div>
 
 <div *ngIf="rolUsuarioLogeado != 1">

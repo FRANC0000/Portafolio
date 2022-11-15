@@ -8,10 +8,53 @@
             <button nz-button nzType="danger" (click)="cerrarSesion()"> Cerrar sesión </button>
         </div>
     </div>
+    
     <div class="menu">
-        <div class="menu-header">
-            <h2>Inventario</h2>
-        </div>
+      <div class="menu-header">
+        <h2>Buzón de entrada</h2>
+      </div>
+      <div>
+        CONTENIDO
+      </div>
+
+      <div class="menu-header">
+        <h2>Solicitudes de reabastecimiento</h2>
+      </div>
+      <div>
+        CONTENIDO
+      </div>
+
+      <div class="menu-header">
+        <h2>Solicitudes de cocina</h2>
+      </div>
+      <div>
+        CONTENIDO
+      </div>
+
+      <div class="menu-header">
+        <h2>Inventario</h2>
+      </div>
+      <div>
+        <nz-table nzShowPagination="true" [nzData]="listaProductos" [nzPageSize]="listaProductos.length">
+          <tr>
+            <th>#</th>
+            <th>Nombre</th>
+            <th>Tipo</th>
+            <th>Stock</th>
+            <th>Fecha ingreso</th>
+            <th>Fecha vencimiento</th>
+          </tr>
+          <tr *ngFor="let prod of listaProductos " class="mesa-row" (click)="seleccionarProducto(prod)"
+            [ngStyle]="{'background-color': prod.id_producto === productoSelected?.id_producto ? 'rgba(81, 0, 195, 0.319)' : ''}">
+            <td>{{prod.id_producto}}</td>
+            <td>{{prod.nombre_producto}}</td>
+            <td>{{prod.nombre_tipo_producto}}</td>
+            <td>{{prod.stock_producto}}</td>
+            <td>{{prod.fecha_ingreso_producto}}</td>
+            <td>{{prod.fecha_vencimiento}}</td>
+          </tr>
+        </nz-table>
+      </div>
     </div>
 </div>
 

@@ -346,6 +346,10 @@
 
 .detalle-boleta{
     padding: 15px 20px;
+    overflow: auto;
+    position: absolute;
+    height: calc(100% - 155px);
+    width: 100%;
 }
 
 .forma-de-pago{

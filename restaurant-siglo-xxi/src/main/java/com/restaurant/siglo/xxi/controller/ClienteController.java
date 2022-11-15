@@ -3,6 +3,7 @@ package com.restaurant.siglo.xxi.controller;
 import java.text.ParseException;
 import java.util.Map;
 
+import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -23,6 +24,14 @@ public class ClienteController {
 	public String modificarCliente(@RequestBody Map<String, Object> cliente) throws ParseException {
 		
 		String resp = clienteService.modificarCliente(cliente);
+		
+		return resp;	
+	}
+	
+	@RequestMapping(value="/obtenerClientes")
+	public String obtenerClientes() throws ParseException, JSONException {
+		
+		String resp = clienteService.obtenerClientes();
 		
 		return resp;	
 	}

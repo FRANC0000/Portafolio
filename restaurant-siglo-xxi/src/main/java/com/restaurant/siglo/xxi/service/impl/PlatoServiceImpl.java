@@ -10,8 +10,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.restaurant.siglo.xxi.clases.Plato;
+import com.restaurant.siglo.xxi.clases.Receta;
 import com.restaurant.siglo.xxi.clases.TipoPlato;
 import com.restaurant.siglo.xxi.repository.PlatoRepository;
+import com.restaurant.siglo.xxi.repository.RecetaRepository;
 import com.restaurant.siglo.xxi.repository.TipoPlatoRepository;
 import com.restaurant.siglo.xxi.service.PlatoService;
 
@@ -23,6 +25,9 @@ public class PlatoServiceImpl implements PlatoService{
 	
 	@Autowired
     TipoPlatoRepository tipoPlatoRepository;
+	
+	@Autowired
+    RecetaRepository recetaRepository;
     
     @Override
     public String obtenerPlatos() throws JSONException {
@@ -46,6 +51,22 @@ public class PlatoServiceImpl implements PlatoService{
                 	platos.put("descripcion_tipo_plato", plato.getTipo_plato().getDescripcion());
                 	platos.put("eliminado", plato.isEliminado());
                 	platos.put("nombre_imagen", plato.getNombre_imagen());
+                	
+                    JSONArray listRecetas = new JSONArray();
+                    List<Receta> listadoRecetas = recetaRepository.obtenerRecetasPorIdPlato(plato.getId_plato());
+                    
+                    for (Receta receta : listadoRecetas) {
+						JSONObject unaReceta = new JSONObject();
+						if (receta.isEliminado() == false) {							
+							unaReceta.put("id_receta", receta.getId_receta());
+							unaReceta.put("tiempo_preparacion", receta.getTiempo_preparacion());
+							unaReceta.put("comentario", receta.getComentario());
+							unaReceta.put("complejidad", receta.getComplejidad());
+							listRecetas.put(unaReceta);
+						}
+					}
+                    platos.put("recetas", listRecetas);
+                    
                 	listPlatos.put(platos);
                 }
             } catch (JSONException e) {

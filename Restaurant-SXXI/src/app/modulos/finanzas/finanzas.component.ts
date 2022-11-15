@@ -1,5 +1,7 @@
+import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { NzNotificationService } from 'ng-zorro-antd';
 import { Boleta, Pedido, ProductoEnCarro } from 'src/app/interfaces/carrito-compras';
 import { Plato, Producto } from 'src/app/interfaces/cocina';
 import { FinanzasService } from './finanzas.service';
@@ -11,7 +13,8 @@ import { FinanzasService } from './finanzas.service';
 })
 export class FinanzasComponent implements OnInit {
 
-  constructor(private finanzasService : FinanzasService,
+  constructor(private finanzasService : FinanzasService, 
+    private nzNotificacionService : NzNotificationService,
     private router: Router) { }
 
   usuarioLogeado :string = localStorage.getItem('id_usuario');
@@ -22,9 +25,10 @@ export class FinanzasComponent implements OnInit {
   pedidoEnBoleta = [];
   isVisibleAbrirCaja = false;
   dineroConElQuePago : number;
-  dineroPorPagar : number;
-  vueltoAEntregar : number;
-  resumenPago = true;
+  dineroPorPagar : number = null;
+  vueltoAEntregar : number = null;
+  resumenPago = false;
+  isVisibleEntregarVuelto = false;
 
   ngOnInit() {
     console.log('usuarioLogeado', this.usuarioLogeado);
@@ -86,37 +90,71 @@ export class FinanzasComponent implements OnInit {
   
   okAbrirCaja(){
     console.log('okAbrirCaja');
-    this.boletaAPagarSelected.idEstadoBoleta = 3
+    if (this.dineroPorPagar == 0 && this.vueltoAEntregar == 0){
+      console.log('El cliente no debe dinero, tampoco debes vuelto. Pagado!');
+      this.nzNotificacionService.create(
+        'success', 'Pagado', 'Se ha cerrado esta boleta #'+this.boletaAPagarSelected.id_boleta
+      );
+      
+      this.boletaAPagarSelected.idEstadoBoleta = 3
 
-    const boleta = {
-      "boleta": this.boletaAPagarSelected
+      const boleta = {
+        "boleta": this.boletaAPagarSelected
+      }
+      console.log('boleta', boleta);
+
+      const transaccion = {
+        "rut_cliente" : this.boletaAPagarSelected.rutCliente,
+        "id_boleta" : this.boletaAPagarSelected.id_boleta,
+        "valor" : this.boletaAPagarSelected.total,
+        "id_cartera_pagos" : "-1",
+      }
+
+      this.finanzasService.crearTransaccion(transaccion).subscribe(resp3 =>{
+        console.log('resp', resp3);
+      })
+
+      this.finanzasService.modificarBoleta(boleta).subscribe(resp => {
+        console.log('resp', resp);
+        this.resumenPago = true;
+        this.isVisibleAbrirCaja = false;
+
+        setTimeout(() => {
+          this.obtenerBoletasPorPagarEnCaja();
+          this.pedidoEnBoleta = [];
+          this.boletaAPagarSelected = null;
+          this.dineroConElQuePago = null;
+          this.dineroPorPagar = null;
+          this.vueltoAEntregar = null;
+          this.resumenPago = false;
+        }, 10000);
+      })
     }
-    console.log('boleta', boleta);
-
-    this.finanzasService.modificarBoleta(boleta).subscribe(resp => {
-      console.log('resp', resp);
-      this.resumenPago = true;
-      this.isVisibleAbrirCaja = false;
-
-      setTimeout(() => {
-        this.obtenerBoletasPorPagarEnCaja();
-        this.pedidoEnBoleta = [];
-        this.boletaAPagarSelected = null;
-        this.dineroConElQuePago = null;
-        this.dineroPorPagar = null;
-        this.vueltoAEntregar = null;
-        this.resumenPago = false;
-      }, 10000);
-    })
+    else if (this.dineroPorPagar > 0 && this.vueltoAEntregar == 0){
+      console.log('El cliente debe dinero, tú no le debes vuelto. No se puede pagar');
+      this.nzNotificacionService.create(
+        'warning', 'El cliente debe dinero', 'El cliente debe : $'+this.dineroPorPagar
+      );
+      
+    }
+    else if (this.dineroPorPagar == 0 && this.vueltoAEntregar > 0){
+      console.log('Le debes vuelto al cliente');
+      this.nzNotificacionService.create(
+        'warning', 'Debes entregar vuelto al cliente', 'Le debes : $'+this.vueltoAEntregar
+      );
+      this.isVisibleEntregarVuelto = true;
+      
+    }
   }
 
   obtenerPedidosPorIdBoleta(idBoleta){
-    this.pedidoEnBoleta = [];
+    
     const id_boleta = {
       "id_boleta" : idBoleta
     }
     this.finanzasService.obtenerPedidosPorIdBoleta(id_boleta).subscribe(resp=>{
       // console.log('resp obtenerPedidosPorIdBoleta', resp);
+      this.pedidoEnBoleta = [];
       let pedidos = Object(resp["pedidos"]);
       let sumaPedidosEntregados = 0;
       // console.log('pedidos', pedidos);
@@ -209,5 +247,37 @@ export class FinanzasComponent implements OnInit {
     if (this.vueltoAEntregar < 0){
       this.vueltoAEntregar = 0;
     }
+  }
+
+  cerrarResumenPago(){
+    this.resumenPago = false;
+  }
+
+  cancelarEntregarVuelto(){
+    this.isVisibleEntregarVuelto = false;
+    console.log('cancelarEntregarVuelto');
+    
+  }
+
+  okEntregarVuelto(){
+    this.isVisibleEntregarVuelto = false;
+    console.log('okEntregarVuelto');
+
+    const transaccion = {
+      "rut_cliente" : this.boletaAPagarSelected.rutCliente,
+      "id_boleta" : this.boletaAPagarSelected.id_boleta,
+      "valor" : this.vueltoAEntregar,
+      "id_cartera_pagos" : "-2", //id de entrega de vuelto
+    }
+
+    this.finanzasService.crearTransaccion(transaccion).subscribe(resp3 =>{
+      console.log('resp', resp3);
+
+      this.vueltoAEntregar = 0;
+
+      this.nzNotificacionService.create(
+        'success', 'Entrega de vuelto', 'Se ha registrado esta transacción #'+resp3
+      );
+    })
   }
 }

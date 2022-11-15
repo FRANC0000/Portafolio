@@ -35,7 +35,8 @@ public class SubirImagenController {
         try {
             image = FileUtils.readFileToByteArray(new File("imagenes-rxxi/platos/" + filename));
         } catch (IOException e) {
-            e.printStackTrace();
+        	System.out.println("Error: No se pudo leer la imagen: imagenes-rxxi/platos/"+ filename);
+            //e.printStackTrace();
         }
         return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(image);
     }
@@ -46,7 +47,8 @@ public class SubirImagenController {
         try {
             image = FileUtils.readFileToByteArray(new File("imagenes-rxxi/productos/" + filename));
         } catch (IOException e) {
-            e.printStackTrace();
+        	System.out.println("Error: No se pudo leer la imagen: imagenes-rxxi/productos/"+ filename);
+            //e.printStackTrace();
         }
         return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(image);
     }
