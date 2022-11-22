@@ -1,5 +1,9 @@
 package com.restaurant.siglo.xxi.service.impl;
 
+import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.Map;
 
@@ -72,7 +76,7 @@ public class UsuarioServiceImpl implements UsuarioService{
 
 	
 	@Override
-	public String crearUsuario(Map<String, Object> usuario) {
+	public String crearUsuario(Map<String, Object> usuario) throws NoSuchAlgorithmException {
 		
 		String id_usuario = usuario.get("id_usuario").toString();
 		int rol = Integer.parseInt(usuario.get("rol").toString());
@@ -83,19 +87,24 @@ public class UsuarioServiceImpl implements UsuarioService{
 		String dv = usuario.get("dv").toString();
 		String correo = usuario.get("correo").toString();
 		String contrasena = usuario.get("contrasena").toString();
+		
+        //System.out.println("CONTRASEÑA : " + contrasena + " : " + toHexString(getSHA(contrasena)));
 
-		String resp = usuarioRepository.crearUsuario(id_usuario, nombre, apP, apM, rut, dv, rol, correo, contrasena); 
+		String resp = usuarioRepository.crearUsuario(id_usuario, nombre, apP, apM, rut, dv, rol, correo, toHexString(getSHA(contrasena))); 
 		
 		return resp;
 	}
 
 
 	@Override
-	public String iniciarSesion(Map<String, Object> credenciales) {
+	public String iniciarSesion(Map<String, Object> credenciales) throws NoSuchAlgorithmException {
 		
 		String id_usuario = credenciales.get("id_usuario").toString();
 		String contrasena = credenciales.get("contrasena").toString();
-		String resp = usuarioRepository.iniciarSesion(id_usuario, contrasena);
+		
+		//System.out.println("CONTRASEÑA : " + contrasena + " : " + toHexString(getSHA(contrasena)));
+		String contraEncriptada = toHexString(getSHA(contrasena));
+		String resp = usuarioRepository.iniciarSesion(id_usuario, contraEncriptada);
 		
 		return resp;
 	}
@@ -184,6 +193,35 @@ public class UsuarioServiceImpl implements UsuarioService{
 	        
 	        return resp;
 		}
+	 
+	 public static byte[] getSHA(String input) throws NoSuchAlgorithmException
+	    {
+	        // Static getInstance method is called with hashing SHA
+	        MessageDigest md = MessageDigest.getInstance("SHA-256");
+	 
+	        // digest() method called
+	        // to calculate message digest of an input
+	        // and return array of byte
+	        return md.digest(input.getBytes(StandardCharsets.UTF_8));
+	    }
+	 
+	 public static String toHexString(byte[] hash)
+	    {
+	        // Convert byte array into signum representation
+	        BigInteger number = new BigInteger(1, hash);
+	 
+	        // Convert message digest into hex value
+	        StringBuilder hexString = new StringBuilder(number.toString(16));
+	 
+	        // Pad with leading zeros
+	        while (hexString.length() < 64)
+	        {
+	            hexString.insert(0, '0');
+	        }
+	 
+	        return hexString.toString();
+	    }
+	 
 	
 
 }

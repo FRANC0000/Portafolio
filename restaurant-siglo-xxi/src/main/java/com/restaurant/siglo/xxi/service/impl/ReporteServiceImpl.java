@@ -40,6 +40,32 @@ public class ReporteServiceImpl implements ReporteService {
 	}
 	
 	@Override
+	public List<String> obtenerReporteVistaPlatosConsumidos() {
+		List<String> json = reporteRepository.obtenerReporteVistaPlatosConsumidos();
+		return json;
+	}
+	
+	@Override
+	public List<String> obtenerReporteReabastecimiento(){
+		List<String> json = reporteRepository.obtenerReporteReabastecimiento();
+		return json;
+	}
+	
+	@Override
+	public String obtenerReporteClientesAtendidos() throws JSONException {
+		List<String> json = reporteRepository.obtenerReporteCantIngresosPorClientesMesActual();
+		List<String> json2 = reporteRepository.obtenerReporteClientesAtendidosMesActual();
+		List<String> json3 = reporteRepository.obtenerReporteClientesAtendidosPorBoletaMesActual();
+		
+		JSONObject resp = new JSONObject();
+		
+		resp.put("cantidad_ingresos_por_cliente_mes", json);
+		resp.put("clientes_atendidos_mes", json2);
+		resp.put("clientes_atendidos_por_boleta", json3);
+		return resp.toString();
+	}
+	
+	@Override
 	public String crearReporte(Map<String, Object> reporte) throws ParseException {
 		
 		String comentario = reporte.get("comentario").toString();

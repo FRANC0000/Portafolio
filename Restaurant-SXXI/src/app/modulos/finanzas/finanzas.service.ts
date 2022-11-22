@@ -36,4 +36,10 @@ export class FinanzasService {
       'http://localhost:8085/restaurantSXXI/rest-rsxii/transaccion/crearTransaccion', trans, {headers : this.headers}
     );
   }
+
+  public obtenerSolicitudReabastecimientoFinanzas(){
+    return this.http.get(
+      'http://localhost:8085/restaurantSXXI/rest-rsxii/registro/obtenerSolicitudReabastecimientoFinanzas', {headers : this.headers}
+    );
+  }
 }

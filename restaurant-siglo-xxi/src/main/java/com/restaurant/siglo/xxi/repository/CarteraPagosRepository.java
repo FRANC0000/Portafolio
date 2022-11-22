@@ -16,7 +16,7 @@ public interface CarteraPagosRepository extends JpaRepository<CarteraPagos, Inte
 			@Param("nro_tarjeta") String nro_tarjeta,
 			@Param("mes_exp") int mes_exp,
 			@Param("anno_exp") int anno_exp,
-			@Param("cvv") int cvv,
+			@Param("cvv") String cvv,
 			@Param("email") String email,
 			@Param("nombre_titular") String nombre_titular,
 			@Param("rut_titular") String rut_titular);

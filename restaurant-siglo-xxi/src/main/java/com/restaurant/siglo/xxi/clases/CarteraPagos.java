@@ -28,7 +28,7 @@ public class CarteraPagos {
 	
 	int anno_exp;
 	
-	int cvv;
+	String cvv;
 	
 	String email;
 	
@@ -77,11 +77,11 @@ public class CarteraPagos {
 		this.anno_exp = anno_exp;
 	}
 
-	public int getCvv() {
+	public String getCvv() {
 		return cvv;
 	}
 
-	public void setCvv(int cvv) {
+	public void setCvv(String cvv) {
 		this.cvv = cvv;
 	}
 

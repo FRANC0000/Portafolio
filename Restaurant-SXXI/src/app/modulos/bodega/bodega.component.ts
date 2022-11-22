@@ -1,3 +1,4 @@
+import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Producto } from 'src/app/interfaces/cocina';
@@ -18,11 +19,16 @@ export class BodegaComponent implements OnInit {
 
   listaProductos : Producto[] = [];
   productoSelected ;
+  listaRegistrosRecepcionSolicitudReabastecimiento;
+  isVisibleDetalleRegistro = false;
+  registroRecepcionSolicitudReabastecimiento;
+  linkSolicitudReabastecimiento = "";
 
   ngOnInit() {
     console.log('usuarioLogeado', this.usuarioLogeado);
     console.log('rolUsuarioLogeado', this.rolUsuarioLogeado);
     this.obtenerProductos();
+    this.obtenerSolicitudReabastecimiento();
   }
 
   cerrarSesion(){
@@ -45,9 +51,30 @@ export class BodegaComponent implements OnInit {
     })
   }
 
+  obtenerSolicitudReabastecimiento(){
+    this.bodegaService.obtenerSolicitudReabastecimiento().subscribe(resp=>{
+      this.listaRegistrosRecepcionSolicitudReabastecimiento = resp['registros']
+
+      console.log('listaRegistrosRecepcionSolicitudReabastecimiento', this.listaRegistrosRecepcionSolicitudReabastecimiento);
+    })
+  }
+
   seleccionarProducto(producto){
     this.productoSelected = producto
     console.log('pr', this.productoSelected);
+  }
+
+  verDetalleRegistro(reg){
+    this.isVisibleDetalleRegistro = true;
+    this.registroRecepcionSolicitudReabastecimiento  = reg;
+    this.linkSolicitudReabastecimiento = 'http://localhost:8085/restaurantSXXI/imagenes-rxxi/reportes/'+ reg.reporte.nombre_creacion + "#toolbar=0"
+
+    console.log('url', this.linkSolicitudReabastecimiento);
     
+  }
+
+  cerrarDrawerDetalleSolicitudReabastecimiento(){
+    this.isVisibleDetalleRegistro = false;
+    this.registroRecepcionSolicitudReabastecimiento = null;
   }
 }

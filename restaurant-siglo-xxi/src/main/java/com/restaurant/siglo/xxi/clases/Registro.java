@@ -2,15 +2,31 @@ package com.restaurant.siglo.xxi.clases;
 
 import java.sql.Timestamp;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
 @Entity
 @Table (name="registro")
-
+@NamedQueries(
+		{
+			@NamedQuery(
+					name = "obtenerSolicitudReabastecimiento", 
+					query = " select r from Registro r "
+							+ "where r.estado_registro.id_estado_registro = 2 "
+			),
+			@NamedQuery(
+					name = "obtenerSolicitudReabastecimientoFinanzas", 
+					query = " select r from Registro r "
+							+ "where r.estado_registro.id_estado_registro = 3 "
+			)
+		})
 public class Registro {
 	@Id
 	int id_registro;
@@ -29,25 +45,24 @@ public class Registro {
 	
 	@ManyToOne
 	@JoinColumn(name = "id_modulo")
-	private Modulo modulo;
-	
-	
+	private Modulo modulo;	
 	
 	String titulo_registro;
 	String descripcion;
 	Timestamp fecha_instancia;
-	Timestamp hora_instancia;
+	String hora_instancia;
+	boolean eliminado;
 	
-	public Registro() {};
+	@Column(nullable=true)
+	int version;
 	
-	public Registro(int id_registro, String titulo_registro, String descripcion, Timestamp fecha_instancia, Timestamp hora_instancia) {
-		super();
-		this.id_registro = id_registro;
-		this.titulo_registro = titulo_registro;
-		this.descripcion = descripcion;
-		this.fecha_instancia = fecha_instancia;
-		this.hora_instancia = hora_instancia;
-	}
+	@Column(nullable=true)
+	int id_registro_padre;
+	
+	@Column(nullable=true)
+	int id_reporte;
+	
+	boolean ultima_version;
 
 	public int getId_registro() {
 		return id_registro;
@@ -81,11 +96,84 @@ public class Registro {
 		this.fecha_instancia = fecha_instancia;
 	}
 
-	public Timestamp getHora_instancia() {
+	public TipoRegistro getTipo_registro() {
+		return tipo_registro;
+	}
+
+	public void setTipo_registro(TipoRegistro tipo_registro) {
+		this.tipo_registro = tipo_registro;
+	}
+
+	public EstadoRegistro getEstado_registro() {
+		return estado_registro;
+	}
+
+	public void setEstado_registro(EstadoRegistro estado_registro) {
+		this.estado_registro = estado_registro;
+	}
+
+	public Usuario getUsuario() {
+		return usuario;
+	}
+
+	public void setUsuario(Usuario usuario) {
+		this.usuario = usuario;
+	}
+
+	public Modulo getModulo() {
+		return modulo;
+	}
+
+	public void setModulo(Modulo modulo) {
+		this.modulo = modulo;
+	}
+
+	public String getHora_instancia() {
 		return hora_instancia;
 	}
 
-	public void setHora_instancia(Timestamp hora_instancia) {
+	public void setHora_instancia(String hora_instancia) {
 		this.hora_instancia = hora_instancia;
-	}	
+	}
+
+	public boolean isEliminado() {
+		return eliminado;
+	}
+
+	public void setEliminado(boolean eliminado) {
+		this.eliminado = eliminado;
+	}
+
+	public int getVersion() {
+		return version;
+	}
+
+	public void setVersion(int version) {
+		this.version = version;
+	}
+
+	public int getId_registro_padre() {
+		return id_registro_padre;
+	}
+
+	public void setId_registro_padre(int id_registro_padre) {
+		this.id_registro_padre = id_registro_padre;
+	}
+
+	public int getId_reporte() {
+		return id_reporte;
+	}
+
+	public void setId_reporte(int id_reporte) {
+		this.id_reporte = id_reporte;
+	}
+
+	public boolean isUltima_version() {
+		return ultima_version;
+	}
+
+	public void setUltima_version(boolean ultima_version) {
+		this.ultima_version = ultima_version;
+	}
+	
 }

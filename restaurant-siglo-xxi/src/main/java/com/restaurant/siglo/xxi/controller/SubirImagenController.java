@@ -52,7 +52,18 @@ public class SubirImagenController {
         }
         return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(image);
     }
-     
+
+    @GetMapping("imagenes-rxxi/reportes/{filename}")
+    public ResponseEntity<byte[]> getReporte(@PathVariable("filename") String filename) {
+        byte[] image = new byte[0];
+        try {
+            image = FileUtils.readFileToByteArray(new File("imagenes-rxxi/reportes/" + filename));
+        } catch (IOException e) {
+        	System.out.println("Error: No se pudo leer el pdf: imagenes-rxxi/reportes/"+ filename);
+            //e.printStackTrace();
+        }
+        return ResponseEntity.ok().contentType(MediaType.APPLICATION_PDF).body(image);
+    }
      
     @PostMapping("/plato/save")
     public void saveImgPlato(@RequestParam("fichero") MultipartFile multipartFile, @RequestParam("id_plato") int id_plato) throws IOException {
@@ -90,5 +101,21 @@ public class SubirImagenController {
 			System.out.println("ERROR en saveImgProducto: "+ e);
 		}
         
+    }
+    @PostMapping("/reportes/save")
+    public void guardarPdfReportes(@RequestParam("fichero") MultipartFile multipartFile, @RequestParam("nombre") String nombre) throws IOException {
+    	try {
+    		//Obtenemos el nombre del fichero
+    		String fileName = nombre;
+    		//Establecemos el directorio donde se subiran nuestros ficheros  
+    		String uploadDir = "imagenes-rxxi\\reportes";
+    		
+    		//Guardamos la imagen
+    		FileUploadUtil.saveFile(uploadDir, fileName, multipartFile);
+    	} catch (Exception e) {
+    		// TODO: handle exception
+    		System.out.println("ERROR en guardarPdfReportes: "+ e);
+    	}
+    	
     }
 }

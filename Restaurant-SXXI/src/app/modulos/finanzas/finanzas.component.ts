@@ -29,11 +29,17 @@ export class FinanzasComponent implements OnInit {
   vueltoAEntregar : number = null;
   resumenPago = false;
   isVisibleEntregarVuelto = false;
+  listaRegistrosRecepcionSolicitudReabastecimientoFinanzas = [];
+  isVisibleDetalleRegistro = false;
+  registroRecepcionSolicitudReabastecimiento;
+  linkSolicitudReabastecimiento = "";
+  
 
   ngOnInit() {
     console.log('usuarioLogeado', this.usuarioLogeado);
     console.log('rolUsuarioLogeado', this.rolUsuarioLogeado);
     this.obtenerBoletasPorPagarEnCaja();
+    this.obtenerSolicitudReabastecimiento();
   }
 
   obtenerBoletasPorPagarEnCaja(){
@@ -279,5 +285,27 @@ export class FinanzasComponent implements OnInit {
         'success', 'Entrega de vuelto', 'Se ha registrado esta transacción #'+resp3
       );
     })
+  }
+
+  obtenerSolicitudReabastecimiento(){
+    this.finanzasService.obtenerSolicitudReabastecimientoFinanzas().subscribe(resp=>{
+      this.listaRegistrosRecepcionSolicitudReabastecimientoFinanzas = resp['registros']
+
+      console.log('listaRegistrosRecepcionSolicitudReabastecimientoFinanzas', this.listaRegistrosRecepcionSolicitudReabastecimientoFinanzas);
+    })
+  }
+
+  verDetalleRegistro(reg){
+    this.isVisibleDetalleRegistro = true;
+    this.registroRecepcionSolicitudReabastecimiento  = reg;
+    this.linkSolicitudReabastecimiento = 'http://localhost:8085/restaurantSXXI/imagenes-rxxi/reportes/'+ reg.reporte.nombre_creacion + "#toolbar=0"
+
+    console.log('url', this.linkSolicitudReabastecimiento);
+    
+  }
+
+  cerrarDrawerDetalleSolicitudReabastecimiento(){
+    this.isVisibleDetalleRegistro = false;
+    this.registroRecepcionSolicitudReabastecimiento = null;
   }
 }

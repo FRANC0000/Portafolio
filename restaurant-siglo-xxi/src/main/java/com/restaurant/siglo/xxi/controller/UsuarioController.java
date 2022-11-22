@@ -1,5 +1,6 @@
 package com.restaurant.siglo.xxi.controller;
 
+import java.security.NoSuchAlgorithmException;
 import java.util.Map;
 
 import org.json.JSONException;
@@ -25,7 +26,7 @@ public class UsuarioController {
 	}
 	
 	@RequestMapping(value="/crearUsuario")
-	public String crearUsuario(@RequestBody Map<String, Object> usuario) {
+	public String crearUsuario(@RequestBody Map<String, Object> usuario) throws NoSuchAlgorithmException {
 		
 		String resp = usuarioService.crearUsuario(usuario);
 		
@@ -33,7 +34,7 @@ public class UsuarioController {
 	}
 	
 	@RequestMapping(value="/iniciarSesion")
-	public String iniciarSesion(@RequestBody Map<String, Object> credenciales) {
+	public String iniciarSesion(@RequestBody Map<String, Object> credenciales) throws NoSuchAlgorithmException {
 		
 		String resp = usuarioService.iniciarSesion(credenciales);
 		

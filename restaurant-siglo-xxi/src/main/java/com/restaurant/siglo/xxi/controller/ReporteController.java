@@ -46,6 +46,27 @@ public class ReporteController {
 		
 		return reporteStock;
     }
+
+	@RequestMapping(value="/obtenerReporteClientesAtendidos")
+	public String obtenerReporteClientesAtendidos() throws JSONException {
+		String reporteStock = reporteService.obtenerReporteClientesAtendidos();
+		
+		return reporteStock;
+    }
+	
+	@RequestMapping(value="/obtenerReporteVistaPlatosConsumidos")
+	public List<String> obtenerReporteVistaPlatosConsumidos() throws JSONException {
+		List<String> reporteStock = reporteService.obtenerReporteVistaPlatosConsumidos();
+		
+		return reporteStock;
+	}
+	
+	@RequestMapping(value="/obtenerReporteReabastecimiento")
+	public List<String> obtenerReporteReabastecimiento() throws JSONException {
+		List<String> reporteStock = reporteService.obtenerReporteReabastecimiento();
+		
+		return reporteStock;
+	}
 	
 	@RequestMapping(value="/crearReporte")
 	public String crearReporte(@RequestBody Map<String, Object> reporte) throws JSONException {

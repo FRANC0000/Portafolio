@@ -92,6 +92,12 @@ export class AdministadorService {
     );
   }
 
+  public subirPdfReporte(file) {
+    return this.http.post(
+      'http://localhost:8085/restaurantSXXI/reportes/save', file
+    );
+  }
+
   public obtenerProductos(){
     return this.http.get(
       'http://localhost:8085/restaurantSXXI/rest-rsxii/producto/obtenerProductos'
@@ -145,6 +151,24 @@ export class AdministadorService {
     return this.http.get(
       'http://localhost:8085/restaurantSXXI/rest-rsxii/reporte/obtenerReporteStock' //asi se tiene que llamar en el controller
     );
+  }
+
+  public obtenerReporteReabastecimiento() {
+    return this.http.get(
+      'http://localhost:8085/restaurantSXXI/rest-rsxii/reporte/obtenerReporteReabastecimiento' //asi se tiene que llamar en el controller
+    );
+  }
+
+  public obtenerReporteClientesAtendidos() {
+    return this.http.get(
+      'http://localhost:8085/restaurantSXXI/rest-rsxii/reporte/obtenerReporteClientesAtendidos' //asi se tiene que llamar en el controller
+    );
+  }
+
+  public obtenerReporteVistaPlatosConsumidos() {
+    return this.http.get(
+      'http://localhost:8085/restaurantSXXI/rest-rsxii/reporte/obtenerReporteVistaPlatosConsumidos' //asi se tiene que llamar en el controller
+    );
   } 
 
   public crearReporte(reporte) {
@@ -162,6 +186,12 @@ export class AdministadorService {
   public obtenerReportes() {
     return this.http.get(
       'http://localhost:8085/restaurantSXXI/rest-rsxii/reporte/obtenerReportes' //asi se tiene que llamar en el controller
+    );
+  } 
+
+  public obtenerRegistros() {
+    return this.http.get(
+      'http://localhost:8085/restaurantSXXI/rest-rsxii/registro/obtenerRegistros' //asi se tiene que llamar en el controller
     );
   } 
 

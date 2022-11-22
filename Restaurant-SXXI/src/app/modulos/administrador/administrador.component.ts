@@ -2,21 +2,22 @@ import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { NzNotificationService } from 'ng-zorro-antd';
+import { isInteger, NzNotificationService } from 'ng-zorro-antd';
 import { Producto, ProductosReceta, Receta, TipoProducto } from 'src/app/interfaces/cocina';
 import { EstadoMesa, Mesa, TipoMesa } from 'src/app/interfaces/mesa';
 import { Reporte } from 'src/app/interfaces/reporte';
 import { rol, user } from 'src/app/interfaces/user';
 import { AdministadorService } from './administador.service';
 
+import pdfMake from 'pdfmake/build/pdfmake'
+import pdfFonts from 'pdfmake/build/vfs_fonts'
+pdfMake.vfs =  pdfFonts.pdfMake.vfs
+
 @Component({
   selector: 'app-administrador',
   templateUrl: './administrador.component.html',
   styleUrls: ['./administrador.component.scss']
 })
-
-
-
 
 export class AdministradorComponent implements OnInit {
 
@@ -58,6 +59,7 @@ export class AdministradorComponent implements OnInit {
   validateFormActualizarMesa : FormGroup;
   isVisibleCrearPlato = false;
   formDataPlato = new FormData();
+  formDataPdfReporte = new FormData();
   validateFormCrearPlato!: FormGroup;
   visibleDetalleProdcuto = false;
   validateFormModificarProducto : FormGroup;
@@ -84,12 +86,20 @@ export class AdministradorComponent implements OnInit {
   cantidadProductoReceta : number = 1;
   isVisibleListadoProductos = false;
   listReportes;
+  listSolicitudesReabastecimiento;
   isVisibleCrearReporte = false;
   validateFormCrearReporte : FormGroup;
   listTipoReportes;
   isVisibleVerReportes = false;
   mostrarDetalleVistaReporte = false;
   valoresRespuestaObtenerReporte = [];
+  cantidadIngresoPorClienteMes = [];
+  clientesAtendidosMes = [];
+  clientesAtendidosPorBoleta = [];
+  tipoReporteSelected = 0;
+  obtenerPlatosConsumidos = [];
+  reporteReabastecimiento = [];
+  isVisibleSolicitudReabastecimiento = false;
 
   ngOnInit() {
     console.log('usuarioLogeado', this.usuarioLogeado);
@@ -1141,6 +1151,64 @@ export class AdministradorComponent implements OnInit {
     })
   }
 
+  obtenerReporteReabastecimiento(){
+    this.administadorService.obtenerReporteReabastecimiento().subscribe(resp=>{
+      this.reporteReabastecimiento = [];
+      for (let re in resp){
+        // console.log('re', re);
+        let r = resp[re].split(",");
+        // console.log('r', r);
+        this.reporteReabastecimiento.push(r)
+      }
+      console.log('this.reporteReabastecimiento', this.reporteReabastecimiento);
+      
+    })
+  }
+
+  obtenerReporteVistaPlatosConsumidos(){
+    this.administadorService.obtenerReporteVistaPlatosConsumidos().subscribe(resp=>{
+      this.obtenerPlatosConsumidos = [];
+      for (let re in resp){
+        // console.log('re', re);
+        let r = resp[re].split(",");
+        // console.log('r', r);
+        this.obtenerPlatosConsumidos.push(r)
+      }
+      console.log('this.obtenerPlatosConsumidos', this.obtenerPlatosConsumidos);
+      
+    })
+  }
+
+  obtenerReporteClientesAtendidos(){
+    this.administadorService.obtenerReporteClientesAtendidos().subscribe(resp=>{
+      this.cantidadIngresoPorClienteMes = []
+      this.clientesAtendidosMes = []
+      this.clientesAtendidosPorBoleta = []
+      
+      for (let re of resp['clientes_atendidos_mes']){
+        console.log('re', re);
+        // let r = resp[re]
+        this.clientesAtendidosMes.push(re)
+      }
+      console.log('this.clientesAtendidosMes', this.clientesAtendidosMes);
+      
+      for (let re of resp['cantidad_ingresos_por_cliente_mes']){
+        console.log('re', re);
+        let r = re.split(",");
+        this.cantidadIngresoPorClienteMes.push(r)
+      }
+      console.log('this.cantidadIngresoPorClienteMes', this.cantidadIngresoPorClienteMes);
+      
+      for (let re of resp['clientes_atendidos_por_boleta']){
+        console.log('re', re);
+        let r = re.split(",");
+        this.clientesAtendidosPorBoleta.push(r)
+      }
+      console.log('this.clientesAtendidosPorBoleta', this.clientesAtendidosPorBoleta);
+      
+    })
+  }
+
   crearReporte(){
     this.isVisibleCrearReporte = true;
     this.obtenerTipoReporte();
@@ -1171,13 +1239,31 @@ export class AdministradorComponent implements OnInit {
     })
   }
 
+  obtenerSolicitudesReabastecimiento() {
+    this.administadorService.obtenerReportes().subscribe(resp => {
+      console.log('resp', resp);
+      this.listSolicitudesReabastecimiento = resp['reportes'].filter(r =>{
+        return r.eliminado != true && r.id_tipo_reporte == 4
+      });
+    })
+  }
+  listRegistros = []
+  obtenerRegistros() {
+    this.administadorService.obtenerRegistros().subscribe(resp => {
+      console.log('resp', resp);
+      this.listRegistros = resp['registros']
+    })
+  }
+
   cerrarCrearReporte(){
     this.isVisibleCrearReporte = false;
+    this.mostrarDetalleVistaReporte = false;
     this.validateFormCrearReporte.reset();
   }
 
   guardarCrearReporte(){
     console.log('Servicio crear reporte');
+    this.formDataPdfReporte = new FormData();
     // this.enviarFormularioCrearReporte();
     var valores = this.validateFormCrearReporte.value
 
@@ -1191,20 +1277,167 @@ export class AdministradorComponent implements OnInit {
     
 
     if (this.validateFormCrearReporte.valid){
+      if (this.tipoReporteSelected == 1){
+        let tabla = [];
+        let headerTabla = ['#', 'Nombre', 'Medida', 'Stock ideal', 'Stock actual', '%RI', '%F', 'Acción', 'Tipo', 'Venc.']
+        tabla.push(headerTabla);
 
-      this.mostrarDetalleVistaReporte = true;
+        for (let i of this.valoresRespuestaObtenerReporte) {
+          tabla.push(i)
+        }
+        console.log('tabla', tabla);
+        this.validateFormCrearReporte.value.nombre_creacion = "Reporte_stock_"+this.now.getDate()+this.now.getMonth()+this.now.getFullYear()+this.now.getHours()+this.now.getMinutes()+"_"+this.usuarioLogeado+'.pdf';
+        
+        const pdfDefinitions = {
+          content: [
+            {
+              text: 'Reporte de stock', alignment: 'center', style: 'header',
+              margin: [0, 10, 0, 30]
+            },
+            {
+              text: 'Este reporte de stock fue generado el día ' + this.now.toLocaleString() + ' por el usuario ' + this.usuarioLogeado + ' y representan un listado de todos los productos con sus stock actuales e ideales. Este documento será utilizado para gestión y apoyo en la toma de decisiones del propio Restaurant Siglo XXI.' , 
+              margin: [0, 0, 0, 20] //izquierda, arriba, derecha, abajo
+            },
+            {
+              table: {
+                body: tabla
+              }
+            },
+          ],
+          footer: [
+            {
+              text: 'TLNS S.A.', alignment: 'center', fontSize: 10
+            },
+            {
+              text: this.now.getFullYear(),  alignment: 'center', fontSize: 8,
+              margin: [0, 5, 0, 0]
+            }
+          ],
+          styles: {
+            header: {
+              fontSize: 18,
+              bold: true,
+            },
+            subheader: {
+              fontSize: 15,
+              bold: true
+            },
+            quote: {
+              italics: true
+            },
+            small: {
+              fontSize: 8
+            }
+          }
+        }
 
-      const reporteSeleccionado = this.listTipoReportes.find(tr => {
-        return tr.id_tipo_reporte == this.validateFormCrearReporte.value.id_tipo_reporte
-      })
-  
-      console.log('reporteSeleccionado', reporteSeleccionado);
-      
-  
-      if (reporteSeleccionado.id_tipo_reporte == 1){
-        this.obtenerReporteStock();
+        // const pdf = pdfMake.createPdf(pdfDefinitions).download(this.validateFormCrearReporte.value.nombre_creacion);
+        // pdf.download();
+        const pdf = pdfMake.createPdf(pdfDefinitions)
+        // pdf.open();
+        pdf.getBlob((blob) => {
+          // console.log('blob', blob);
+          this.formDataPdfReporte.append("fichero", blob);
+          this.formDataPdfReporte.append("nombre", this.validateFormCrearReporte.value.nombre_creacion);
+          this.administadorService.subirPdfReporte(this.formDataPdfReporte).subscribe(resp =>{
+            // console.log('resp', resp);
+
+            
+          })
+        });
       }
-      
+      else if (this.tipoReporteSelected == 2){
+        //reporte de clientes atendidos
+      }
+      else if (this.tipoReporteSelected == 3){
+        //reporte de platos consumidos
+      }
+      else if (this.tipoReporteSelected == 4){
+
+        let tabla = [];
+        let headerTabla = ['#', 'Nombre', 'Medida', 'Stock ideal', 'Stock actual', '%S.R.I.', 'Valor un.', 'Cant. comprar', 'Valor X Cant']
+        tabla.push(headerTabla);
+
+        let totalAComprar = 0;
+        for (let i of this.reporteReabastecimiento) {
+          totalAComprar += parseInt(i[8])
+          tabla.push(i)
+        }
+        console.log('tabla', tabla);
+        
+        let tabla2 =  []
+        tabla2.push(['Total'])
+        tabla2.push(['$'+totalAComprar])
+        console.log('tabla2', tabla2);
+
+        this.validateFormCrearReporte.value.nombre_creacion = "Reporte_reabastecimiento_"+this.now.getDate()+this.now.getMonth()+this.now.getFullYear()+this.now.getHours()+this.now.getMinutes()+"_"+this.usuarioLogeado+'.pdf';
+        
+        const pdfDefinitions :any = {
+          content: [
+            {
+              text: 'Reporte de reabastecimiento', alignment: 'center', style: 'header',
+              margin: [0, 10, 0, 30]
+            },
+            {
+              text: 'Este reporte de reabastecimiento fue generado el día ' + this.now.toLocaleString() + ' por el usuario ' + this.usuarioLogeado + ' y representan los productos que requieren de reabastecerse. Este documento será utilizado para gestión y apoyo en la toma de decisiones del propio Restaurant Siglo XXI.' , 
+              margin: [0, 0, 0, 20] //izquierda, arriba, derecha, abajo
+            },
+            {
+              table: {
+                body: tabla
+              }
+            },
+            {
+              table : {
+                body: tabla2
+              }, margin: [455, 10, 0, 0]
+            }
+          ],
+          footer: [
+            {
+              text: 'TLNS S.A.', alignment: 'center', fontSize: 10
+            },
+            {
+              text: this.now.getFullYear(),  alignment: 'center', fontSize: 8,
+              margin: [0, 5, 0, 0]
+            }
+          ],
+          styles: {
+            header: {
+              fontSize: 18,
+              bold: true,
+            },
+            subheader: {
+              fontSize: 15,
+              bold: true
+            },
+            quote: {
+              italics: true
+            },
+            small: {
+              fontSize: 8
+            }
+          }
+        }
+
+        console.log('json pdf string', JSON.stringify(pdfDefinitions));
+        console.log('json datos tabla string', JSON.stringify(tabla));
+
+        // const pdf = pdfMake.createPdf(pdfDefinitions).download(this.validateFormCrearReporte.value.nombre_creacion);
+        // pdf.download();
+        const pdf = pdfMake.createPdf(pdfDefinitions)
+        // pdf.open();
+        // console.log('pdf', pdf);
+        pdf.getBlob((blob) => {
+          // console.log('blob', blob);
+          this.formDataPdfReporte.append("fichero", blob);
+          this.formDataPdfReporte.append("nombre", this.validateFormCrearReporte.value.nombre_creacion);
+          this.administadorService.subirPdfReporte(this.formDataPdfReporte).subscribe(resp =>{
+            // console.log('resp', resp);
+           
+          })
+        });
+      }
       // const reporteACrear : Reporte = {
       //   comentario : this.validateFormCrearReporte.value.comentario,
       //   extension : this.validateFormCrearReporte.value.extension,
@@ -1220,15 +1453,17 @@ export class AdministradorComponent implements OnInit {
       // this.administadorService.crearReporte(reporteACrear).subscribe(resp=>{
       //   console.log('resp:', resp);
       //   // this.cerrarCrearReporte();
-      //   this.notification.create(
-      //     'success', 'Reporte creado', resp.toString()
-      //   );
+        this.notification.create(
+          'success', 'Reporte creado', 
+          // resp.toString()
+          ''
+        );
       // },
       // error => {
       //   // console.log('error', error); 
-      //   this.notification.create(
-      //     'error', 'Error al crear reporte', 'No es posible crear el reporte, intente nuevamente'
-      //   )
+        // this.notification.create(
+        //   'error', 'Error al crear reporte', 'No es posible crear el reporte, intente nuevamente'
+        // )
       // });
     }
     else{
@@ -1237,30 +1472,7 @@ export class AdministradorComponent implements OnInit {
           )
     }
   }
-
-  // enviarFormularioCrearReporte(){
-  //   if (this.validateFormCrearReporte.valid){
-  //     console.log('Formulario válido', this.validateFormCrearReporte.value);      
-
-  //   } else {
-  //     console.log('Formulario no válido?', this.validateFormCrearReporte.value);
-
-  //     this.notification.create(
-  //       'error', 'Error al crear reporte', 'Debes rellenar todos los campos'
-  //     )
-
-  //     Object.values(this.validateFormCrearReporte.controls).forEach(control => {
-  //       // console.log('control', control);
-  //       if (control.invalid) {
-  //         console.log('control inválido');          
-  //         control.markAsDirty();
-  //         control.updateValueAndValidity({onlySelf : true});
-  //       }
-  //     });
-  //   }
-  // }
-
-  
+ 
   mostrarReportes(){
     this.isVisibleVerReportes = true;
     this.obtenerReportes();
@@ -1282,37 +1494,34 @@ export class AdministradorComponent implements OnInit {
     })
   }
 
-  guardarNuevoReporteConDetalle(){
-    console.log('guardarNuevoReporteConDetalle');
-    // const reporteACrear : Reporte = {
-    //   comentario : this.validateFormCrearReporte.value.comentario,
-    //   extension : this.validateFormCrearReporte.value.extension,
-    //   fecha_creacion : this.validateFormCrearReporte.value.fecha_creacion,
-    //   id_tipo_reporte : this.validateFormCrearReporte.value.id_tipo_reporte,
-    //   id_usuario : this.validateFormCrearReporte.value.id_usuario,
-    //   nombre_creacion : this.validateFormCrearReporte.value.nombre_creacion,
-    //   titulo_reporte : this.validateFormCrearReporte.value.titulo_reporte,
-    //   id_reporte :this.validateFormCrearReporte.value.id_reporte
-    // }
-
-    // console.log('reporteACrear: ', reporteACrear);
-    // this.administadorService.crearReporte(reporteACrear).subscribe(resp=>{
-    //   console.log('resp:', resp);
-    //   // this.cerrarCrearReporte();
-         // this.okDetalleReporte();
-    //   this.notification.create(
-    //     'success', 'Reporte creado', resp.toString()
-    //   );
-    // },
-    // error => {
-    //   // console.log('error', error); 
-    //   this.notification.create(
-    //     'error', 'Error al crear reporte', 'No es posible crear el reporte, intente nuevamente'
-    //   )
-    // });
+  onChangeTipoReporte(ev){
+    console.log('event', ev);
+    this.tipoReporteSelected = ev
+    
+    if (ev == 1){
+      this.obtenerReporteStock();
+      this.mostrarDetalleVistaReporte = true;
+    }
+    else if (ev == 2){
+      this.obtenerReporteClientesAtendidos();
+      this.mostrarDetalleVistaReporte = true;
+    }
+    else if (ev ==3){
+      this.obtenerReporteVistaPlatosConsumidos();
+    }
+    else if (ev==4){
+      this.obtenerReporteReabastecimiento();
+      this.mostrarDetalleVistaReporte = true;
+    }
   }
 
-  okDetalleReporte(){
-    this.mostrarDetalleVistaReporte = false;
+  mostrarRegistros(){
+    this.isVisibleSolicitudReabastecimiento = true;
+    this.obtenerSolicitudesReabastecimiento()
   }
+
+  okSolicitudReabastecimiento(){
+    this.isVisibleSolicitudReabastecimiento = false;
+  }
+
 }

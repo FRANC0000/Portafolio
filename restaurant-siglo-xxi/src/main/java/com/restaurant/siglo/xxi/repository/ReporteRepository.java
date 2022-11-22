@@ -14,8 +14,23 @@ public interface ReporteRepository extends JpaRepository<Reporte, Integer>{
 	@Query(value = "SELECT * FROM  vista_reporte_pedido", nativeQuery = true)
 	List<String> obtenerReporteProducto();
 	
-	@Query(value = "SELECT * FROM  vista_reporte_stock2", nativeQuery = true)
+	@Query(value = "SELECT * FROM  vista_reporte_stock", nativeQuery = true)
 	List<String> obtenerReporteStock();
+	
+	@Query(value = "select * from vista_clientes_atendidos_mes_actual", nativeQuery = true)
+	List<String> obtenerReporteClientesAtendidosMesActual();
+	
+	@Query(value = "select * from vista_cliente_atendido_por_boleta_mes_actual", nativeQuery = true)
+	List<String> obtenerReporteClientesAtendidosPorBoletaMesActual();
+
+	@Query(value = "select * from vista_cant_ingresos_por_cliente_mes_actual", nativeQuery = true)
+	List<String> obtenerReporteCantIngresosPorClientesMesActual();
+	
+	@Query(value = "select * from vista_platos_consumidos", nativeQuery = true)
+	List<String> obtenerReporteVistaPlatosConsumidos();
+	
+	@Query(value = "select * from vista_reporte_reabastecimiento", nativeQuery = true)
+	List<String> obtenerReporteReabastecimiento();
 	
 	@Query(value = "select crear_reporte(:comentario, :extension, :fecha_creacion, :nombre_creacion, :titulo_reporte, :id_tipo_reporte, :id_usuario) ", nativeQuery = true)
 	String crearReporte

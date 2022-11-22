@@ -13,6 +13,12 @@ public interface ReporteService {
 	public List<String> obtenerReporteProducto()throws JSONException;
 	
 	public List<String> obtenerReporteStock()throws JSONException;
+	
+	public String obtenerReporteClientesAtendidos()throws JSONException;
+	
+	public List<String> obtenerReporteVistaPlatosConsumidos()throws JSONException;
+	
+	public List<String> obtenerReporteReabastecimiento();
 
 	public String crearReporte(Map<String, Object> reporte) throws ParseException, JSONException;
 

@@ -1,5 +1,6 @@
 package com.restaurant.siglo.xxi.controller;
 
+import java.security.NoSuchAlgorithmException;
 import java.util.Map;
 
 import org.json.JSONException;
@@ -20,7 +21,7 @@ public class CarteraPagosController {
 	CarteraPagosService carteraPagosService;
 	
 	@RequestMapping(value="/crearCarteraPagos")
-	public String crearCarteraPagos(@RequestBody Map<String, Object> card) throws JSONException {
+	public String crearCarteraPagos(@RequestBody Map<String, Object> card) throws JSONException, NoSuchAlgorithmException{
 		
 		String resp = carteraPagosService.crearCarteraPagos(card);
 		

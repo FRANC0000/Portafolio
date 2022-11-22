@@ -37,14 +37,14 @@
       <div class="grid">
         <div class="funcionalidades">
           <h3>Usuarios</h3>
-          <div class="card" (click)="crearUsuario()"> 
-            <h3>Crear un usuario</h3>
+          <div class="card" (click)="obtenerUsuarios()"> 
+            <h3>Mostrar listado de usuarios </h3>
           </div>
         </div>
         <div class="funcionalidades">
           <br>
-          <div class="card" (click)="obtenerUsuarios()"> 
-            <h3>Mostrar listado de usuarios </h3>
+          <div class="card" (click)="crearUsuario()"> 
+            <h3>Crear un usuario</h3>
           </div>
         </div>
       </div>
@@ -101,6 +101,12 @@
           <br>
           <div class="card" (click)="crearReporte()"> 
             <h3>Creación de reportes</h3>
+          </div>
+        </div>
+        <div class="funcionalidades">
+          <br>
+          <div class="card" (click)="mostrarRegistros()">
+            <h3>Historial de registros</h3>
           </div>
         </div>
       </div>
@@ -1071,7 +1077,7 @@
    </nz-modal>
 
    <!-- CREAR REPORTE -->
-  <nz-modal nzTitle="Crear reporte" [nzWidth]="800" [nzContent]="crearReporteContent" [(nzVisible)]="isVisibleCrearReporte" (nzOnOk)="guardarCrearReporte()" (nzOnCancel)="cerrarCrearReporte()">
+  <nz-modal nzTitle="Crear reporte" [nzWidth]="1000" [nzContent]="crearReporteContent" [(nzVisible)]="isVisibleCrearReporte" (nzOnOk)="guardarCrearReporte()" (nzOnCancel)="cerrarCrearReporte()">
     <ng-container #crearReporteContent>
         <form nz-form [formGroup]="validateFormCrearReporte" id="validateFormCrearReporte" [nzLayout]="'inline'">
             <div nz-row clas="form-usuario">
@@ -1089,7 +1095,8 @@
                             Tipo reporte
                         </nz-form-label>
                         <nz-form-control>
-                            <nz-select nzPlaceHolder="Elegir tipo de reporte" name="id_tipo_reporte" formControlName="id_tipo_reporte">
+                            <nz-select nzPlaceHolder="Elegir tipo de reporte" name="id_tipo_reporte" formControlName="id_tipo_reporte"
+                            (ngModelChange)="onChangeTipoReporte($event)">
                                 <ng-container *ngFor="let tr of listTipoReportes">
                                     <nz-option [nzValue]="tr.id_tipo_reporte" [nzLabel]="tr.nombre_tipo_reporte"></nz-option>
                                 </ng-container>
@@ -1107,6 +1114,122 @@
                 </div>
             </div>
         </form>
+
+        <br>
+
+        <div *ngIf="mostrarDetalleVistaReporte">
+          <div *ngIf="tipoReporteSelected == 1">
+            <h3 nz-title> Reporte de stock de productos </h3>
+            <table>
+              <tr>
+                <th>#</th>
+                <!-- <th>ID</th> -->
+                <th>Nombre</th>
+                <th>Medida</th>
+                <th>Stock ideal</th>
+                <th>Stock actual</th>
+                <th>%Respecto ideal</th>
+                <th>%Productos faltantes</th>
+                <th>Valor unitario</th>
+              </tr>
+              <tr *ngFor="let row of valoresRespuestaObtenerReporte; let i = index;" class="mesa-row">
+                <td>{{i+1}}</td>
+                <!-- <td>{{row[0]}}</td> -->
+                <td>{{row[1]}}</td>
+                <td>{{row[2]}}</td>
+                <td>{{row[3]}}</td>
+                <td>{{row[4]}}</td>
+                <td>{{row[5]}}</td>
+                <td>{{row[6]}}</td>
+                <td>{{row[7]}}</td>
+              </tr>
+            </table>
+          </div>
+          <div *ngIf="tipoReporteSelected == 2">
+            <h3 nz-title> Reporte de clientes atendidos </h3>
+            <table>
+              <tr>
+                <th>Clientes atendidos</th>
+              </tr>
+              <tr *ngFor="let row of clientesAtendidosMes; let i = index;" class="mesa-row">
+                <td>{{row[0]}}</td>
+              </tr>
+            </table>
+            <br>
+            <h3 nz-title> Reporte de ingresos por cliente este mes </h3>
+            <table>
+              <tr>
+                <th>RUT Cliente</th>
+                <th>Ingresos este mes</th>
+              </tr>
+              <tr *ngFor="let row of cantidadIngresoPorClienteMes; let i = index;" class="mesa-row">
+                <td>{{row[0]}}</td>
+                <td>{{row[1]}}</td>
+              </tr>
+            </table>
+            <br>
+            <h3 nz-title> Reporte de clientes atendidos por boleta </h3>
+            <table>
+              <tr>
+                <th>RUT Cliente</th>
+                <th>Estado boleta</th>
+                <th>Tipo de pago</th>
+              </tr>
+              <tr *ngFor="let row of clientesAtendidosPorBoleta; let i = index;" class="mesa-row">
+                <td>{{row[0]}}</td>
+                <td>{{row[1]}}</td>
+                <td>{{row[2]}}</td>
+              </tr>
+            </table>
+
+          </div>
+          <div *ngIf="tipoReporteSelected == 3">
+            <h3 nz-title> Reporte de platos consumidos </h3>
+            <table>
+              <tr>
+                <th>#</th>
+                <th>Nombre plato</th>
+                <th>Tipo de plato</th>
+                <th>Veces pedido</th>
+              </tr>
+              <tr *ngFor="let row of obtenerPlatosConsumidos; let i = index;" class="mesa-row">
+                <td>{{i+1}}</td>
+                <td>{{row[2]}}</td>
+                <td>{{row[1]}}</td>
+                <td>{{row[3]}}</td>
+              </tr>
+            </table>
+          </div>
+          <div *ngIf="tipoReporteSelected == 4">
+            <h3 nz-title> Reporte de reabastecimiento </h3>
+            <table>
+              <tr>
+                <th>#</th>
+                <!-- <th>ID</th> -->
+                <th>Nombre</th>
+                <th>Medida</th>
+                <th>Stock ideal</th>
+                <th>Stock actual</th>
+                <th>%S.R.I.</th>
+                <th>Valor unitario</th>
+                <th>Cant. comprar</th>
+                <th>Valor X cantidad</th>
+              </tr>
+              <tr *ngFor="let row of reporteReabastecimiento; let i = index;" class="mesa-row">
+                <td>{{i+1}}</td>
+                <!-- <td>{{row[0]}}</td> -->
+                <td>{{row[1]}}</td>
+                <td>{{row[2]}}</td>
+                <td>{{row[3]}}</td>
+                <td>{{row[4]}}</td>
+                <td>{{row[5]}}</td>
+                <td>{{row[6]}}</td>
+                <td>{{row[7]}}</td>
+                <td>${{row[8]}}</td>
+              </tr>
+            </table>
+          </div>
+        </div>
     </ng-container>
   </nz-modal>
 
@@ -1146,41 +1269,37 @@
 
     </nz-modal>
 
-    <!-- VER DETALLE REPORTE -->
-    <nz-modal nzTitle="Detalle de reporte" [nzContent]="detalleReportesContent" [nzWidth]="1000" [(nzVisible)]="mostrarDetalleVistaReporte" (nzOnOk)="guardarNuevoReporteConDetalle()" (nzOnCancel)="okDetalleReporte()">
+    <!-- VER LISTADO DE SOLICITUDES DE REABASTECIMIENTO -->
+    <nz-modal nzTitle="Listado de solicitudes de reabastecimiento" [nzContent]="listadoSolicitudesReabastecimientoContent" [nzWidth]="800" [(nzVisible)]="isVisibleSolicitudReabastecimiento" (nzOnOk)="okSolicitudReabastecimiento()" (nzOnCancel)="okSolicitudReabastecimiento()" [nzFooter]="null">
 
-      <ng-container #detalleReportesContent>
+      <ng-container #listadoSolicitudesReabastecimientoContent>
           <div>
-            <h3 nz-title> Reporte de stock de productos </h3>
-            <table>
-              <tr>
-                  <th>#</th>
-                  <th>ID</th>
-                  <th>Nombre</th>
-                  <th>Medida</th>
-                  <th>Stock ideal</th>
-                  <th>Stock actual</th>
-                  <th>%Respecto ideal</th>
-                  <th>%Productos faltantes</th>
-                  <th>Valor unitario</th>
-              </tr>
-              <tr *ngFor="let row of valoresRespuestaObtenerReporte; let i = index;" class="mesa-row">
-                  <td>{{i+1}}</td>
-                  <td>{{row[0]}}</td>
-                  <td>{{row[1]}}</td>
-                  <td>{{row[2]}}</td>
-                  <td>{{row[3]}}</td>
-                  <td>{{row[4]}}</td>
-                  <td>{{row[5]}}%</td>
-                  <td>{{row[6]}}</td>
-                  <td>{{row[7]}}</td>
-              </tr>
-          </table>
+              <table>
+                  <tr>
+                      <th>ID reporte</th>
+                      <th>Título</th>
+                      <th>Fecha creación</th>
+                      <th>Tipo</th>
+                      <th>Acción</th>
+                  </tr>
+                  <tr *ngFor="let reporte of listSolicitudesReabastecimiento" class="mesa-row">
+                      <td>{{reporte.id_reporte}}</td>
+                      <td>{{reporte.titulo_reporte}}</td>
+                      <td>{{reporte.fecha_creacion | date : 'dd/MM/yyyy'}}</td>
+                      <td>{{reporte.nombre_tipo_reporte}}</td>
+                      <td>
+                          <a nz-popconfirm
+                          nzPopconfirmTitle="¿Seguro que quieres eliminar este reporte?" nzPopconfirmPlacement="top"
+                          (nzOnConfirm)="eliminarReporte(reporte.id_reporte)">Eliminar</a>
+                          <a>Descargar archivo</a>
+                      </td>
+
+                  </tr>
+              </table>
           </div>
       </ng-container>
 
     </nz-modal>
-
 </div>
 
 <div *ngIf="rolUsuarioLogeado != 1">

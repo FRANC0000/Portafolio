@@ -21,7 +21,29 @@
         <h2>Solicitudes de reabastecimiento</h2>
       </div>
       <div>
-        CONTENIDO
+        <div class="pedidos-row" *ngIf="listaRegistrosRecepcionSolicitudReabastecimiento?.length > 0">
+          <div *ngFor="let reg of listaRegistrosRecepcionSolicitudReabastecimiento">
+            <nz-card style="width:300px; margin: 0px 2px; margin-bottom: 10px;" nzTitle="Registro #{{reg.id_registro}}">
+              <div>
+                <label for=""> Título: {{reg.titulo_registro}}</label>
+                <br>
+                <label for=""> Creado por: {{reg.id_usuario}}</label>
+                <br>
+                <label for=""> Fecha: {{reg.fecha_instancia | date: 'dd/MM/yyyy HH:mm:ss'}}</label>
+
+              </div>
+              <br>
+              <div class="botones-pedidos">
+                <button nz-button (click)="verDetalleRegistro(reg)" style="width: 100%;">
+                  Ver detalle de la solicitud
+                </button>
+              </div>
+            </nz-card>
+          </div>
+        </div>
+        <div class="pedidos-row sin-pedidos" *ngIf="listaRegistrosRecepcionSolicitudReabastecimiento?.length == 0">
+          No hay solicitudes de reabastecimiento pendientes en este momento.
+        </div>
       </div>
 
       <div class="menu-header">
@@ -56,6 +78,25 @@
         </nz-table>
       </div>
     </div>
+
+    <!-- VER DETALLE SOLICITUD REABASTECIMIENTO -->
+    <nz-drawer [nzWidth]="700" [nzClosable]="true" [nzVisible]="isVisibleDetalleRegistro" nzPlacement="right"
+      nzTitle="Detalle de la solicitud" (nzOnClose)="cerrarDrawerDetalleSolicitudReabastecimiento()"
+      style="background-color: rgba(81, 0, 195, 0.319);">
+      <ng-container>
+        <div>
+          {{registroRecepcionSolicitudReabastecimiento?.id_registro}}
+          {{registroRecepcionSolicitudReabastecimiento?.reporte.nombre_creacion}}
+
+          <iframe [src]="linkSolicitudReabastecimiento | safe" 
+          style="height: 700px; width: 100%;"></iframe>
+
+          <div>
+            <button nz-button> Aprobar solicitud </button>
+          </div>
+        </div>
+      </ng-container>
+    </nz-drawer>
 </div>
 
 <div *ngIf="rolUsuarioLogeado != 2 && rolUsuarioLogeado != 1">

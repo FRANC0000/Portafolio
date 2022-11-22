@@ -1,5 +1,9 @@
 package com.restaurant.siglo.xxi.service.impl;
 
+import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.Map;
 
@@ -20,7 +24,7 @@ public class CarteraPagosServiceImpl implements CarteraPagosService{
 	CarteraPagosRepository carteraPagosRepository;
 
 	@Override
-	public String crearCarteraPagos(Map<String, Object> card) throws JSONException {
+	public String crearCarteraPagos(Map<String, Object> card) throws JSONException, NoSuchAlgorithmException {
 		String resp = "";
 		
 			//rut_cliente integer,nro_tarjeta integer,mes_exp integer,anno_exp integer,cvv integer,email varchar,nombre_titular varchar,rut_titular varchar
@@ -31,10 +35,10 @@ public class CarteraPagosServiceImpl implements CarteraPagosService{
 			String nombre_titular = card.get("nombre_titular").toString();
 			int mes_exp = Integer.parseInt(card.get("mes_exp").toString());
 			int anno_exp = Integer.parseInt(card.get("anno_exp").toString());
-			int cvv = Integer.parseInt(card.get("cvv").toString());
+			String cvv = card.get("cvv").toString();
 			
 			//select crear_cartera_pago(20392004, '1111222233334444', 12, 22, 333, 'f.teran.p22@gmail.com', 'Franco Terán Peña', '20392004-0')
-			resp = carteraPagosRepository.crearCarteraPagos(rut_cliente, nro_tarjeta, mes_exp, anno_exp, cvv, email, nombre_titular, rut_titular);
+			resp = carteraPagosRepository.crearCarteraPagos(rut_cliente, nro_tarjeta, mes_exp, anno_exp, toHexString(getSHA(cvv)), email, nombre_titular, rut_titular);
 			
 			
 		
@@ -76,5 +80,33 @@ public class CarteraPagosServiceImpl implements CarteraPagosService{
 		
 		return resp;
 	}
+	
+	public static byte[] getSHA(String input) throws NoSuchAlgorithmException
+    {
+        // Static getInstance method is called with hashing SHA
+        MessageDigest md = MessageDigest.getInstance("SHA-256");
+ 
+        // digest() method called
+        // to calculate message digest of an input
+        // and return array of byte
+        return md.digest(input.getBytes(StandardCharsets.UTF_8));
+    }
+ 
+ public static String toHexString(byte[] hash)
+    {
+        // Convert byte array into signum representation
+        BigInteger number = new BigInteger(1, hash);
+ 
+        // Convert message digest into hex value
+        StringBuilder hexString = new StringBuilder(number.toString(16));
+ 
+        // Pad with leading zeros
+        while (hexString.length() < 64)
+        {
+            hexString.insert(0, '0');
+        }
+ 
+        return hexString.toString();
+    }
 
 }
