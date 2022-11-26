@@ -11,6 +11,7 @@ import { AdministadorService } from './administador.service';
 
 import pdfMake from 'pdfmake/build/pdfmake'
 import pdfFonts from 'pdfmake/build/vfs_fonts'
+import { Registro } from 'src/app/interfaces/registro';
 pdfMake.vfs =  pdfFonts.pdfMake.vfs
 
 @Component({
@@ -1277,6 +1278,7 @@ export class AdministradorComponent implements OnInit {
     
 
     if (this.validateFormCrearReporte.valid){
+      let registroAIngresar : Registro;
       if (this.tipoReporteSelected == 1){
         let tabla = [];
         let headerTabla = ['#', 'Nombre', 'Medida', 'Stock ideal', 'Stock actual', '%RI', '%F', 'Acción', 'Tipo', 'Venc.']
@@ -1334,6 +1336,18 @@ export class AdministradorComponent implements OnInit {
         // const pdf = pdfMake.createPdf(pdfDefinitions).download(this.validateFormCrearReporte.value.nombre_creacion);
         // pdf.download();
         const pdf = pdfMake.createPdf(pdfDefinitions)
+
+        registroAIngresar = {
+          descripcion : this.validateFormCrearReporte.value.comentario,
+          id_estado_registro : 1,
+          id_modulo : 1,
+          id_registro_padre : -1,
+          id_tipo_registro : 2, //tipo_registro 1 = Reporte de inventario
+          id_usuario : this.usuarioLogeado,
+          titulo_registro : this.validateFormCrearReporte.value.titulo_reporte,
+          version : 1
+        }
+
         // pdf.open();
         pdf.getBlob((blob) => {
           // console.log('blob', blob);
@@ -1341,8 +1355,6 @@ export class AdministradorComponent implements OnInit {
           this.formDataPdfReporte.append("nombre", this.validateFormCrearReporte.value.nombre_creacion);
           this.administadorService.subirPdfReporte(this.formDataPdfReporte).subscribe(resp =>{
             // console.log('resp', resp);
-
-            
           })
         });
       }
@@ -1426,6 +1438,18 @@ export class AdministradorComponent implements OnInit {
         // const pdf = pdfMake.createPdf(pdfDefinitions).download(this.validateFormCrearReporte.value.nombre_creacion);
         // pdf.download();
         const pdf = pdfMake.createPdf(pdfDefinitions)
+
+        registroAIngresar = {
+          descripcion : this.validateFormCrearReporte.value.comentario,
+          id_estado_registro : 2, //estado_registro 2 = Recepcionar solicitud de reabastecimiento (bodega)
+          id_modulo : 1,
+          id_registro_padre : -1,
+          id_tipo_registro : 1, //tipo_registro 1 = Solicitud de reabastecimiento
+          id_usuario : this.usuarioLogeado,
+          titulo_registro : this.validateFormCrearReporte.value.titulo_reporte,
+          version : 1
+        }
+
         // pdf.open();
         // console.log('pdf', pdf);
         pdf.getBlob((blob) => {
@@ -1438,33 +1462,48 @@ export class AdministradorComponent implements OnInit {
           })
         });
       }
-      // const reporteACrear : Reporte = {
-      //   comentario : this.validateFormCrearReporte.value.comentario,
-      //   extension : this.validateFormCrearReporte.value.extension,
-      //   fecha_creacion : this.validateFormCrearReporte.value.fecha_creacion,
-      //   id_tipo_reporte : this.validateFormCrearReporte.value.id_tipo_reporte,
-      //   id_usuario : this.validateFormCrearReporte.value.id_usuario,
-      //   nombre_creacion : this.validateFormCrearReporte.value.nombre_creacion,
-      //   titulo_reporte : this.validateFormCrearReporte.value.titulo_reporte,
-      //   id_reporte :this.validateFormCrearReporte.value.id_reporte
-      // }
+      const reporteACrear : Reporte = {
+        comentario : this.validateFormCrearReporte.value.comentario,
+        extension : this.validateFormCrearReporte.value.extension,
+        fecha_creacion : this.validateFormCrearReporte.value.fecha_creacion,
+        id_tipo_reporte : this.validateFormCrearReporte.value.id_tipo_reporte,
+        id_usuario : this.validateFormCrearReporte.value.id_usuario,
+        nombre_creacion : this.validateFormCrearReporte.value.nombre_creacion,
+        titulo_reporte : this.validateFormCrearReporte.value.titulo_reporte
+      }
 
-      // console.log('reporteACrear: ', reporteACrear);
-      // this.administadorService.crearReporte(reporteACrear).subscribe(resp=>{
-      //   console.log('resp:', resp);
-      //   // this.cerrarCrearReporte();
+      console.log('reporteACrear: ', reporteACrear);
+      this.administadorService.crearReporte(reporteACrear).subscribe(resp=>{
+        console.log('resp:', resp);
+        // this.cerrarCrearReporte();
+        registroAIngresar.id_reporte = parseInt(resp);
+        this.administadorService.crearRegistro(registroAIngresar).subscribe(resp2=>{
+          console.log('resp2', resp2);
+          this.notification.create(
+            'success', 'Registro creado', 
+            resp.toString()
+            // ''
+          );
+        },
+        error => {
+          // console.log('error', error); 
+          this.notification.create(
+            'error', 'Error al crear registro', 'No es posible crear el registro, intente nuevamente'
+          )
+        });
+
         this.notification.create(
           'success', 'Reporte creado', 
-          // resp.toString()
-          ''
+          resp.toString()
+          // ''
         );
-      // },
-      // error => {
-      //   // console.log('error', error); 
-        // this.notification.create(
-        //   'error', 'Error al crear reporte', 'No es posible crear el reporte, intente nuevamente'
-        // )
-      // });
+      },
+      error => {
+        // console.log('error', error); 
+        this.notification.create(
+          'error', 'Error al crear reporte', 'No es posible crear el reporte, intente nuevamente'
+        )
+      });
     }
     else{
       this.notification.create(

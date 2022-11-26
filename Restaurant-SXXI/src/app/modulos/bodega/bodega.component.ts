@@ -2,6 +2,7 @@ import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Producto } from 'src/app/interfaces/cocina';
+import { BuzonEntrada } from 'src/app/interfaces/registro';
 import { BodegaService } from './bodega.service';
 
 @Component({
@@ -23,12 +24,16 @@ export class BodegaComponent implements OnInit {
   isVisibleDetalleRegistro = false;
   registroRecepcionSolicitudReabastecimiento;
   linkSolicitudReabastecimiento = "";
+  listaRegistrosRecepcionSolicitudReabastecimientoAprobada = [];
+  buzonEntrada : BuzonEntrada[] = []
+  isVisibleRegistroBuzon = false;
 
   ngOnInit() {
     console.log('usuarioLogeado', this.usuarioLogeado);
     console.log('rolUsuarioLogeado', this.rolUsuarioLogeado);
     this.obtenerProductos();
     this.obtenerSolicitudReabastecimiento();
+    this.obtenerSolicitudReabastecimientoAprobada();
   }
 
   cerrarSesion(){
@@ -59,6 +64,24 @@ export class BodegaComponent implements OnInit {
     })
   }
 
+  obtenerSolicitudReabastecimientoAprobada(){
+    this.bodegaService.obtenerSolicitudReabastecimientoAprobada().subscribe(resp=>{
+      this.listaRegistrosRecepcionSolicitudReabastecimientoAprobada = resp['registros']
+
+      console.log('listaRegistrosRecepcionSolicitudReabastecimientoAprobada', this.listaRegistrosRecepcionSolicitudReabastecimientoAprobada);
+
+      for (let reg of this.listaRegistrosRecepcionSolicitudReabastecimientoAprobada){
+        let bzE : BuzonEntrada = {
+          registro : Object(reg),
+          esAprobado : true,
+          esRechazado : false
+        }
+        this.buzonEntrada.push(bzE);
+      }
+      console.log('buzon',this.buzonEntrada);
+    })    
+  }
+
   seleccionarProducto(producto){
     this.productoSelected = producto
     console.log('pr', this.productoSelected);
@@ -75,6 +98,17 @@ export class BodegaComponent implements OnInit {
 
   cerrarDrawerDetalleSolicitudReabastecimiento(){
     this.isVisibleDetalleRegistro = false;
+    this.isVisibleRegistroBuzon = false;
     this.registroRecepcionSolicitudReabastecimiento = null;
+    this.linkSolicitudReabastecimiento = "";
   }
+
+  verDetalleRegistroEnBuzon(bzE){
+    this.isVisibleRegistroBuzon = true;
+    this.registroRecepcionSolicitudReabastecimiento  = bzE.registro;
+    this.linkSolicitudReabastecimiento = 'http://localhost:8085/restaurantSXXI/imagenes-rxxi/reportes/'+ bzE.registro.reporte.nombre_creacion + "#toolbar=0"
+
+    console.log('url', this.linkSolicitudReabastecimiento);
+  }
+
 }

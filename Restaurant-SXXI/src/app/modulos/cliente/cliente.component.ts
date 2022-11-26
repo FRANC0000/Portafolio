@@ -4,6 +4,7 @@ import { Routes, RouterModule, ActivatedRoute, Router} from '@angular/router';
 import { NzNotificationService, NzTreeHigherOrderServiceToken } from 'ng-zorro-antd';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { TimeHolder } from 'ng-zorro-antd/time-picker/time-holder';
+import { parse } from 'querystring';
 import { Boleta, InstanciarBoleta, InstanciarPedido, Pedido, ProductoEnCarro } from 'src/app/interfaces/carrito-compras';
 import { Plato, Producto } from 'src/app/interfaces/cocina';
 import { CancelarReserva, Cliente, EstadoMesa, Mesa, Reserva, TipoMesa } from 'src/app/interfaces/mesa';
@@ -59,8 +60,12 @@ export class ClienteComponent implements OnInit {
   resumenPago = false;
   dirigirseACaja = false;
 
+  test = [1, 2, 3, 4]
+
 
   ngOnInit() {
+    console.log('test',this.test.toString());
+    
     this.mesaReservada = false;
     const id_mesa = {
       id_mesa : this.idMesaParam
@@ -393,24 +398,57 @@ export class ClienteComponent implements OnInit {
 
     if (!existe){
       // console.log('no existe, agregar');
-      const productoEnCarro : ProductoEnCarro = {
-      plato: plato,
-      cantidad : 1,
-      esPlato : true,
-      esProducto : false,
-      valorUnitario : plato.precio_plato
+      console.log('plato', plato);
+      
+      if (plato.recetas.length > 0){
+        // console.log('doc', document.getElementById(plato.id_plato));
+        // console.log('model', document.getElementById(plato.id_plato).getAttribute('ngmodel'))
+        let recetaSeleccionada = document.getElementById(plato.id_plato).getAttribute('ngmodel');
+        const productoEnCarro : ProductoEnCarro = {
+        plato: plato,
+        cantidad : 1,
+        esPlato : true,
+        esProducto : false,
+        valorUnitario : plato.precio_plato,
+        recetaSeleccionada : [parseInt(recetaSeleccionada)]
+        }
+        this.carritoDeCompras.push(productoEnCarro);
       }
-      this.carritoDeCompras.push(productoEnCarro);
+      else{
+        const productoEnCarro : ProductoEnCarro = {
+          plato: plato,
+          cantidad : 1,
+          esPlato : true,
+          esProducto : false,
+          valorUnitario : plato.precio_plato,
+          recetaSeleccionada : []
+          }
+          this.carritoDeCompras.push(productoEnCarro);
+      }
     }
     else{
       // console.log('existe, sumar 1');
-      this.carritoDeCompras.find(p => {
-        if (p.plato != null && p.plato != undefined){
-          if (p.plato.id_plato === plato.id_plato){
-            p.cantidad +=1
+      if (plato.recetas.length > 0){
+        let recetaSeleccionada = document.getElementById(plato.id_plato).getAttribute('ngmodel');
+
+        this.carritoDeCompras.find(p => {
+          if (p.plato != null && p.plato != undefined){
+            if (p.plato.id_plato === plato.id_plato){
+              p.recetaSeleccionada.push(parseInt(recetaSeleccionada));
+              p.cantidad += 1;
+            }
           }
-        }
-      })
+        })
+      }
+      else{
+        this.carritoDeCompras.find(p => {
+          if (p.plato != null && p.plato != undefined){
+            if (p.plato.id_plato === plato.id_plato){
+              p.cantidad +=1
+            }
+          }
+        })
+      }
     }
     console.log('carritoDeCompras', this.carritoDeCompras);
     this.crearPedidoAIngresar();
@@ -752,6 +790,12 @@ export class ClienteComponent implements OnInit {
       this.dirigirseACaja = false;
       this.terminarEstancia();
     }, 10000);
+  }
+
+  onChangeRecetaSelected(ev,id_plato){
+    // console.log('onChangeRecetaSelected', ev);
+    document.getElementById(id_plato).setAttribute('ngmodel', ev)
+    // console.log('dom', document.getElementById(id_plato));
   }
 
 }

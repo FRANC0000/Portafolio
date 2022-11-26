@@ -230,7 +230,7 @@
                     <div class="plato-row">
                         <div class="plato-disponible">
                             <div class="plato-title">
-                                <h3 class="plato-name">Receta #{{receta.id_receta}}</h3>
+                                <h3 class="plato-name">Nombre: {{receta.titulo_receta}}</h3>
                                 <h5 class="plato-tipo"> | Preparación en {{receta.tiempoPreparacion}}' min</h5>
                                 <br>
                             </div>
@@ -311,12 +311,14 @@
                     <table>
                         <tr>
                           <th>#</th>
+                          <th>Receta</th>
                           <th>Tiempo</th>
                           <th>Complejidad</th>
                           <th>Comentario</th>
                         </tr>
                         <tr *ngFor="let rec of platoSelected?.recetas; let i = index;" class="mesa-row">
-                          <td>{{i}}</td>
+                          <td>{{i+1}}</td>
+                          <td>{{rec.titulo_receta}}</td>
                           <td>{{rec.tiempo_preparacion}}' minutos</td>
                           <td>{{rec.complejidad}}</td>
                           <td>{{rec.comentario}}</td>
@@ -612,9 +614,10 @@
                 <div *ngIf="!isVisibleModificarReceta">
                     <div class="name-detalle-plato">
                         <h3>Receta #{{recetaSelected?.id_receta}}</h3>
+                        <h3>Nombre: {{recetaSelected?.titulo_receta}}</h3>
                     </div>
                     <div class="desc-detalle-plato">
-                        <h5>Tiempo de preparación: {{recetaSelected?.tiempoPreparacion}}</h5>
+                        <h5>Tiempo de preparación: {{recetaSelected?.tiempo_preparacion}}</h5>
                         <h5>Complejidad: {{recetaSelected?.complejidad}}</h5>
                         <h5>Comentario: {{recetaSelected?.comentario}}</h5>
                     </div>
@@ -650,6 +653,15 @@
                             </nz-form-label>
                             <nz-form-control nzErrorTip="Por favor ingrese la nuevo id de receta">
                                 <input nz-input type="text" name="id_receta" id="id_receta" placeholder="id_receta" disabled value="{{recetaSelected.id_receta}}">
+                            </nz-form-control>
+                        </nz-form-item>
+                        <nz-form-item>
+                            <nz-form-label nzRequired nzFor="titulo_receta">
+                                Título receta
+                            </nz-form-label>
+                            <nz-form-control>
+                                <input nz-input type="text" name="titulo_receta" id="titulo_receta" placeholder="titulo_receta" value="{{recetaSelected.titulo_receta}" 
+                                formControlName="titulo_receta">
                             </nz-form-control>
                         </nz-form-item>
                         <nz-form-item>
@@ -786,9 +798,16 @@
                 </form>
                 <br>
                 <h2 nz-title> Receta de este plato</h2>
-                <form nz-form [formGroup]="validateFormCrearReceta" id="validateFormCrearReceta" [nzLayout]="'inline'"
-                (ngSubmit)="(guardarCrearReceta)">
+                <form nz-form [formGroup]="validateFormCrearReceta" id="validateFormCrearReceta" [nzLayout]="'inline'">
                 <div style="display: flex; justify-content: center;">
+                    <nz-form-item>
+                        <nz-form-label>
+                            Título
+                        </nz-form-label>
+                        <nz-form-control>
+                            <input nz-input type="text" name="titulo_receta" id="titulo_receta" placeholder="Título de receta" formControlName="titulo_receta">
+                        </nz-form-control>
+                    </nz-form-item>
                     <nz-form-item>
                         <nz-form-label nzFor="complejidad">
                             Complejidad
@@ -875,8 +894,6 @@
                         </div>
                     </div>
                 </div>
-                
-                
                 </form>
             </ng-container>
         </div>

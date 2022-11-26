@@ -299,13 +299,30 @@ export class FinanzasComponent implements OnInit {
     this.isVisibleDetalleRegistro = true;
     this.registroRecepcionSolicitudReabastecimiento  = reg;
     this.linkSolicitudReabastecimiento = 'http://localhost:8085/restaurantSXXI/imagenes-rxxi/reportes/'+ reg.reporte.nombre_creacion + "#toolbar=0"
-
-    console.log('url', this.linkSolicitudReabastecimiento);
-    
+    // console.log('url', this.linkSolicitudReabastecimiento);
   }
 
   cerrarDrawerDetalleSolicitudReabastecimiento(){
     this.isVisibleDetalleRegistro = false;
     this.registroRecepcionSolicitudReabastecimiento = null;
   }
+
+  isVisibleAprobarSolicitud = false;
+
+  cancelarAprobarSolicitud(){
+    this.isVisibleAprobarSolicitud = false;
+  }
+
+  okAprobarSolicitud(id_registro){
+    console.log('Aprobar solicitud');
+    console.log('Ingresar solicitud al sistema');
+    console.log('Ingresar presupuesto de gastos');
+    this.isVisibleDetalleRegistro = false;
+  }
+
+  rechazarSolicitud(id_registro){
+    console.log('Rechazar solicitud');
+    this.isVisibleDetalleRegistro = false;
+  }
+  
 }

@@ -14,7 +14,35 @@
         <h2>Buzón de entrada</h2>
       </div>
       <div>
-        CONTENIDO
+        <div class="pedidos-row" *ngIf="buzonEntrada?.length > 0"
+          style="height: 300px">
+          <div *ngFor="let bzE of buzonEntrada">
+            <nz-card style="width:300px; margin: 0px 2px; margin-bottom: 10px;" nzTitle="Registro #{{bzE.registro.id_registro}}">
+              <div>
+                <div style="text-align: center;">
+                  <label for="" *ngIf="bzE.esAprobado" style="font-weight: bold; color: rgba(81, 0, 195, 0.733); font-size: large; "> Solicitud aprobada </label>
+                  <label for="" *ngIf="bzE.esRechazo" style="font-weight: bold; color: red; font-size: large; ">Solicitud rechazada</label>
+                </div>
+                <nz-divider style="margin:10px 0px"></nz-divider>
+                <label for=""> Título: {{bzE.registro.titulo_registro}}</label>
+                <br>
+                <label for=""> Creado por: {{bzE.registro.id_usuario}}</label>
+                <br>
+                <label for=""> Fecha: {{bzE.registro.fecha_instancia | date: 'dd/MM/yyyy HH:mm:ss'}}</label>
+        
+              </div>
+              <br>
+              <div class="botones-pedidos">
+                <button nz-button (click)="verDetalleRegistroEnBuzon(bzE)" style="width: 100%;">
+                  Ver detalle de la solicitud
+                </button>
+              </div>
+            </nz-card>
+          </div>
+        </div>
+        <div class="pedidos-row sin-pedidos" *ngIf="buzonEntrada?.length == 0">
+          No hay registros en el buzón.
+        </div>
       </div>
 
       <div class="menu-header">
@@ -93,6 +121,25 @@
 
           <div>
             <button nz-button> Aprobar solicitud </button>
+          </div>
+        </div>
+      </ng-container>
+    </nz-drawer>
+
+    <!-- VER DETALLE SOLICITUD REABASTECIMIENTO EN BUZÓN -->
+    <nz-drawer [nzWidth]="700" [nzClosable]="true" [nzVisible]="isVisibleRegistroBuzon" nzPlacement="right"
+      nzTitle="Detalle de la solicitud" (nzOnClose)="cerrarDrawerDetalleSolicitudReabastecimiento()"
+      style="background-color: rgba(81, 0, 195, 0.319);">
+      <ng-container>
+        <div>
+          {{registroRecepcionSolicitudReabastecimiento?.id_registro}}
+          {{registroRecepcionSolicitudReabastecimiento?.reporte.nombre_creacion}}
+
+          <iframe [src]="linkSolicitudReabastecimiento | safe" 
+          style="height: 700px; width: 100%;"></iframe>
+
+          <div>
+            <!-- <button nz-button> Aprobar solicitud </button> -->
           </div>
         </div>
       </ng-container>

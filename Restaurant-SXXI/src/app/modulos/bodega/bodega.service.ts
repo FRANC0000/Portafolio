@@ -23,4 +23,10 @@ export class BodegaService {
       'http://localhost:8085/restaurantSXXI/rest-rsxii/registro/obtenerSolicitudReabastecimiento'
     );
   }
+
+  obtenerSolicitudReabastecimientoAprobada(){
+    return this.http.get(
+      'http://localhost:8085/restaurantSXXI/rest-rsxii/registro/obtenerSolicitudReabastecimientoAprobada'
+    );
+  }
 }

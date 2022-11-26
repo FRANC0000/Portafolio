@@ -40,6 +40,13 @@
                   <p>{{plato.comentario}}</p>
                 </div>
                 <div>
+                  <nz-select (ngModelChange)="onChangeRecetaSelected($event, plato.id_plato)"
+                  style="width: 200px" nzPlaceHolder="Seleccione receta" *ngIf="plato.recetas.length > 0" [ngModel]="undefined"
+                  [id]="plato.id_plato">
+                    <ng-container *ngFor="let rec of plato.recetas">
+                      <nz-option [nzValue]="rec.id_receta" [nzLabel]="rec.titulo_receta"></nz-option>
+                    </ng-container>
+                  </nz-select>
                   <button nz-button (click)="agregarPlatoAlCarro(plato)" class="agregar-item"> Añadir </button>
                   <button nz-button (click)="verDetallePlato(plato)"> Ver detalle </button>
                 </div>

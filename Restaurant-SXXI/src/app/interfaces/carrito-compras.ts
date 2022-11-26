@@ -1,4 +1,4 @@
-import { Plato, Producto } from "./cocina";
+import { Plato, Producto, Receta } from "./cocina";
 
 
 export interface ProductoEnCarro {
@@ -7,7 +7,9 @@ export interface ProductoEnCarro {
     cantidad : number,
     esPlato : boolean,
     esProducto : boolean,
-    valorUnitario : number
+    valorUnitario : number,
+    recetaSeleccionada?: number[],
+    objetoRecetaSeleccionada? : Receta[]
 }
 
 export interface Pedido{

@@ -80,13 +80,15 @@ export class CocinaComponent implements OnInit {
     this.validateFormCrearReceta = new FormGroup({
       comentario: new FormControl,
       complejidad: new FormControl,
-      tiempo_preparacion: new FormControl
+      tiempo_preparacion: new FormControl,
+      titulo_receta: new FormControl
     })
 
     this.validateFormModificarReceta = new FormGroup({
       comentario: new FormControl,
       complejidad: new FormControl,
       tiempo_preparacion: new FormControl,
+      titulo_receta : new FormControl
     })
 
     this.validateFormEliminarReceta = new FormGroup({
@@ -222,7 +224,8 @@ export class CocinaComponent implements OnInit {
     this.validateFormCrearReceta = this.fb.group({
       comentario :[null, [Validators.required]],
       complejidad :[null, [Validators.required]],
-      tiempo_preparacion :[null, [Validators.required]]
+      tiempo_preparacion :[null, [Validators.required]],
+      titulo_receta :[null, [Validators.required]],
     })
   }
   verPlatos(){
@@ -231,6 +234,8 @@ export class CocinaComponent implements OnInit {
 
   guardarCrearReceta(id_plato){
     console.log('guardarCrearReceta');
+    console.log(this.validateFormCrearReceta);
+    
     console.log('valid ', this.validateFormCrearReceta.valid);
     if (this.validateFormCrearReceta.valid && this.listProductosReceta.length > 0){
       console.log('formulario válido, usa el servicio de crear Receta');
@@ -242,13 +247,15 @@ export class CocinaComponent implements OnInit {
         complejidad : this.validateFormCrearReceta.value.complejidad,
         tiempoPreparacion : this.validateFormCrearReceta.value.tiempo_preparacion,
         productosEnReceta : this.listProductosReceta,
-        id_plato : id_plato
+        id_plato : id_plato,
+        titulo_receta : this.validateFormCrearReceta.value.titulo_receta
       }
       console.log('UnaReceta', unaReceta);
       this.cocinaService.crearReceta(unaReceta).subscribe(resp => {
         console.log('respuesta a mi servicio crearReceta', resp);
         this.obtenerRecetas();
         this.isVisibleCrearReceta = false;
+        this.cerrarCrearPlato();
         this.cerrarCrearReceta();
       })
       this.notification.create(
@@ -300,7 +307,8 @@ export class CocinaComponent implements OnInit {
         id_receta : id_receta,
         comentario: this.validateFormModificarReceta.value.comentario,
         complejidad : this.validateFormModificarReceta.value.complejidad,
-        tiempoPreparacion : this.validateFormModificarReceta.value.tiempo_preparacion
+        tiempoPreparacion : this.validateFormModificarReceta.value.tiempo_preparacion,
+        titulo_receta : this.validateFormModificarReceta.value.titulo_receta
       }
       console.log('UnaReceta', unaReceta);
       this.cocinaService.modificarReceta(unaReceta).subscribe(resp => {
@@ -329,7 +337,8 @@ export class CocinaComponent implements OnInit {
     this.validateFormModificarReceta = this.fb.group({
       comentario :[receta.comentario, [Validators.required]],
       complejidad :[receta.complejidad, [Validators.required]],
-      tiempo_preparacion :[receta.tiempoPreparacion.toString(), [Validators.required]],
+      tiempo_preparacion :[receta.tiempo_preparacion.toString(), [Validators.required]],
+      titulo_receta : [receta.titulo_receta, [Validators.required]]
     })
   }
   
@@ -389,7 +398,6 @@ export class CocinaComponent implements OnInit {
       console.log('platoACrear: ', platoACrear);
       this.cocinaService.crearPlato(platoACrear).subscribe(resp=>{
         console.log('resp:', resp);
-        this.cerrarCrearPlato();
         this.notification.create(
           'success', 'Plato creado', resp
         );
@@ -439,7 +447,6 @@ export class CocinaComponent implements OnInit {
   cerrarCrearPlato(){
     this.isVisibleCrearPlato = false;
     this.validateFormCrearPlato.reset();
-    this.cerrarCrearReceta()
   }
 
   obtenerTipoPlato(){
@@ -599,6 +606,20 @@ export class CocinaComponent implements OnInit {
         let carritoDeUnPedido : ProductoEnCarro[] = [];
 
         pedido.platos_del_pedido.forEach(plato => {
+          let recetaSelecccionada = JSON.parse(plato.recetas_pedidas)
+          // console.log('recetaSelecccionada',recetaSelecccionada);
+          let rec : Receta[] = [];
+          for (let receta of recetaSelecccionada) {
+            let r = this.listaRecetas.filter(r => {
+              return r.id_receta === receta
+            })
+            // console.log('r', r);
+            
+            rec.push(r[0])
+            // console.log('recetaSelecccionada', recetaSelecccionada);
+          }
+          // console.log('rec', rec);
+
           const unPlatoPedido : Plato = {
             cantidad_personas_recomendadas : plato.cantidad_personas_recomendadas,
             comentario : plato.comentario_plato,
@@ -615,7 +636,9 @@ export class CocinaComponent implements OnInit {
             esPlato : true,
             esProducto : false,
             valorUnitario : plato.precio_plato,
-            plato : unPlatoPedido
+            plato : unPlatoPedido,
+            recetaSeleccionada : recetaSelecccionada,
+            objetoRecetaSeleccionada : rec
           }
 
           carritoDeUnPedido.push(platoEnCarro);
@@ -659,6 +682,29 @@ export class CocinaComponent implements OnInit {
         // console.log('unPedido', unPedido);
         this.listaPedidosEnCola.push(unPedido);
       });
+      this.listaPedidosEnCola.sort((a,b) => {
+        if (a.carritoProductos.length < b.carritoProductos.length){
+          console.log('a < b');
+          this.listaPedidosEnCola.forEach(pe => {
+            pe.carritoProductos.forEach((it, index)=> {
+              if (it.objetoRecetaSeleccionada !=undefined){
+                if (a.carritoProductos[index].objetoRecetaSeleccionada.length < b.carritoProductos[index].objetoRecetaSeleccionada.length){
+                  it.objetoRecetaSeleccionada.forEach((re, index2) => {
+                    if(a.carritoProductos[index].objetoRecetaSeleccionada[index2].tiempoPreparacion < b.carritoProductos[index].objetoRecetaSeleccionada[index2].tiempoPreparacion){
+                      return 1
+                    }
+                    return -1
+                  })
+                }
+                return -1
+              }
+              return -1
+            })
+          })
+          return -1
+        }
+        return -1
+      })
       console.log('listaPedidosEnCola', this.listaPedidosEnCola);
     })
   }

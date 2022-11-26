@@ -199,5 +199,11 @@ export class AdministadorService {
     return this.http.post(
       'http://localhost:8085/restaurantSXXI/rest-rsxii/reporte/eliminarReporte', id_reporte , {responseType : 'text'} //asi se tiene que llamar en el controller
     );
+  }
+
+  public crearRegistro(registro) {
+    return this.http.post(
+      'http://localhost:8085/restaurantSXXI/rest-rsxii/registro/crearRegistro', registro , {responseType : 'text'} //asi se tiene que llamar en el controller
+    );
   } 
 }
