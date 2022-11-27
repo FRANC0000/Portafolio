@@ -3,7 +3,9 @@ package com.restaurant.siglo.xxi.clases;
 import java.io.Serializable;
 import java.sql.Date;
 import java.sql.Time;
+import java.sql.Timestamp;
 
+import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -24,9 +26,13 @@ public class RegistroReporte implements Serializable {
 	RegistroReporteId registroReporteId;
 	
 	String id_usuario_creador;
-	Date fecha_creacion;
-	Time hora_creacion;
-	int id_modulo_creador;
+	
+	Timestamp fecha_creacion;
+	
+	@Column(length = 100000)
+	String pdfDefinitions;
+	
+	
 	public RegistroReporteId getRegistroReporteId() {
 		return registroReporteId;
 	}
@@ -39,23 +45,17 @@ public class RegistroReporte implements Serializable {
 	public void setId_usuario_creador(String id_usuario_creador) {
 		this.id_usuario_creador = id_usuario_creador;
 	}
-	public Date getFecha_creacion() {
+	public Timestamp getFecha_creacion() {
 		return fecha_creacion;
 	}
-	public void setFecha_creacion(Date fecha_creacion) {
+	public void setFecha_creacion(Timestamp fecha_creacion) {
 		this.fecha_creacion = fecha_creacion;
 	}
-	public Time getHora_creacion() {
-		return hora_creacion;
+	public String getPdfDefinitions() {
+		return pdfDefinitions;
 	}
-	public void setHora_creacion(Time hora_creacion) {
-		this.hora_creacion = hora_creacion;
+	public void setPdfDefinitions(String pdfDefinitions) {
+		this.pdfDefinitions = pdfDefinitions;
 	}
-	public int getId_modulo_creador() {
-		return id_modulo_creador;
-	}
-	public void setId_modulo_creador(int id_modulo_creador) {
-		this.id_modulo_creador = id_modulo_creador;
-	}
-
+	
 }

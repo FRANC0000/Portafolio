@@ -39,8 +39,9 @@ public class RecetaServiceImpl implements RecetaService{
 		String comentario = receta.get("comentario").toString();
 		int tiempo_preparacion = Integer.parseInt(receta.get("tiempoPreparacion").toString());
 		String complejidad = receta.get("complejidad").toString();
+		String titulo_receta = receta.get("titulo_receta").toString();
 		
-		String resp = recetaRepository.modificarReceta(id_receta, comentario, complejidad, tiempo_preparacion); 
+		String resp = recetaRepository.modificarReceta(id_receta, comentario, complejidad, tiempo_preparacion, titulo_receta); 
 	
 		
 		return resp;
@@ -52,11 +53,12 @@ public class RecetaServiceImpl implements RecetaService{
         try {
             String comentario = receta.get("comentario").toString();
             String complejidad  = receta.get("complejidad").toString();
+            String titulo_receta  = receta.get("titulo_receta").toString();
             int tiempoPreparacion = Integer.parseInt(receta.get("tiempoPreparacion").toString());
             int id_plato = Integer.parseInt(receta.get("id_plato").toString());
             List<Map<String,Object>> productosEnReceta = (List<Map<String, Object>>) receta.get("productosEnReceta");
             
-            resp = recetaRepository.crearReceta(comentario, complejidad,tiempoPreparacion, id_plato); 
+            resp = recetaRepository.crearReceta(comentario, complejidad,tiempoPreparacion, id_plato, titulo_receta); 
             
             productosRecetaService.crearProductosEnUnaReceta(Integer.parseInt(resp), productosEnReceta);
             
@@ -80,6 +82,7 @@ public class RecetaServiceImpl implements RecetaService{
             resp.put("comentario", unaReceta.getComentario());
             resp.put("complejidad", unaReceta.getComplejidad());
             resp.put("tiempoPreparacion", unaReceta.getTiempo_preparacion());
+            resp.put("titulo_receta", unaReceta.getTitulo_receta());
         } catch (Exception e) {
             return "Receta no existe. \n"
                     + "Mensaje de error: "+ e.getMessage();
@@ -122,6 +125,7 @@ public class RecetaServiceImpl implements RecetaService{
                     m.put("comentario", receta.getComentario());
                     m.put("complejidad", receta.getComplejidad());
                     m.put("tiempo_preparacion", receta.getTiempo_preparacion());
+                    m.put("titulo_receta", receta.getTitulo_receta());
                     
                     List<ProductosReceta> productosEnUnaReceta = productosRecetaRepository.obtenerProductosDeUnaReceta(receta.getId_receta());
                     

@@ -10,10 +10,11 @@ import com.restaurant.siglo.xxi.clases.PlatosPedido;
 
 public interface PlatosPedidoRepository extends JpaRepository<PlatosPedido,Long>{
 	
-	@Query(value = "select crear_platos_pedido(:id_pedido, :id_plato, :cantidad_platos)", nativeQuery = true)
+	@Query(value = "select crear_platos_pedido(:id_pedido, :id_plato, :cantidad_platos, :recetaSeleccionada)", nativeQuery = true)
 	String crearPlatosPedido(@Param("id_pedido") int id_pedido,
 			@Param("id_plato") int id_plato,
-			@Param("cantidad_platos") int cantidad_platos);
+			@Param("cantidad_platos") int cantidad_platos,
+			@Param("recetaSeleccionada") String recetaSeleccionada);
 
 	@Query(name = "obtenerPlatosPedidoPorIdCompuesto", nativeQuery = true)
 	List<PlatosPedido> obtenerPlatosPedidoPorIdCompuesto(@Param("id_pedido") int id_pedido,

@@ -69,7 +69,9 @@ public class PedidoServiceImpl implements PedidoService {
 					//System.out.println("Este es un plato y tengo que ingresarlo en platos_pedido");
 					Map<String, Object> unPlato = (Map<String, Object>) unItem.get("plato");
 					int id_plato = Integer.parseInt(unPlato.get("id_plato").toString());
-					platosPedidoRepository.crearPlatosPedido(id_pedido, id_plato, cantidad);
+					List<Integer> rec = (List<Integer>) unItem.get("recetaSeleccionada");
+					String recetaSeleccionada = rec.toString();
+					platosPedidoRepository.crearPlatosPedido(id_pedido, id_plato, cantidad, recetaSeleccionada);
 				}
 				else if (esProducto && !esPlato) {
 					//System.out.println("Este es un producto y tengo que ingresarlo en productos_pedido");
@@ -207,6 +209,7 @@ public class PedidoServiceImpl implements PedidoService {
 					unPlato.put("id_tipo_plato", objetoPlato.getTipo_plato().getId_tipo_plato());
 					unPlato.put("nombre_tipo_plato", objetoPlato.getTipo_plato().getNombre_tipo_plato());
 					unPlato.put("descripcion_tipo_plato", objetoPlato.getTipo_plato().getDescripcion());					
+					unPlato.put("recetas_pedidas", unPlatoEnUnPedido.getRecetas_pedidas());
 					listPlatosEnUnPedido.put(unPlato);
 				}
 				unPedido.put("platos_del_pedido" , listPlatosEnUnPedido);

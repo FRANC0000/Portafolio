@@ -11,8 +11,9 @@ import com.restaurant.siglo.xxi.clases.Registro;
 
 public interface RegistroRepository extends JpaRepository<Registro, Integer>{
 	
-	@Query(value = "select crear_registro(:descripcion, :fecha_instancia, :hora_instancia, :titulo_registro,"
-			+ " :id_estado_registro, :id_modulo, :id_tipo_registro, :id_usuario, :id_registro_padre, :version)", nativeQuery = true)
+	@Query(value = "select crear_registro(:descripcion, :fecha_instancia, :hora_instancia, :titulo_registro, "
+			+ " :id_estado_registro, :id_modulo, :id_tipo_registro, :id_usuario, :id_registro_padre, :version, "
+			+ ":id_reporte)", nativeQuery = true)
 	String crearRegistro(@Param("descripcion") String descripcion, 
 			@Param("fecha_instancia") Timestamp fecha_instancia,
 			@Param("hora_instancia") String hora_instancia,
@@ -22,12 +23,16 @@ public interface RegistroRepository extends JpaRepository<Registro, Integer>{
 			@Param("id_tipo_registro") int id_tipo_registro,
 			@Param("id_usuario") String id_usuario,
 			@Param("id_registro_padre") int id_registro_padre,
-			@Param("version") int version);
+			@Param("version") int version,
+			@Param("id_reporte") int id_reporte);
 	
 	@Query(name = "obtenerSolicitudReabastecimiento", nativeQuery = true)
 	List<Registro> obtenerSolicitudReabastecimiento();
 	
 	@Query(name = "obtenerSolicitudReabastecimientoFinanzas", nativeQuery = true)
 	List<Registro> obtenerSolicitudReabastecimientoFinanzas();
+	
+	@Query(name = "obtenerSolicitudReabastecimientoAprobada", nativeQuery = true)
+	List<Registro> obtenerSolicitudReabastecimientoAprobada();
 
 }

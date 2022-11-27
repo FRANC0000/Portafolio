@@ -2,6 +2,7 @@ package com.restaurant.siglo.xxi.clases;
 
 import java.io.Serializable;
 
+import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -36,6 +37,9 @@ public class PlatosPedido implements Serializable{
 	PlatosPedidoId platosPedidoId;
 	
 	int cantidad_platos;
+	
+	@Column(nullable = true)
+	String recetas_pedidas;
 
 	public PlatosPedidoId getPlatosPedidoId() {
 		return platosPedidoId;
@@ -53,6 +57,12 @@ public class PlatosPedido implements Serializable{
 		this.cantidad_platos = cantidad_platos;
 	}
 
-	
+	public String getRecetas_pedidas() {
+		return recetas_pedidas;
+	}
+
+	public void setRecetas_pedidas(String recetas_pedidas) {
+		this.recetas_pedidas = recetas_pedidas;
+	}
 	
 }

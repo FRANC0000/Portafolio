@@ -25,6 +25,11 @@ import javax.persistence.Table;
 					name = "obtenerSolicitudReabastecimientoFinanzas", 
 					query = " select r from Registro r "
 							+ "where r.estado_registro.id_estado_registro = 3 "
+			),
+			@NamedQuery(
+					name = "obtenerSolicitudReabastecimientoAprobada", 
+					query = " select r from Registro r "
+							+ "where r.estado_registro.id_estado_registro = 4 "
 			)
 		})
 public class Registro {
@@ -62,6 +67,7 @@ public class Registro {
 	@Column(nullable=true)
 	int id_reporte;
 	
+	@Column(nullable=true)
 	boolean ultima_version;
 
 	public int getId_registro() {

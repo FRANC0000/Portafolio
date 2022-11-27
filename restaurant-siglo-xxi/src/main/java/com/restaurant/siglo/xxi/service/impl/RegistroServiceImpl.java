@@ -38,8 +38,9 @@ public class RegistroServiceImpl implements RegistroService{
 		int id_registro_padre = Integer.parseInt(registro.get("id_registro_padre").toString());
 		int version = Integer.parseInt(registro.get("version").toString());
 		String id_usuario = registro.get("id_usuario").toString();
+		int id_reporte = Integer.parseInt(registro.get("id_reporte").toString());
 
-		String resp = registroRepository.crearRegistro(descripcion, fecha_instancia, hora_instancia, titulo_registro, id_estado_registro, id_modulo, id_tipo_registro, id_usuario, id_registro_padre, version); 
+		String resp = registroRepository.crearRegistro(descripcion, fecha_instancia, hora_instancia, titulo_registro, id_estado_registro, id_modulo, id_tipo_registro, id_usuario, id_registro_padre, version, id_reporte); 
 		
 		return resp;
 	}
@@ -67,6 +68,8 @@ public class RegistroServiceImpl implements RegistroService{
 			tipo.put("id_usuario", reg.getUsuario().getId_usuario());
 			tipo.put("id_registro_padre", reg.getId_registro_padre());
 			tipo.put("version", reg.getVersion());
+			tipo.put("eliminado", reg.isEliminado());
+			tipo.put("ultima_version", reg.isUltima_version());
 			
 			JSONObject objReporte = new JSONObject();
 			Reporte rep = reporteRepository.getById(reg.getId_reporte());
@@ -112,6 +115,8 @@ public class RegistroServiceImpl implements RegistroService{
 			tipo.put("id_usuario", reg.getUsuario().getId_usuario());
 			tipo.put("id_registro_padre", reg.getId_registro_padre());
 			tipo.put("version", reg.getVersion());
+			tipo.put("eliminado", reg.isEliminado());
+			tipo.put("ultima_version", reg.isUltima_version());
 			
 			JSONObject objReporte = new JSONObject();
 			Reporte rep = reporteRepository.getById(reg.getId_reporte());
@@ -157,6 +162,8 @@ public class RegistroServiceImpl implements RegistroService{
 			tipo.put("id_usuario", reg.getUsuario().getId_usuario());
 			tipo.put("id_registro_padre", reg.getId_registro_padre());
 			tipo.put("version", reg.getVersion());
+			tipo.put("eliminado", reg.isEliminado());
+			tipo.put("ultima_version", reg.isUltima_version());
 			
 			JSONObject objReporte = new JSONObject();
 			Reporte rep = reporteRepository.getById(reg.getId_reporte());
@@ -172,6 +179,53 @@ public class RegistroServiceImpl implements RegistroService{
 			tipo.put("reporte", objReporte);
 
 
+			list.put(tipo);
+		}
+		
+		resp = objeto.put("registros", list).toString();		
+		
+		return resp;
+	}
+	
+	@Override
+	public String obtenerSolicitudReabastecimientoAprobada() throws JSONException {
+		
+		String resp = "";
+		List<Registro> registros = registroRepository.obtenerSolicitudReabastecimientoAprobada();
+		JSONObject objeto = new JSONObject();
+		JSONArray list = new JSONArray();
+		
+		for (Registro reg : registros) {
+			JSONObject tipo = new JSONObject();
+			tipo.put("id_registro", reg.getId_registro());
+			tipo.put("descripcion", reg.getDescripcion());
+			tipo.put("id_estado_registro", reg.getEstado_registro().getId_estado_registro());;
+			tipo.put("nombre_estado_registro", reg.getEstado_registro().getNombre_estado_registro());;
+			tipo.put("fecha_instancia", reg.getFecha_instancia());
+			tipo.put("hora_instancia", reg.getHora_instancia());
+			tipo.put("id_modulo", reg.getModulo().getId_modulo());
+			tipo.put("id_tipo_registro", reg.getTipo_registro().getId_tipo_registro());
+			tipo.put("titulo_registro", reg.getTitulo_registro());
+			tipo.put("id_usuario", reg.getUsuario().getId_usuario());
+			tipo.put("id_registro_padre", reg.getId_registro_padre());
+			tipo.put("version", reg.getVersion());
+			tipo.put("eliminado", reg.isEliminado());
+			tipo.put("ultima_version", reg.isUltima_version());
+			
+			JSONObject objReporte = new JSONObject();
+			Reporte rep = reporteRepository.getById(reg.getId_reporte());
+			objReporte.put("id_reporte", rep.getId_reporte());
+			objReporte.put("extension", rep.getExtension());
+			objReporte.put("comentario", rep.getComentario());
+			objReporte.put("nombre_creacion", rep.getNombre_creacion());
+			objReporte.put("id_tipo_reporte", rep.getTipo_reporte().getId_tipo_reporte());
+			objReporte.put("nombre_tipo_reporte", rep.getTipo_reporte().getId_tipo_reporte());
+			objReporte.put("titulo_reporte", rep.getTitulo_reporte());
+			objReporte.put("id_usuario", rep.getUsuario().getId_usuario());
+			
+			tipo.put("reporte", objReporte);
+			
+			
 			list.put(tipo);
 		}
 		

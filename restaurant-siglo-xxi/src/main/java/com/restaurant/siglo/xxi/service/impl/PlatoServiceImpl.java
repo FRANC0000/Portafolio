@@ -62,6 +62,7 @@ public class PlatoServiceImpl implements PlatoService{
 							unaReceta.put("tiempo_preparacion", receta.getTiempo_preparacion());
 							unaReceta.put("comentario", receta.getComentario());
 							unaReceta.put("complejidad", receta.getComplejidad());
+							unaReceta.put("titulo_receta", receta.getTitulo_receta());
 							listRecetas.put(unaReceta);
 						}
 					}

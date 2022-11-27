@@ -28,6 +28,9 @@ public class Receta {
 	String complejidad;
 	boolean eliminado;
 	
+	@Column(nullable=true)
+	String titulo_receta;
+	
 	@ManyToOne
 	@JoinColumn(name = "id_plato", nullable = true)
 	private Plato plato;
@@ -79,4 +82,14 @@ public class Receta {
     public void setEliminado(boolean eliminado) {
         this.eliminado = eliminado;
     }
+
+	public String getTitulo_receta() {
+		return titulo_receta;
+	}
+
+	public void setTitulo_receta(String titulo_receta) {
+		this.titulo_receta = titulo_receta;
+	}
+    
+    
 }

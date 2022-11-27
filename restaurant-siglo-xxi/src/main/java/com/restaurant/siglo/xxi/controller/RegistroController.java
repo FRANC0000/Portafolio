@@ -49,4 +49,12 @@ public class RegistroController {
 		
 		return resp;	
 	}
+	
+	@RequestMapping(value="/obtenerSolicitudReabastecimientoAprobada")
+	public String obtenerSolicitudReabastecimientoAprobada() throws JSONException {
+		
+		String resp = registroService.obtenerSolicitudReabastecimientoAprobada();
+		
+		return resp;	
+	}
 }
