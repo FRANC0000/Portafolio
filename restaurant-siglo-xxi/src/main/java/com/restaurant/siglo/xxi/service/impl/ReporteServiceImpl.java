@@ -198,5 +198,30 @@ public class ReporteServiceImpl implements ReporteService {
 		return resp;
 	}
     
+	@Override
+	public String obtenerReporteRendimientoFinanciero() throws JSONException {
+		List<String> json = reporteRepository.obtenerReporteFinanciero30m();
+		List<String> json2 = reporteRepository.obtenerReporteFinanciero40m();
+		List<String> json3 = reporteRepository.obtenerReporteFinanciero50m();
+		
+		JSONObject resp = new JSONObject();
+		
+		resp.put("rendimiento_financiero_30m", json);
+		resp.put("rendimiento_financiero_40m", json2);
+		resp.put("rendimiento_financiero_50m", json3);
+		return resp.toString();
+	}
+	
+	@Override
+	public String obtenerReporteTiempoAtencion() throws JSONException {
+		List<String> json = reporteRepository.obtenerReporteTiempoAtencionPromedio();
+		List<String> json2 = reporteRepository.obtenerReporteTiempoDuracionEstadiaMensual();
+		
+		JSONObject resp = new JSONObject();
+		
+		resp.put("tiempo_atencion_promedio", json);
+		resp.put("tiempo_duracion_estadia_mensual", json2);
+		return resp.toString();
+	}
 	
 }

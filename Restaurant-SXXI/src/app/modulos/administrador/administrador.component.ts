@@ -107,6 +107,11 @@ export class AdministradorComponent implements OnInit {
   listaRegistrosRecepcionSolicitudReabastecimientoModificada = [];
   listaRegistrosRecepcionSolicitudReabastecimientoAprobada = [];
   isVisibleMostrarRegistrosAprobadas = false;
+  reporteFinanciero30m = [];
+  reporteFinanciero40m = [];
+  reporteFinanciero50m = [];
+  reporteTiempoAtencionPromedio = [];
+  reporteTiempoDuracionEstadiaMensual = []
 
   ngOnInit() {
     console.log('usuarioLogeado', this.usuarioLogeado);
@@ -118,6 +123,8 @@ export class AdministradorComponent implements OnInit {
     this.obtenerProductos();
     this.obtenerTipoProducto();
     this.obtenerClientes();
+
+    this.buzonEntrada = [];
     this.obtenerSolicitudReabastecimientoAprobada();
     this.obtenerSolicitudReabastecimientoModificada();
 
@@ -248,6 +255,7 @@ export class AdministradorComponent implements OnInit {
 
   obtenerSolicitudReabastecimientoModificada(){
     this.administadorService.obtenerSolicitudReabastecimientoModificada().subscribe(resp=>{
+      this.listaRegistrosRecepcionSolicitudReabastecimientoModificada=[]
       this.listaRegistrosRecepcionSolicitudReabastecimientoModificada = resp['registros']
 
       console.log('listaRegistrosRecepcionSolicitudReabastecimientoModificada', this.listaRegistrosRecepcionSolicitudReabastecimientoModificada);
@@ -1264,6 +1272,61 @@ export class AdministradorComponent implements OnInit {
     })
   }
 
+  obtenerReporteRendimientoFinanciero(){
+    this.administadorService.obtenerReporteRendimientoFinanciero().subscribe(resp=>{
+      this.reporteFinanciero30m = []
+      this.reporteFinanciero40m = []
+      this.reporteFinanciero50m = []
+      
+      for (let re of resp['rendimiento_financiero_30m']){
+        console.log('re', re);
+        let r = re.split(",");
+        this.reporteFinanciero30m.push(r)
+      }
+      console.log('this.reporteFinanciero30m', this.reporteFinanciero30m);
+      
+
+      for (let re of resp['rendimiento_financiero_40m']){
+        console.log('re', re);
+        let r = re.split(",");
+        this.reporteFinanciero40m.push(r)
+      }
+      console.log('this.reporteFinanciero40m', this.reporteFinanciero40m);
+      
+
+
+      for (let re of resp['rendimiento_financiero_50m']){
+        console.log('re', re);
+        let r = re.split(",");
+        this.reporteFinanciero50m.push(r)
+      }
+      console.log('this.reporteFinanciero50m', this.reporteFinanciero50m);
+      
+    })
+  }
+
+  obtenerReporteTiempoAtencion(){
+    this.administadorService.obtenerReporteTiempoAtencion().subscribe(resp=>{
+      this.reporteTiempoAtencionPromedio = []
+      this.reporteTiempoDuracionEstadiaMensual = []
+      
+      for (let re of resp['tiempo_atencion_promedio']){
+        let r = re.split(",");
+        this.reporteTiempoAtencionPromedio.push(r)
+      }
+      console.log('this.reporteTiempoAtencionPromedio', this.reporteTiempoAtencionPromedio);
+      
+
+      for (let re of resp['tiempo_duracion_estadia_mensual']){
+        console.log('re', re);
+        let r = re.split(",");
+        this.reporteTiempoDuracionEstadiaMensual.push(r)
+      }
+      console.log('this.reporteTiempoDuracionEstadiaMensual', this.reporteTiempoDuracionEstadiaMensual);
+      
+    })
+  }
+
   crearReporte(){
     this.isVisibleCrearReporte = true;
     this.obtenerTipoReporte();
@@ -1414,9 +1477,204 @@ export class AdministradorComponent implements OnInit {
       }
       else if (this.tipoReporteSelected == 2){
         //reporte de clientes atendidos
+
+        let tabla = []
+        let headerTabla = ['Nro. de Clientes atendidos este mes']
+        tabla.push(headerTabla);
+        for (let i of this.clientesAtendidosMes) {
+          //console.log('i ', i);
+          tabla.push([i])
+        }
+        console.log('tabla', tabla);
+
+
+        let tabla2 = []
+        let headerTabla2 = ['Rut cliente','Cantidad de visitas al local este mes']
+        tabla2.push(headerTabla2);
+        for (let i of this.cantidadIngresoPorClienteMes) {
+          tabla2.push(i)
+        }
+        console.log('tabla2', tabla2);
+        
+
+        let tabla3 = []
+        let headerTabla3 = ['Rut cliente','Estado de boleta','Tipo de pago']
+        tabla3.push(headerTabla3);
+        for (let i of this.clientesAtendidosPorBoleta) {
+          tabla3.push(i)
+        }
+        console.log('tabla3', tabla3);
+
+
+        this.validateFormCrearReporte.value.nombre_creacion = "Reporte_atencion_clientes"+this.now.getDate()+this.now.getMonth()+this.now.getFullYear()+this.now.getHours()+this.now.getMinutes()+"_"+this.usuarioLogeado+'.pdf';
+        
+        const pdfDefinitions :any = {
+          content: [
+            {
+              text: 'Reporte de atencion de clientes', alignment: 'center', style: 'header',
+              margin: [0, 10, 0, 30]
+            },
+            {
+              text: 'Este reporte de atencion de clientes fue generado el día ' +  this.now.toLocaleString() + ' por el usuario ' + this.usuarioLogeado + ' y representa la cantidad total de clientes atendidos, cuantas veces han ingresado al local durante el mes y sus boletas. Este documento será utilizado para gestión y apoyo en la toma de decisiones del propio Restaurant Siglo XXI.' , 
+              margin: [0, 0, 0, 20] //izquierda, arriba, derecha, abajo
+            },
+            {
+              table: {
+                body: tabla
+              }
+            },
+            {
+              table: {
+                body: tabla2
+              }
+            },
+            {
+              table: {
+                body: tabla3
+              }
+            }
+          ],
+          footer: [
+            {
+              text: 'TLNS S.A.', alignment: 'center', fontSize: 10
+            },
+            {
+              text: this.now.getFullYear(),  alignment: 'center', fontSize: 8,
+              margin: [0, 5, 0, 0]
+            }
+          ],
+          styles: {
+            header: {
+              fontSize: 18,
+              bold: true,
+            },
+            subheader: {
+              fontSize: 15,
+              bold: true
+            },
+            quote: {
+              italics: true
+            },
+            small: {
+              fontSize: 8
+            }
+          }
+        }
+
+        console.log('json pdf string', JSON.stringify(pdfDefinitions));
+        console.log('json datos tabla string', JSON.stringify(tabla));
+        console.log('json datos tabla string', JSON.stringify(tabla2));
+        console.log('json datos tabla string', JSON.stringify(tabla3));
+        
+        const pdf = pdfMake.createPdf(pdfDefinitions)
+
+        registroAIngresar = {
+          descripcion : this.validateFormCrearReporte.value.comentario,
+          id_estado_registro : 1,
+          id_modulo : 1,
+          id_registro_padre : -1,
+          id_tipo_registro : 4, //tipo_registro 1 = Reporte de inventario
+          id_usuario : this.usuarioLogeado,
+          titulo_registro : this.validateFormCrearReporte.value.titulo_reporte,
+          version : 1
+        }
+
+        // pdf.open();
+        pdf.getBlob((blob) => {
+          // console.log('blob', blob);
+          this.formDataPdfReporte.append("fichero", blob);
+          this.formDataPdfReporte.append("nombre", this.validateFormCrearReporte.value.nombre_creacion);
+          this.administadorService.subirPdfReporte(this.formDataPdfReporte).subscribe(resp =>{
+            // console.log('resp', resp);
+           
+          })
+        });
+
       }
       else if (this.tipoReporteSelected == 3){
         //reporte de platos consumidos
+        let tabla = []
+        let headerTabla = ['#', 'Nombre de plato', 'Tipo de plato', 'Nro. veces consumido']
+        tabla.push(headerTabla);
+
+        for (let i of this.obtenerPlatosConsumidos) {
+          tabla.push(i)
+        }
+
+        console.log('tabla', tabla);
+
+        this.validateFormCrearReporte.value.nombre_creacion = "Reporte_consumo_"+this.now.getDate()+this.now.getMonth()+this.now.getFullYear()+this.now.getHours()+this.now.getMinutes()+"_"+this.usuarioLogeado+'.pdf';
+        
+        const pdfDefinitions :any = {
+          content: [
+            {
+              text: 'Reporte de consumo de platos', alignment: 'center', style: 'header',
+              margin: [0, 10, 0, 30]
+            },
+            {
+              text: 'Este reporte de consumo de platos fue generado el día ' +  this.now.toLocaleString() + ' por el usuario ' + this.usuarioLogeado + ' y representan los platos que posee el restaurante, sus tipos y la cantidad de veces pedido por parte de los clientes. Este documento será utilizado para gestión y apoyo en la toma de decisiones del propio Restaurant Siglo XXI.' , 
+              margin: [0, 0, 0, 20] //izquierda, arriba, derecha, abajo
+            },
+            {
+              table: {
+                body: tabla
+              }
+            }
+          ],
+          footer: [
+            {
+              text: 'TLNS S.A.', alignment: 'center', fontSize: 10
+            },
+            {
+              text: this.now.getFullYear(),  alignment: 'center', fontSize: 8,
+              margin: [0, 5, 0, 0]
+            }
+          ],
+          styles: {
+            header: {
+              fontSize: 18,
+              bold: true,
+            },
+            subheader: {
+              fontSize: 15,
+              bold: true
+            },
+            quote: {
+              italics: true
+            },
+            small: {
+              fontSize: 8
+            }
+          }
+        }
+
+        console.log('json pdf string', JSON.stringify(pdfDefinitions));
+        console.log('json datos tabla string', JSON.stringify(tabla));
+        
+        const pdf = pdfMake.createPdf(pdfDefinitions)
+
+        registroAIngresar = {
+          descripcion : this.validateFormCrearReporte.value.comentario,
+          id_estado_registro : 1,
+          id_modulo : 1,
+          id_registro_padre : -1,
+          id_tipo_registro : 5, //tipo_registro 1 = Reporte de inventario
+          id_usuario : this.usuarioLogeado,
+          titulo_registro : this.validateFormCrearReporte.value.titulo_reporte,
+          version : 1
+        }
+
+        // pdf.open();
+        pdf.getBlob((blob) => {
+          // console.log('blob', blob);
+          this.formDataPdfReporte.append("fichero", blob);
+          this.formDataPdfReporte.append("nombre", this.validateFormCrearReporte.value.nombre_creacion);
+          this.administadorService.subirPdfReporte(this.formDataPdfReporte).subscribe(resp =>{
+            // console.log('resp', resp);
+           
+          })
+        });
+
       }
       else if (this.tipoReporteSelected == 4){
 
@@ -1516,6 +1774,230 @@ export class AdministradorComponent implements OnInit {
           })
         });
       }
+      else if (this.tipoReporteSelected == 5){
+        //reporte de rendimiento financiero
+
+        let tabla = []
+        let headerTabla = ['Inversión inicial (pesos)','Ganancia aproximada por año (pesos)','% Rentabilidad nominal anual (sin inflación)','% Rentabilidad nominal anual (con inflación actual)']
+        tabla.push(headerTabla);
+        for (let i of this.reporteFinanciero30m) {
+          tabla.push(i)
+        }
+        console.log('tabla', tabla);
+
+
+        let tabla2 = []
+        let headerTabla2 = ['Inversión inicial (pesos)','Ganancia aproximada por año (pesos)','% Rentabilidad nominal anual (sin inflación)','% Rentabilidad nominal anual (con inflación actual)']
+        tabla2.push(headerTabla2);
+        for (let i of this.reporteFinanciero40m) {
+          tabla2.push(i)
+        }
+        console.log('tabla2', tabla2);
+        
+
+        let tabla3 = []
+        let headerTabla3 = ['Inversión inicial (pesos)','Ganancia aproximada por año (pesos)','% Rentabilidad nominal anual (sin inflación)','% Rentabilidad nominal anual (con inflación actual)']
+        tabla3.push(headerTabla3);
+        for (let i of this.reporteFinanciero50m) {
+          tabla3.push(i)
+        }
+        console.log('tabla3', tabla3);
+
+
+        this.validateFormCrearReporte.value.nombre_creacion = "Reporte_rendimiento_financiero"+this.now.getDate()+this.now.getMonth()+this.now.getFullYear()+this.now.getHours()+this.now.getMinutes()+"_"+this.usuarioLogeado+'.pdf';
+        
+        const pdfDefinitions :any = {
+          content: [
+            {
+              text: 'Reporte de Rendimiento Financiero', alignment: 'center', style: 'header',
+              margin: [0, 10, 0, 30]
+            },
+            {
+              text: 'Este reporte de rendimiento financiero fue generado el día ' +  this.now.toLocaleString() + ' por el usuario ' + this.usuarioLogeado + ' y representa el rendimiento financiero del local, el cual se compone de tres opciones distintas para los inversores, indicando cual es el porcentaje de retorno por año según la cantidad de dinero invertido en la realización del proyecto. Este documento será utilizado para gestión y apoyo en la toma de decisiones del propio Restaurant Siglo XXI.' , 
+              margin: [0, 0, 0, 20] //izquierda, arriba, derecha, abajo
+            },
+            {
+              table: {
+                body: tabla
+              }
+            },
+            {
+              text: '                                                                                     ', alignment: 'center'
+            },
+            {
+              table: {
+                body: tabla2
+              } , margin: [0, 5, 0, 0] 
+            },
+            {
+              text: '                                                                                     ', alignment: 'center'
+            },
+            {
+              table: {
+                body: tabla3
+              } , margin: [0, 5, 0, 0] 
+            }
+          ],
+          footer: [
+            {
+              text: 'TLNS S.A.', alignment: 'center', fontSize: 10
+            },
+            {
+              text: this.now.getFullYear(),  alignment: 'center', fontSize: 8,
+              margin: [0, 5, 0, 0]
+            }
+          ],
+          styles: {
+            header: {
+              fontSize: 18,
+              bold: true,
+            },
+            subheader: {
+              fontSize: 15,
+              bold: true
+            },
+            quote: {
+              italics: true
+            },
+            small: {
+              fontSize: 8
+            }
+          }
+        }
+
+        console.log('json pdf string', JSON.stringify(pdfDefinitions));
+        console.log('json datos tabla string', JSON.stringify(tabla));
+        console.log('json datos tabla string', JSON.stringify(tabla2));
+        console.log('json datos tabla string', JSON.stringify(tabla3));
+        
+        const pdf = pdfMake.createPdf(pdfDefinitions)
+
+        registroAIngresar = {
+          descripcion : this.validateFormCrearReporte.value.comentario,
+          id_estado_registro : 1,
+          id_modulo : 1,
+          id_registro_padre : -1,
+          id_tipo_registro : 6, //tipo_registro 1 = Reporte de inventario
+          id_usuario : this.usuarioLogeado,
+          titulo_registro : this.validateFormCrearReporte.value.titulo_reporte,
+          version : 1
+        }
+
+        // pdf.open();
+        pdf.getBlob((blob) => {
+          // console.log('blob', blob);
+          this.formDataPdfReporte.append("fichero", blob);
+          this.formDataPdfReporte.append("nombre", this.validateFormCrearReporte.value.nombre_creacion);
+          this.administadorService.subirPdfReporte(this.formDataPdfReporte).subscribe(resp =>{
+            // console.log('resp', resp);
+           
+          })
+        });
+
+      }
+      else if (this.tipoReporteSelected == 6){
+        //reporte de tiempo de atencion
+
+        let tabla = []
+        let headerTabla = ['Tiempo de atencion promedio']
+        tabla.push(headerTabla);
+        for (let i of this.reporteTiempoAtencionPromedio) {
+          tabla.push([i])
+        }
+        console.log('tabla', tabla);
+
+
+        let tabla2 = []
+        let headerTabla2 = ['Boleta','Duración de la estadía']
+        tabla2.push(headerTabla2);
+        for (let i of this.reporteTiempoDuracionEstadiaMensual) {
+          tabla2.push(i)
+        }
+        console.log('tabla2', tabla2);
+
+        this.validateFormCrearReporte.value.nombre_creacion = "Reporte_tiempo_atencion"+this.now.getDate()+this.now.getMonth()+this.now.getFullYear()+this.now.getHours()+this.now.getMinutes()+"_"+this.usuarioLogeado+'.pdf';
+        
+        const pdfDefinitions :any = {
+          content: [
+            {
+              text: 'Reporte de Tiempo de Atención Mensual', alignment: 'center', style: 'header',
+              margin: [0, 10, 0, 30]
+            },
+            {
+              text: 'Este reporte de tiempo de atención fue generado el día ' +  this.now.toLocaleString() + ' por el usuario ' + this.usuarioLogeado + ' y representa el tiempo promedio de atención de todos los pedidos realizados por los clientes, a su vez, representa la duración por cada boleta ingresada. Este documento será utilizado para gestión y apoyo en la toma de decisiones del propio Restaurant Siglo XXI.' , 
+              margin: [0, 0, 0, 20] //izquierda, arriba, derecha, abajo
+            },
+            {
+              table: {
+                body: tabla
+              }, margin: [180, 0, 0, 5]
+            },
+            {
+              text: '___________________________________________________________________________________', alignment: 'center'
+            },
+            {
+              table: {
+                body: tabla2
+              }, margin: [180, 15, 0, 0]
+            }
+          ],
+          footer: [
+            {
+              text: 'TLNS S.A.', alignment: 'center', fontSize: 10
+            },
+            {
+              text: this.now.getFullYear(),  alignment: 'center', fontSize: 8,
+              margin: [0, 5, 0, 0]
+            }
+          ],
+          styles: {
+            header: {
+              fontSize: 18,
+              bold: true,
+            },
+            subheader: {
+              fontSize: 15,
+              bold: true
+            },
+            quote: {
+              italics: true
+            },
+            small: {
+              fontSize: 8
+            }
+          }
+        }
+
+        console.log('json pdf string', JSON.stringify(pdfDefinitions));
+        console.log('json datos tabla string', JSON.stringify(tabla));
+        console.log('json datos tabla string', JSON.stringify(tabla2));
+        
+        const pdf = pdfMake.createPdf(pdfDefinitions)
+
+        registroAIngresar = {
+          descripcion : this.validateFormCrearReporte.value.comentario,
+          id_estado_registro : 1,
+          id_modulo : 1,
+          id_registro_padre : -1,
+          id_tipo_registro : 7, //tipo_registro 1 = Reporte de inventario
+          id_usuario : this.usuarioLogeado,
+          titulo_registro : this.validateFormCrearReporte.value.titulo_reporte,
+          version : 1
+        }
+
+        // pdf.open();
+        pdf.getBlob((blob) => {
+          // console.log('blob', blob);
+          this.formDataPdfReporte.append("fichero", blob);
+          this.formDataPdfReporte.append("nombre", this.validateFormCrearReporte.value.nombre_creacion);
+          this.administadorService.subirPdfReporte(this.formDataPdfReporte).subscribe(resp =>{
+            // console.log('resp', resp);
+           
+          })
+        });
+
+      }
+
       const reporteACrear : Reporte = {
         comentario : this.validateFormCrearReporte.value.comentario,
         extension : this.validateFormCrearReporte.value.extension,
@@ -1607,6 +2089,14 @@ export class AdministradorComponent implements OnInit {
       this.obtenerReporteReabastecimiento();
       this.mostrarDetalleVistaReporte = true;
     }
+    else if (ev==5){
+      this.obtenerReporteRendimientoFinanciero();
+      this.mostrarDetalleVistaReporte = true;
+    }
+    else if (ev==6){
+      this.obtenerReporteTiempoAtencion();
+      this.mostrarDetalleVistaReporte = true;
+    }
   }
 
   mostrarRegistros(){
@@ -1643,12 +2133,15 @@ export class AdministradorComponent implements OnInit {
     let registroAntiguo = {
       "id_registro" : reg['id_registro']
     }
+
+    let subtotal = document.getElementById(reg['id_registro']).getAttribute('ngmodel')
+
     let boletaAIngresar  : Boleta = {
       fechaAtencion : this.now.toLocaleDateString(),
       horaAtencion : this.now.toLocaleTimeString(),
       idUsuario : 'admin',
       rutCliente : -1,
-      subtotal : 1
+      subtotal : parseInt(subtotal)/2
     }
     console.log('boletaAIngresar', boletaAIngresar);
     const instanciarBoleta : InstanciarBoleta ={
@@ -1666,9 +2159,9 @@ export class AdministradorComponent implements OnInit {
         // ''
       );
 
-      // this.administadorService.actualizarUltimaVersionRegistro(registroAntiguo).subscribe(resp => {
-      //   console.log('resp actualizarUltimaVersionRegistro()', resp);
-      // })
+      this.administadorService.actualizarUltimaVersionRegistro(registroAntiguo).subscribe(resp => {
+        console.log('resp actualizarUltimaVersionRegistro()', resp);
+      })
 
       this.administadorService.instanciarBoleta(instanciarBoleta).subscribe(resp => {
         let boletaAPagar: Boleta = {
@@ -1681,8 +2174,9 @@ export class AdministradorComponent implements OnInit {
           extras: 0,
           horaEmision: this.now.toLocaleTimeString(),
           id_boleta: parseInt(resp),
+          // id_boleta: 1,
           idEstadoBoleta: 5,
-          idTipoPago: 1,
+          idTipoPago: 4,
           total: boletaAIngresar.subtotal
         }
         console.log('boletaAPagar', boletaAPagar);
@@ -1692,19 +2186,19 @@ export class AdministradorComponent implements OnInit {
         }
         console.log('boleta', boleta);
 
-        // this.administadorService.modificarBoleta(boleta).subscribe(resp => {
-        //   console.log('resp modificarBoleta', resp);
-        //   const transaccion = {
-        //     "rut_cliente": boletaAPagar.rutCliente,
-        //     "id_boleta": boletaAPagar.id_boleta,
-        //     "valor": boletaAPagar.total,
-        //     "id_cartera_pagos": "-3",
-        //   }
+        this.administadorService.modificarBoleta(boleta).subscribe(resp => {
+          console.log('resp modificarBoleta', resp);
+          const transaccion = {
+            "rut_cliente": boletaAPagar.rutCliente,
+            "id_boleta": boletaAPagar.id_boleta,
+            "valor": boletaAPagar.total,
+            "id_cartera_pagos": "-3",
+          }
 
-        //   this.administadorService.crearTransaccion(transaccion).subscribe(resp3 => {
-        //     console.log('resp', resp3);
-        //   })
-        // })
+          this.administadorService.crearTransaccion(transaccion).subscribe(resp3 => {
+            console.log('resp', resp3);
+          })
+        })
       })
     },
       error => {
@@ -1713,8 +2207,36 @@ export class AdministradorComponent implements OnInit {
           'error', 'Error al crear registro', 'No es posible crear el registro, intente nuevamente'
         )
       });
+    this.buzonEntrada = []
     this.obtenerSolicitudReabastecimientoAprobada();
     this.obtenerSolicitudReabastecimientoModificada();
     this.cerrarRegistrosSolicitudesAprobadas();
+  }
+
+  visible: boolean = false;
+
+  clickMe(): void {
+    this.visible = false;
+  }
+
+  change(value: boolean): void {
+    console.log(value);
+  }
+
+  puedeContactarProveedor = false
+
+  onChangeValorAAsignar(id_reg, ev){
+    // console.log('ev', ev);
+    // console.log('id_reg', id_reg);
+    document.getElementById(id_reg).setAttribute('ngmodel', ev);
+    if (ev > 0) {
+      document.getElementById('boton-'+id_reg).removeAttribute('disabled')
+      this.puedeContactarProveedor = true
+    }
+    else if (ev <= 0){
+      this.puedeContactarProveedor = false
+      document.getElementById('boton-'+id_reg).setAttribute('disabled', '')
+    }
+    // console.log(document.getElementById(id_reg));
   }
 }

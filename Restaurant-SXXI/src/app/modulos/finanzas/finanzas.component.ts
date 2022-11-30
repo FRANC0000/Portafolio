@@ -359,8 +359,8 @@ export class FinanzasComponent implements OnInit {
   }
 
   obtenerSolicitudReabastecimiento(){
+    this.listaRegistrosRecepcionSolicitudReabastecimientoFinanzas = []
     this.finanzasService.obtenerSolicitudReabastecimientoFinanzas().subscribe(resp=>{
-      this.listaRegistrosRecepcionSolicitudReabastecimientoFinanzas = []
       this.listaRegistrosRecepcionSolicitudReabastecimientoFinanzas = resp['registros'].filter(r =>{
         return r.ultima_version == true
       })
@@ -598,7 +598,7 @@ export class FinanzasComponent implements OnInit {
 
     let registroNuevo = {
       descripcion : this.registroRecepcionSolicitudReabastecimiento['descripcion'],
-      id_estado_registro : 7, //estado_registro 2 = Recepcionar solicitud de reabastecimiento (bodega)
+      id_estado_registro : 6, //estado_registro 2 = Recepcionar solicitud de reabastecimiento (bodega)
       id_modulo : 5,
       id_registro_padre : this.registroRecepcionSolicitudReabastecimiento['id_registro'],
       id_tipo_registro : 1, //tipo_registro 1 = Solicitud de reabastecimiento
@@ -666,6 +666,8 @@ export class FinanzasComponent implements OnInit {
 
     
     this.isVisibleDetalleRegistro = false;
+    this.isVisibleEnviarPresupuestoAjustado = false;
+    this.listModificarReabastecimiento = [];
     this.obtenerSolicitudReabastecimiento();
   }
 

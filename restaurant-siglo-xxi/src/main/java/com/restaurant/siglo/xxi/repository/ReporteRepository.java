@@ -56,4 +56,18 @@ public interface ReporteRepository extends JpaRepository<Reporte, Integer>{
 			@Param("id_tipo_reporte") int id_tipo_reporte,
 			@Param("id_usuario") String id_usuario);
 	
+	@Query(value = "select * from vista_rendimiento_financiero_30m", nativeQuery = true)
+	List<String> obtenerReporteFinanciero30m();
+	
+	@Query(value = "select * from vista_rendimiento_financiero_40m", nativeQuery = true)
+	List<String> obtenerReporteFinanciero40m();
+
+	@Query(value = "select * from vista_rendimiento_financiero_50m", nativeQuery = true)
+	List<String> obtenerReporteFinanciero50m();
+	
+	@Query(value = "select * from vista_duracion_promedio_estadia_mensual", nativeQuery = true)
+	List<String> obtenerReporteTiempoAtencionPromedio();
+
+	@Query(value = "select * from vista_duracion_estadia_mensual_por_boleta", nativeQuery = true)
+	List<String> obtenerReporteTiempoDuracionEstadiaMensual();
 }

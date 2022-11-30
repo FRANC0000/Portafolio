@@ -105,4 +105,19 @@ public class ReporteController {
         String listReporte = reporteService.obtenerReportes();
         return listReporte;
     }
+	
+	@RequestMapping(value="/obtenerReporteRendimientoFinanciero")
+	public String obtenerReporteRendimientoFinanciero() throws JSONException {
+		String reporteRendimiento = reporteService.obtenerReporteRendimientoFinanciero();
+		
+		return reporteRendimiento;
+    }
+	
+	@RequestMapping(value="/obtenerReporteTiempoAtencion")
+	public String obtenerReporteTiempoAtencion() throws JSONException {
+		String reporteTiempoAtencion = reporteService.obtenerReporteTiempoAtencion();
+		
+		return reporteTiempoAtencion;
+    }
+	
 }

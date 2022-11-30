@@ -131,7 +131,7 @@
                 </div>
                 <br>
                 <div>
-                    <h4 nz-title>Pedidos de esta boleta: </h4>
+                    <h4 nz-title *ngIf="pedidoEnBoleta.length > 0">Pedidos de esta boleta: </h4>
                     <nz-collapse nzAccordion>
                         <nz-collapse-panel *ngFor="let item of pedidoEnBoleta; let i = index;"
                             nzHeader="Pedido #{{item.idPedido}} | ${{item.subtotal | currency:'CLP'}}">
@@ -140,7 +140,7 @@
                                     Fecha de ingreso : {{item.fechaIngreso | date: 'dd/MM/yyyy HH:mm:ss'}} |
                                     {{item.nombreEstadoInstancia}}
                                     <br><br>
-                                    <h4 nz-title> Productos de este pedido: </h4>
+                                    <h4 nz-title > Productos de este pedido: </h4>
                                 </div>
                                 <div *ngFor="let itemDelCarro of item.carritoProductos; let i = index"
                                     class="carrito-de-un-pedido">
@@ -263,7 +263,7 @@
                         <button *ngIf="addProd" (click)="addFila()" nzType="primary" nz-button>Añadir producto</button>
                     </div>
                     <br>
-                    <div>
+                    <div *ngIf="listModificarReabastecimiento.length > 0">
                         <table>
                             <tr>
                                 <!-- <th>#</th> -->
@@ -297,6 +297,9 @@
                                 </td>
                             </tr>
                         </table>
+                    </div>
+                    <div class="pedidos-row sin-pedidos" *ngIf="listModificarReabastecimiento.length == 0">
+                        No hay pagos de reabastecimiento
                     </div>
                     <br>
                     <div>

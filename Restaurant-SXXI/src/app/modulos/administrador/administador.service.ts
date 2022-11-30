@@ -249,4 +249,16 @@ export class AdministadorService {
       'http://localhost:8085/restaurantSXXI/rest-rsxii/boleta/boletaAModificar', boleta, {headers : this.headers}
     );
   }
+
+  public obtenerReporteRendimientoFinanciero() {
+    return this.http.get(
+      'http://localhost:8085/restaurantSXXI/rest-rsxii/reporte/obtenerReporteRendimientoFinanciero' //asi se tiene que llamar en el controller
+    );
+  }
+
+  public obtenerReporteTiempoAtencion() {
+    return this.http.get(
+      'http://localhost:8085/restaurantSXXI/rest-rsxii/reporte/obtenerReporteTiempoAtencion' //asi se tiene que llamar en el controller
+    );
+  }
 }

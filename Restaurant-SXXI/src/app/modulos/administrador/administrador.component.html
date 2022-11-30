@@ -1235,6 +1235,88 @@
               </tr>
             </table>
           </div>
+          <div *ngIf="tipoReporteSelected == 5">
+
+            <h3 nz-title>Inversion de 30 millones</h3>
+            <table>
+                <tr>
+                    <th>Inversión inicial (pesos)</th>
+                    <th>Ganancia aproximada por año (pesos)</th>
+                    <th>% Rentabilidad nominal anual (sin inflación)</th>
+                    <th>% Rentabilidad nominal anual (con inflación actual)</th>
+                </tr>
+                <tr *ngFor="let row of reporteFinanciero30m; let i = index;" class="mesa-row">
+                    <td>{{row[0]}}</td>
+                    <td>{{row[1]}}</td>
+                    <td>{{row[2]}}</td>
+                    <td>{{row[3]}}</td>
+                </tr>
+            </table>
+
+            <br>
+
+            <h3 nz-title>Inversion de 40 millones</h3>
+            <table>
+                <tr>
+                    <th>Inversión inicial (pesos)</th>
+                    <th>Ganancia aproximada por año (pesos)</th>
+                    <th>% Rentabilidad nominal anual (sin inflación)</th>
+                    <th>% Rentabilidad nominal anual (con inflación actual)</th>
+                </tr>
+                <tr *ngFor="let row of reporteFinanciero40m; let i = index;" class="mesa-row">
+                    <td>{{row[0]}}</td>
+                    <td>{{row[1]}}</td>
+                    <td>{{row[2]}}</td>
+                    <td>{{row[3]}}</td>
+                </tr>
+            </table>
+
+            <br>
+
+            <h3 nz-title>Inversion de 50 millones</h3>
+            <table>
+                <tr>
+                    <th>Inversión inicial (pesos)</th>
+                    <th>Ganancia aproximada por año (pesos)</th>
+                    <th>% Rentabilidad nominal anual (sin inflación)</th>
+                    <th>% Rentabilidad nominal anual (con inflación actual)</th>
+                </tr>
+                <tr *ngFor="let row of reporteFinanciero50m; let i = index;" class="mesa-row">
+                    <td>{{row[0]}}</td>
+                    <td>{{row[1]}}</td>
+                    <td>{{row[2]}}</td>
+                    <td>{{row[3]}}</td>
+                </tr>
+            </table>
+
+          </div>
+          <div *ngIf="tipoReporteSelected == 6">
+
+              <h3 nz-title>Reporte de tiempo de atencion - promedio de tiempo</h3>
+              <table>
+                  <tr>
+                      <th>Tiempo de atencion promedio</th>
+                  </tr>
+                  <tr *ngFor="let row of reporteTiempoAtencionPromedio; let i = index;" class="mesa-row">
+                      <td>{{row[0]}}</td>
+                  </tr>
+              </table>
+
+              <br>
+
+              <h3 nz-title>Reporte de tiempo de atencion - duracion por boleta</h3>
+              <table>
+                  <tr>
+                      <th>Boleta</th>
+                      <th>Duracion</th>
+                  </tr>
+                  <tr *ngFor="let row of reporteTiempoDuracionEstadiaMensual; let i = index;" class="mesa-row">
+                      <td>{{row[0]}}</td>
+                      <td>{{row[1]}}</td>
+                  </tr>
+              </table>
+
+          </div>
         </div>
     </ng-container>
   </nz-modal>
@@ -1330,7 +1412,14 @@
                       <td>
                         <a href="http://localhost:8085/restaurantSXXI/imagenes-rxxi/reportes/{{bzE.registro.reporte.nombre_creacion}}" target="_blank">Abrir archivo</a>
                         <br>
-                        <button nz-button (click)="contactarProveedores(bzE.registro)" nzType="primary"> Contactar proveedores </button>
+                        <input nz-input [id]="bzE.registro.id_registro" placeholder="Valor a asignar" [ngModel]="null" type="number"
+                          (ngModelChange)="onChangeValorAAsignar(bzE.registro.id_registro, $event)"
+                          style="width: 150px;"/>
+
+                        <button nz-button nzType="primary" id="boton-{{bzE.registro.id_registro}}" disabled
+                        nz-popconfirm
+                        nzPopconfirmTitle="¿Confirmar el contacto con proveedores?" nzPopconfirmPlacement="top"
+                        (nzOnConfirm)="contactarProveedores(bzE.registro)"> Contactar proveedores </button>
                       </td>
                   </tr>
               </table>

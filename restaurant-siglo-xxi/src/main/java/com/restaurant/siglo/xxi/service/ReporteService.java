@@ -30,4 +30,8 @@ public interface ReporteService {
 	
 	public String obtenerReportes() throws JSONException;
 
+	public String obtenerReporteRendimientoFinanciero() throws JSONException;
+
+	public String obtenerReporteTiempoAtencion() throws JSONException;
+
 }

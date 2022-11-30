@@ -64,6 +64,7 @@ export class BodegaComponent implements OnInit {
   }
 
   obtenerSolicitudReabastecimiento(){
+    this.listaRegistrosRecepcionSolicitudReabastecimiento = [];
     this.bodegaService.obtenerSolicitudReabastecimiento().subscribe(resp=>{
       this.listaRegistrosRecepcionSolicitudReabastecimiento = resp['registros'].filter(r => {
         return r.ultima_version == true;
