@@ -24,7 +24,8 @@ public interface RegistroService {
 	
 	public String obtenerSolicitudReabastecimientoModificada() throws JSONException;
 	
-	
 	public String obtenerSolicitudReabastecimientoProveedores() throws JSONException;
+	
+	public String obtenerSolicitudIngredientes() throws JSONException;
 
 }

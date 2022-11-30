@@ -1,7 +1,7 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { InstanciarBoleta, InstanciarPedido } from 'src/app/interfaces/carrito-compras';
-import { CancelarReserva } from 'src/app/interfaces/mesa';
+import { CancelarReserva, EncuestaCancelacion, EncuestaSatisfaccion, ModificarReserva } from 'src/app/interfaces/mesa';
 
 @Injectable({
   providedIn: 'root'
@@ -92,4 +92,22 @@ export class ClienteService {
       'http://localhost:8085/restaurantSXXI/rest-rsxii/transaccion/crearTransaccion', trans, {headers : this.headers}
     );
   }
+
+public crearEncuestaCancelacion(encuestaCancelacionACrear : EncuestaCancelacion) {
+  return this.http.post(
+    'http://localhost:8085/restaurantSXXI/rest-rsxii/encuesta-cancelacion/crearEncuestaCancelacion', encuestaCancelacionACrear, { responseType : 'text'}
+  );
+}
+
+public crearEncuestaSatisfaccion(encuestaSatisfaccionACrear : EncuestaSatisfaccion) {
+  return this.http.post(
+    'http://localhost:8085/restaurantSXXI/rest-rsxii/encuesta-satisfaccion/crearEncuestaSatisfaccion', encuestaSatisfaccionACrear, { responseType : 'text'}
+  );
+}
+
+public modificarReserva(reservaAModificar : ModificarReserva){
+  return this.http.post(
+    'http://localhost:8085/restaurantSXXI/rest-rsxii/reserva/modificarInteraccion', reservaAModificar, { responseType : 'text'}
+  );
+}
 }

@@ -15,5 +15,5 @@ public interface PedidoService {
 	public String obtenerPedidosEnPreparacion();
 	public String obtenerPedidosParaEntregar();
 	public String obtenerPedidosEntregadosHoy();
-
+	public String obtenerPedidoPorId(int id_pedido);
 }

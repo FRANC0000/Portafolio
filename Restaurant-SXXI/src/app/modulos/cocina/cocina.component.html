@@ -27,9 +27,9 @@
                                 </div>
                                 <br>
                                 <div class="botones-pedidos">
-                                    <button nz-button (click)="verDetallePedidoEnCola(pedido)"
-                                     style="width: 100%;">
-                                        Ver detalle del pedido
+                                    <button nz-button (click)="solicitarIngredientes(pedido)"
+                                     style="width: 100%;" [id]="pedido.idPedido">
+                                        Solicitar ingredientes
                                     </button>
                                     <button nz-button (click)="moverPedidoAEnPreparacion(pedido)"
                                      style="width: 100%;" class="agregar-item">
@@ -127,6 +127,34 @@
             </nz-tabset>
         </div>
         <br>
+        <div class="menu-header">
+            <h2>Alertas mesas</h2>
+        </div>
+        <nz-divider></nz-divider>
+        <div class="menu-content">
+            <div class="grid">
+                <div *ngFor="let mesa of listadoMesas" class="mesas">
+                    <div class="card" *ngIf="mesa.nombre_estado_mesa == 'Ocupado'">
+                        <div class="title-card">
+                            Mesa nro. {{mesa.id_mesa}}
+                            
+                        </div>
+                        <div class="content-card">
+                            Cantidad de asientos: {{mesa.cantidad_asientos}}
+                            <br>
+                            Estado de mesa: {{mesa.nombre_estado_mesa}}
+                            <br>
+                            Tipo de mesa: {{mesa.nombre_tipo_mesa}}
+                            <br>
+                            <button nz-popconfirm
+                            nzPopconfirmTitle="¿Seguro que quieres cancelar la reserva y disponibilizar la mesa?"
+                            nzPopconfirmPlacement="top"
+                            (nzOnConfirm)="cancelarReserva(mesa.id_mesa)"> Disponibilizar mesa </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div> 
         <div class="menu-header">
             <h2>Nuestro menú.</h2>
         </div>

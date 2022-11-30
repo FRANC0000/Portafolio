@@ -1,7 +1,9 @@
 import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { Producto } from 'src/app/interfaces/cocina';
+import { NzNotificationService } from 'ng-zorro-antd';
+import { Pedido, ProductoEnCarro } from 'src/app/interfaces/carrito-compras';
+import { Plato, Producto, Receta } from 'src/app/interfaces/cocina';
 import { BuzonEntrada } from 'src/app/interfaces/registro';
 import { BodegaService } from './bodega.service';
 
@@ -13,7 +15,8 @@ import { BodegaService } from './bodega.service';
 export class BodegaComponent implements OnInit {
 
   constructor(private router: Router,
-    private bodegaService : BodegaService) {}
+    private bodegaService : BodegaService,
+    private notification: NzNotificationService) {}
 
   usuarioLogeado :string = localStorage.getItem('id_usuario');
   rolUsuarioLogeado : string = localStorage.getItem('rol');
@@ -25,22 +28,28 @@ export class BodegaComponent implements OnInit {
   registroRecepcionSolicitudReabastecimiento;
   linkSolicitudReabastecimiento = "";
   listaRegistrosRecepcionSolicitudReabastecimientoAprobada = [];
+  listaRegistrosRecepcionSolicitudIngredientes = [];
   buzonEntrada : BuzonEntrada[] = []
   isVisibleRegistroBuzon = false;
   registroSeleceted;
   listaRegistrosRecepcionSolicitudReabastecimientoModificada = []
   listaRegistrosRecepcionSolicitudReabastecimientoRechazada = [];
   listaobtenerSolicitudReabastecimientoProveedores = [];
+  isVisibleDetallePedido = false;
+  pedidoSelected ;
+  listaRecetas : Receta[] = [];
 
   ngOnInit() {
     console.log('usuarioLogeado', this.usuarioLogeado);
     console.log('rolUsuarioLogeado', this.rolUsuarioLogeado);
     this.obtenerProductos();
+    this.obtenerRecetas();
     this.obtenerSolicitudReabastecimiento();
     this.obtenerSolicitudReabastecimientoAprobada();
     this.obtenerSolicitudReabastecimientoModificada();
     this.obtenerSolicitudReabastecimientoRechazada();
     this.obtenerSolicitudReabastecimientoProveedores();
+    this.obtenerSolicitudIngredientes();
   }
 
   cerrarSesion(){
@@ -84,7 +93,29 @@ export class BodegaComponent implements OnInit {
         let bzE : BuzonEntrada = {
           registro : Object(reg),
           esAprobado : true,
-          esRechazado : false
+          esRechazado : false,
+          esIngrediente : false
+        }
+        this.buzonEntrada.push(bzE);
+      }
+      this.quitarUltimaVersionFalseBuzon();
+      console.log('buzon',this.buzonEntrada);
+    })    
+  }
+
+  obtenerSolicitudIngredientes(){
+    this.bodegaService.obtenerSolicitudIngredientes().subscribe(resp=>{
+      this.listaRegistrosRecepcionSolicitudIngredientes = resp['registros']
+
+      console.log('listaRegistrosRecepcionSolicitudIngredientes', this.listaRegistrosRecepcionSolicitudIngredientes);
+
+      for (let reg of this.listaRegistrosRecepcionSolicitudIngredientes){
+        let bzE : BuzonEntrada = {
+          registro : Object(reg),
+          esAprobado : false,
+          esRechazado : false,
+          esEnviada : false,
+          esIngrediente : true
         }
         this.buzonEntrada.push(bzE);
       }
@@ -104,7 +135,8 @@ export class BodegaComponent implements OnInit {
           registro : Object(reg),
           esAprobado : true,
           esRechazado : false,
-          esEnviada : false
+          esEnviada : false,
+          esIngrediente : false
         }
         this.buzonEntrada.push(bzE);
       }
@@ -124,7 +156,8 @@ export class BodegaComponent implements OnInit {
           registro : Object(reg),
           esAprobado : false,
           esRechazado : true,
-          esEnviada : false
+          esEnviada : false,
+          esIngrediente : false
         }
         this.buzonEntrada.push(bzE);
       }
@@ -145,6 +178,7 @@ export class BodegaComponent implements OnInit {
           esAprobado : false,
           esRechazado : false,
           esEnviada : true,
+          esIngrediente : false
         }
         this.buzonEntrada.push(bzE);
       }
@@ -217,6 +251,143 @@ export class BodegaComponent implements OnInit {
   quitarUltimaVersionFalseBuzon(){
     this.buzonEntrada = this.buzonEntrada.filter( b=> {
       return b.registro['ultima_version'] != false
+    })
+  }
+
+  obtenerPedidoPorId(id_pedido){
+    this.bodegaService.obtenerPedidoPorId(id_pedido).subscribe(resp=>{
+      console.log('resp', resp);
+      
+    })
+  }
+
+  verDetallePedidoEnBuzon(bzE){
+    this.isVisibleDetallePedido = true;
+    let registro = bzE.registro;
+    let idPedido = parseInt(bzE.registro['descripcion'])
+    this.bodegaService.obtenerPedidoPorId(idPedido).subscribe(resp => {
+      console.log('resp', resp);
+      let pedido = resp['pedidos'];
+      let carritoDeUnPedido : ProductoEnCarro[] = [];
+
+        pedido.platos_del_pedido.forEach(plato => {
+          let rec : Receta[] = [];
+          let recetaSelecccionada = []
+          if (plato.recetas_pedidas != undefined){
+            let recetaSelecccionada = JSON.parse(plato.recetas_pedidas)
+            // console.log('recetaSelecccionada',recetaSelecccionada);
+            for (let receta of recetaSelecccionada) {
+              let r = this.listaRecetas.filter(r => {
+                return r.id_receta === receta
+              })
+              // console.log('r', r);
+              
+              rec.push(r[0])
+              // console.log('recetaSelecccionada', recetaSelecccionada);
+            }
+          }
+          // console.log('rec', rec);
+
+          const unPlatoPedido : Plato = {
+            cantidad_personas_recomendadas : plato.cantidad_personas_recomendadas,
+            comentario : plato.comentario_plato,
+            descripcion_plato : plato.descripcion_plato,
+            disponibilidad : plato.disponibilidad_plato,
+            id_plato : plato.id_plato,
+            id_tipo_plato : plato.id_tipo_plato,
+            nombre_plato : plato.nombre_plato,
+            precio_plato : plato.precio_plato
+          }
+
+          const platoEnCarro : ProductoEnCarro = {
+            cantidad : plato.cantidad_platos_en_pedido,
+            esPlato : true,
+            esProducto : false,
+            valorUnitario : plato.precio_plato,
+            plato : unPlatoPedido,
+            recetaSeleccionada : recetaSelecccionada,
+            objetoRecetaSeleccionada : rec
+          }
+
+          carritoDeUnPedido.push(platoEnCarro);
+        })
+
+        pedido.productos_del_pedido.forEach(producto => {
+          const unProductoPedido : Producto = {
+            comentario : producto.comentario_producto,
+            fecha_ingreso_producto : producto.fecha_ingreso_producto,
+            fecha_vencimiento : producto.fecha_vencimiento_producto,
+            id_producto : producto.id_producto,
+            id_tipo_producto : producto.id_tipo_producto,
+            medida_producto : producto.medida_producto,
+            nombre_producto : producto.nombre_producto,
+            stock_producto : producto.stock_producto,
+            valor_unitario : producto.valor_unitario_producto
+          }
+
+          const productoEnCarro : ProductoEnCarro = {
+            cantidad: producto.cantidad_productos_en_pedido,
+            esPlato : false,
+            esProducto : true,
+            valorUnitario : producto.valor_unitario_producto,
+            producto : unProductoPedido
+          }
+          carritoDeUnPedido.push(productoEnCarro);
+        })
+
+        const unPedido : Pedido ={
+          fechaIngreso : pedido.fecha_ingreso,
+          idEstadoIinstancia: pedido.id_estado_instancia,
+          idMesa: pedido.id_mesa,
+          rutCliente : pedido.id_cliente,
+          idBoleta : pedido.id_boleta,
+          idPedido : pedido.id_pedido,
+          nombreEstadoInstancia : pedido.nombre_estado_instancia,
+          subtotal : pedido.subtotal,
+          carritoProductos : carritoDeUnPedido
+        }
+
+        this.pedidoSelected = unPedido
+        console.log('pedido', this.pedidoSelected);
+        
+    })
+  }
+
+  cerrarDetallePedidoEnBuzon(){
+    this.isVisibleDetallePedido = false;
+    this.pedidoSelected = null;
+  }
+
+  restarStock(){
+    console.log('pedido', this.pedidoSelected);
+    
+    let carrito = {
+      "carrito" : this.pedidoSelected.carritoProductos
+    }
+
+    this.bodegaService.carritoRestarStock(carrito).subscribe(resp =>{
+      console.log('resp', resp);
+      this.notification.create(
+        'success', 'Receta creada', resp.toString()
+      )
+      
+    })
+  }
+
+  obtenerRecetas(){
+    this.listaRecetas = [];
+    this.bodegaService.obtenerRecetas().subscribe(resp => {
+
+      this.listaRecetas = resp["listado_recetas"].sort(function(a,b){
+            if(a.id_receta < b.id_receta){
+              return -1
+            }
+            if (a.id_receta > b.id_receta){
+              return 1
+            }
+            return 0;
+          })
+      console.log('listaRecetas', this.listaRecetas);
     })
   }
 }

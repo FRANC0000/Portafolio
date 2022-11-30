@@ -40,6 +40,7 @@ public class PlatosPedido implements Serializable{
 	
 	@Column(nullable = true)
 	String recetas_pedidas;
+	
 
 	public PlatosPedidoId getPlatosPedidoId() {
 		return platosPedidoId;

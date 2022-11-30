@@ -7,7 +7,7 @@ import { TimeHolder } from 'ng-zorro-antd/time-picker/time-holder';
 import { parse } from 'querystring';
 import { Boleta, InstanciarBoleta, InstanciarPedido, Pedido, ProductoEnCarro } from 'src/app/interfaces/carrito-compras';
 import { Plato, Producto } from 'src/app/interfaces/cocina';
-import { CancelarReserva, Cliente, EstadoMesa, Mesa, Reserva, TipoMesa } from 'src/app/interfaces/mesa';
+import { CancelarReserva, Cliente, EncuestaCancelacion, EncuestaSatisfaccion, EstadoMesa, Mesa, Reserva,  ModificarReserva, TipoMesa } from 'src/app/interfaces/mesa';
 import { ClienteService } from './cliente.service';
 
 @Component({
@@ -37,6 +37,8 @@ export class ClienteComponent implements OnInit {
   clienteObjectParam : Cliente;
   boletaObjectParam : Boleta;
   mesaReservada :boolean = false;
+  interaccionConElSistema : boolean = true;
+
   listaPlatos : Plato;
   listaProductos : Producto;
   carritoDeCompras : ProductoEnCarro[] = [];
@@ -59,6 +61,24 @@ export class ClienteComponent implements OnInit {
   validateFormPagoTarjeta : FormGroup
   resumenPago = false;
   dirigirseACaja = false;
+  validateFormCrearEncuestaCancelacion: FormGroup;
+  validateFormCrearEncuestaSatisfaccion: FormGroup;
+  validateFormReservaModificar: FormGroup;
+  isVisibleCrearEncuestaCancelacion = false;
+  isVisibleCrearEncuestaSatisfaccion = false;
+  tooltipsCancelacion = ['Muy mala', 'Mala', 'Normal', 'Buena', 'Muy buena'];
+  tooltipsTiempoAtencion = ['Muy mala', 'Mala', 'Normal', 'Buena', 'Muy buena'];
+  tooltipsComida = ['Muy mala', 'Mala', 'Normal', 'Buena', 'Muy buena'];
+  tooltipsTratoAlCliente = ['Muy mala', 'Mala', 'Normal', 'Buena', 'Muy buena'];
+  tooltipsIntuitivo = ['Poco intuitivo', 'Algo intuitivo', 'Intuitivo', 'Muy intuitivo'];
+  valueCancelacion = 3;
+  valueTiempoAtencion = 3;
+  valueComida = 3;
+  valueTratoAlCliente = 3;
+  valueIntuitivo = 3;
+  radioValueVuelta = "true"
+  radioValueRecomendado = "true"
+  timer;
 
   test = [1, 2, 3, 4]
 
@@ -74,6 +94,212 @@ export class ClienteComponent implements OnInit {
     this.obtenerReservaActivaPorIdMesa(id_mesa);
     this.obtenerPlatos();
     this.obtenerProductos();
+
+    this.validateFormCrearEncuestaCancelacion = new FormGroup({
+      id_reserva : new FormControl,
+      comentario : new FormControl,
+      puntuacion_atencion : new FormControl,
+      motivo : new FormControl,
+    })
+
+    this.validateFormCrearEncuestaSatisfaccion = new FormGroup({
+      id_reserva : new FormControl,
+      puntuacion_comida : new FormControl,
+      puntuacion_tiempo_atencion : new FormControl,
+      puntuacion_trato_del_personal : new FormControl,
+      puntuacion_interaccion_sistema : new FormControl,
+      recomendado : new FormControl,
+      vuelta : new FormControl,
+      comentario : new FormControl,
+    })
+
+    this.validateFormReservaModificar = new FormGroup({
+      id_reserva : new FormControl,
+      interaccion : new FormControl
+    })
+  }
+
+  interaccionConElSistemaListener(){
+    window.clearTimeout(this.timer)
+    
+    this.interaccionConElSistema = true;
+
+    this.timer = setTimeout(() => {
+      this.interaccionConElSistema = false;
+      console.log('No han interactuado en esta mesa')
+      this.alertaNoInteraccionACocina()
+    }, 600000);
+  }
+
+  alertaNoInteraccionACocina(){
+    this.validateFormReservaModificar = this.fb.group({
+      id_reserva: [this.reservaObjectParam.id_reserva, [Validators.required]],
+      interaccion : [this.interaccionConElSistema] //false
+    })
+    
+    if (this.validateFormReservaModificar.valid){
+    var valores = this.validateFormReservaModificar.value
+
+    var modificarInteraccion : ModificarReserva = {
+      id_reserva : valores.id_reserva,
+      interaccion : valores.interaccion
+    }
+
+    this.clienteService.modificarReserva(modificarInteraccion).subscribe(resp=>{
+      console.log('resp:', resp);
+
+      this.nzNotificacionService.create(
+        'warning', '¿Sigues ahí?', 'Un garzón vendrá a tu mesa a verificar'
+      );
+    })
+  }
+  }
+
+  crearEncuestaCancelacion() {
+    this.isVisibleCrearEncuestaCancelacion = true; 
+    this.validateFormCrearEncuestaCancelacion = this.fb.group({
+      motivo: [null, [Validators.required]],
+      puntuacion_atencion: [null, [Validators.required]],
+      comentario: [null],
+      id_reserva: [this.reservaObjectParam.id_reserva, [Validators.required]]
+    })
+    
+    console.log('Crear encuesta de cancelación');
+    
+  }
+
+  crearEncuestaSatisfaccion() {
+    this.isVisibleCrearEncuestaSatisfaccion = true; 
+    this.validateFormCrearEncuestaSatisfaccion = this.fb.group({
+      puntuacion_comida: [null, [Validators.required]],
+      puntuacion_tiempo_atencion: [null, [Validators.required]],
+      puntuacion_trato_del_personal: [null, [Validators.required]],
+      puntuacion_interaccion_sistema: [null, [Validators.required]],
+      recomendado: [null, [Validators.required]],
+      vuelta: [null, [Validators.required]],
+      comentario: [null],
+      id_reserva: [this.reservaObjectParam.id_reserva, [Validators.required]]
+    })
+  
+    
+    console.log('Crear encuesta de cancelación');
+    
+  }
+
+  guardarCrearEncuestaCancelacion(){
+    console.log('Servicio crear encuesta de cancelación');
+    
+    var valores = this.validateFormCrearEncuestaCancelacion.value
+
+    if (this.validateFormCrearEncuestaCancelacion.value.comentario == null){
+      this.validateFormCrearEncuestaCancelacion.value.comentario = "";
+    }
+
+    if (this.validateFormCrearEncuestaCancelacion.valid){
+      
+      console.log('Formulario válido', this.validateFormCrearEncuestaCancelacion.value);
+      var encuestaCancelacionACrear : EncuestaCancelacion = {
+        motivo: valores.motivo,
+        puntuacion_atencion: valores.puntuacion_atencion,
+        comentario: valores.comentario,
+        id_reserva: valores.id_reserva
+      }
+
+      
+      
+      console.log('encuestaCancelacionACrear: ', encuestaCancelacionACrear);
+
+      this.clienteService.crearEncuestaCancelacion(encuestaCancelacionACrear).subscribe(resp=>{
+        console.log('resp:', resp);
+        this.cerrarCrearEncuestaCancelacion();
+        this.nzNotificacionService.create(
+          'success', 'Encuesta creada', resp
+        );
+        this.mesaReservada = false;
+      })
+
+      
+    } else{
+      console.log('Formulario no válido?', this.validateFormCrearEncuestaCancelacion.value);
+
+      this.nzNotificacionService.create(
+        'error', 'Error al crear encuesta', 'Debes rellenar todos los campos'
+      )
+      
+
+      Object.values(this.validateFormCrearEncuestaCancelacion.controls).forEach(control => {
+        // console.log('control', control);
+        if (control.invalid) {
+          console.log('control inválido');          
+          control.markAsDirty();
+          control.updateValueAndValidity({onlySelf : true});
+        }
+      });
+
+     
+    }
+
+  }
+
+  guardarCrearEncuestaSatisfaccion(){
+    console.log('Servicio crear encuesta de satisfacción');
+    console.log(this.reservaObjectParam.id_reserva);
+    
+    var valores = this.validateFormCrearEncuestaSatisfaccion.value
+
+    if (this.validateFormCrearEncuestaSatisfaccion.valid){
+      if (this.validateFormCrearEncuestaSatisfaccion.value.comentario == null){
+        this.validateFormCrearEncuestaSatisfaccion.value.comentario = "";
+      }
+
+      console.log('Formulario válido', this.validateFormCrearEncuestaSatisfaccion.value);
+      var encuestaSatisfaccionACrear : EncuestaSatisfaccion = {
+        puntuacion_comida: valores.puntuacion_comida,
+        puntuacion_tiempo_atencion: valores.puntuacion_tiempo_atencion,
+        puntuacion_trato_del_personal: valores.puntuacion_trato_del_personal,
+        puntuacion_interaccion_sistema: valores.puntuacion_interaccion_sistema,
+        recomendado: valores.recomendado,
+        vuelta: valores.vuelta,
+        comentario: valores.comentario,
+        id_reserva: valores.id_reserva,
+
+      }      
+      
+      console.log('encuestaSatisfaccionACrear: ', encuestaSatisfaccionACrear);
+
+      this.clienteService.crearEncuestaSatisfaccion(encuestaSatisfaccionACrear).subscribe(resp=>{
+        console.log('resp:', resp);
+        this.cerrarCrearEncuestaSatisfaccion();
+        this.nzNotificacionService.create(
+          'success', 'Encuesta creada', resp
+        );
+      })
+    } else{
+      console.log('Formulario no válido?', this.validateFormCrearEncuestaSatisfaccion.value);
+
+      this.nzNotificacionService.create(
+        'error', 'Error al crear encuesta', 'Debes rellenar todos los campos'
+      )
+
+      Object.values(this.validateFormCrearEncuestaSatisfaccion.controls).forEach(control => {
+        // console.log('control', control);
+        if (control.invalid) {
+          console.log('control inválido');          
+          control.markAsDirty();
+          control.updateValueAndValidity({onlySelf : true});
+        }
+      });
+    }
+
+  }
+
+  cerrarCrearEncuestaCancelacion(){
+    this.isVisibleCrearEncuestaCancelacion = false;
+    this.mesaReservada = false;
+  }
+
+  cerrarCrearEncuestaSatisfaccion(){
+    this.isVisibleCrearEncuestaSatisfaccion = false;
   }
 
   obtenerUnaMesa(id_mesa){
@@ -124,6 +350,12 @@ export class ClienteComponent implements OnInit {
         }
         console.log('clienteObjectParam', this.clienteObjectParam);
         this.obtenerBoletaEnProcesoPorIdCliente(this.clienteObjectParam.rut_cliente);
+
+        this.timer = setTimeout(() => {
+          this.interaccionConElSistema = false;
+          console.log('No han interactuado en esta mesa')
+          this.alertaNoInteraccionACocina()
+        }, 600000); 
       }
       else{
         console.log('Esta mesa está disponible y no tiene una reserva activa');
@@ -290,7 +522,6 @@ export class ClienteComponent implements OnInit {
     })
   }
 
-
   cancelarReserva(){
     console.log('aquí se cancelará la reserva');
     const cancelarReserva : CancelarReserva = {
@@ -301,7 +532,7 @@ export class ClienteComponent implements OnInit {
       console.log('resp cancelarReserva', resp);
 
       if (resp.includes('cancelada con éxito')){
-        this.mesaReservada = false;
+        this.crearEncuestaCancelacion()
       }
       
     })
@@ -337,6 +568,7 @@ export class ClienteComponent implements OnInit {
   }
 
   verDetallePlato(plato){
+    this.interaccionConElSistemaListener()
     this.visibleDetallePlato = true;
     this.platoSelected = plato;
     console.log('platoSelected', this.platoSelected);
@@ -359,6 +591,8 @@ export class ClienteComponent implements OnInit {
   }
 
   verCarrito(){
+    this.interaccionConElSistemaListener()
+
     console.log('carritoDeCompras', this.carritoDeCompras);
     if (this.carritoDeCompras.length > 0){
       this.visibleCarritoCompras = true;
@@ -381,6 +615,8 @@ export class ClienteComponent implements OnInit {
   agregarPlatoAlCarro(plato){
     // console.log('plato', plato);
     // console.log(arr.some(e => e.foo === 'bar')); // true
+    this.interaccionConElSistemaListener()
+    
     const existe = this.carritoDeCompras.some( p => {
       if (p.plato != null && p.plato != undefined){
         if (p.plato.id_plato === plato.id_plato){

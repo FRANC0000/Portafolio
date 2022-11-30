@@ -10,7 +10,10 @@
       <!-- <button nz-button (click)="verMenu()"> Ver menú </button> -->
       <button nz-button (click)="verCarrito()"> Ver carrito </button>
       <!-- <button nz-button nzType="danger" (click)="cerrarSesion()"> Cerrar sesión </button> -->
-      <button *ngIf="boletaAIngresar == null" nz-button nzType="danger" (click)="cancelarReserva()"> Cancelar reserva </button>
+      <button *ngIf="boletaAIngresar == null" nz-button nzType="danger" nz-popconfirm
+      nzPopconfirmTitle="¿Seguro que quieres cancelar la reserva?"
+      nzPopconfirmPlacement="top"
+      (nzOnConfirm)="cancelarReserva()"> Cancelar reserva </button>
       <button *ngIf="pedidoEnBoleta != null && boletaAIngresar != null" nz-button (click)="mostrarPedidosEnBoleta()"> Ver boleta </button>
     </div>
   </div>
@@ -501,7 +504,7 @@
       </div>
     </div>
     <div nz-result-extra>
-      <button nz-button nzType="danger">Cerrar</button>
+      <button nz-button nzType="primary" (click)="crearEncuestaSatisfaccion()">¡Déjanos tu opinión!</button>
     </div>
   </nz-result>
 </div>
@@ -540,7 +543,146 @@
       </div>
     </div>
     <div nz-result-extra>
-      <button nz-button nzType="danger">Cerrar</button>
+      <button nz-button nzType="primary" (click)="crearEncuestaSatisfaccion()">¡Déjanos tu opinión!</button>
     </div>
   </nz-result>
 </div>
+
+<nz-modal nzTitle="Encuesta de cancelación" [nzWidth]="1000" [nzContent]="crearEncuestaCancelacionContent"
+      [(nzVisible)]="isVisibleCrearEncuestaCancelacion" (nzOnOk)="guardarCrearEncuestaCancelacion()" (nzOnCancel)="cerrarCrearEncuestaCancelacion()">
+      <div>
+        <ng-container #crearEncuestaCancelacionContent>
+          <form nz-form [formGroup]="validateFormCrearEncuestaCancelacion" id="validateFormCrearEncuestaCancelacion" [nzLayout]="'inline'" (ngSubmit)="enviarFormularioCrearEncuestaCancelacion()">
+            <div nz-row clas="form-encuesta">
+              <div nz-col nzSpan="24">
+                <nz-form-item>
+                  <nz-form-label class="nz-label-crear-encuesta-cancelacion">
+                    Puntuación de la atención
+                  </nz-form-label>
+                  <nz-form-control class="nz-control-crear-encuesta" nzErrorTip="Por favor ingrese una puntuación">
+                      <nz-rate formControlName="puntuacion_atencion" [(ngModel)]="valueCancelacion" [nzTooltips]="tooltipsCancelacion"></nz-rate>
+                      <span *ngIf="valueCancelacion" class="ant-rate-text">{{ valueCancelacion ? tooltipsCancelacion[valueCancelacion - 1] : '' }}</span>
+                  </nz-form-control>
+                </nz-form-item>
+                <nz-divider></nz-divider>
+                <nz-form-item style="width: 100%;">
+                    <nz-form-label nzFor="comentario">
+                        Motivo de cancelación
+                    </nz-form-label>
+                    <nz-form-control nzErrorTip="Por favor ingrese algún motivo de cancelación" style="width: 74.5%;">
+                      <nz-radio-group formControlName="motivo" [(ngModel)]="radioValue">
+                        <label nz-radio nzValue="A">Demora excesiva en la atención</label>
+                        <label nz-radio nzValue="B">Mal trato al cliente</label>
+                        <label nz-radio nzValue="C">Mala higiene / aseo del restaurant</label>
+                        <label nz-radio nzValue="M">Otros motivos</label>
+                      </nz-radio-group>
+                    </nz-form-control>
+                </nz-form-item>
+
+                <nz-divider></nz-divider>
+
+                <nz-form-item style="width: 100%;">
+                    <nz-form-label nzFor="comentario">
+                        Comentarios o recomendaciones
+                    </nz-form-label>
+                    <nz-form-control nzErrorTip="Por favor ingrese algún comentario" style="width: 74.5%;">
+                        <textarea rows="4" nz-input name="comentario" id="comentario" placeholder="Añadir un comentario a la encuesta"
+                            formControlName="comentario">
+                        </textarea>
+                    </nz-form-control>
+                </nz-form-item>
+              </div>
+            </div>
+          </form>
+        </ng-container>
+      </div>
+    </nz-modal>
+
+<nz-modal nzTitle="Encuesta de satisfacción" [nzWidth]="1000" [nzContent]="crearEncuestaSatisfaccionContent"
+  [(nzVisible)]="isVisibleCrearEncuestaSatisfaccion" (nzOnOk)="guardarCrearEncuestaSatisfaccion()" (nzOnCancel)="cerrarCrearEncuestaSatisfaccion()">
+  <div>
+    <ng-container #crearEncuestaSatisfaccionContent>
+       <form nz-form [formGroup]="validateFormCrearEncuestaSatisfaccion" id="validateFormCrearEncuestaSatisfaccion" [nzLayout]="'inline'">
+         <div nz-row clas="form-encuesta">
+          <div nz-col nzSpan="24">
+             <nz-form-item>
+               <nz-form-label class="nz-label-crear-encuesta-satisfaccion">
+                    Puntuación comida
+               </nz-form-label>
+               <nz-form-control class="nz-control-crear-encuesta-producto" nzErrorTip="Por favor ingrese una puntuación">
+                  <nz-rate formControlName="puntuacion_comida" [(ngModel)]="valueComida" [nzTooltips]="tooltipsComida"></nz-rate>
+                  <span *ngIf="valueComida" class="ant-rate-text">{{ valueComida ? tooltipsComida[valueComida - 1] : '' }}</span>
+               </nz-form-control>
+             </nz-form-item>
+             <br>
+            <nz-form-item>
+               <nz-form-label class="nz-label-crear-encuesta-satisfaccion">
+                 Puntuación tiempo de atención
+               </nz-form-label>
+               <nz-form-control class="nz-control-crear-encuesta-satisfaccion" nzErrorTip="Por favor ingrese una puntuación">
+                 <nz-rate formControlName="puntuacion_tiempo_atencion" [(ngModel)]="valueTiempoAtencion" [nzTooltips]="tooltipsTiempoAtencion"></nz-rate>
+                 <span *ngIf="valueTiempoAtencion" class="ant-rate-text">{{ valueTiempoAtencion ? tooltipsTiempoAtencion[valueTiempoAtencion - 1] : '' }}</span>
+              </nz-form-control>
+             </nz-form-item>
+             <br>
+             <nz-form-item>
+              <nz-form-label class="nz-label-crear-encuesta-satisfaccion">
+                Puntuación atención al cliente
+              </nz-form-label>
+              <nz-form-control class="nz-control-crear-encuesta-satisfaccion" nzErrorTip="Por favor ingrese una puntuación">
+                <nz-rate formControlName="puntuacion_trato_del_personal" [(ngModel)]="valueTratoAlCliente" [nzTooltips]="tooltipsTratoAlCliente"></nz-rate>
+                <span *ngIf="valueTratoAlCliente" class="ant-rate-text">{{ valueTratoAlCliente ? tooltipsTratoAlCliente[valueTratoAlCliente - 1] : '' }}</span>
+              </nz-form-control>
+             </nz-form-item>
+             <br>
+             <nz-form-item>
+              <nz-form-label class="nz-label-crear-encuesta-satisfaccion">
+                ¿Qué tan fácil se le hizo interactuar con el sistema?
+              </nz-form-label>
+              <nz-form-control class="nz-control-crear-encuesta-satisfaccion" nzErrorTip="Por favor ingrese una puntuación">
+                <nz-rate formControlName="puntuacion_interaccion_sistema" [(ngModel)]="valueIntuitivo" [nzTooltips]="tooltipsIntuitivo" [nzCount]="4"></nz-rate>
+                <span *ngIf="valueIntuitivo" class="ant-rate-text">{{ valueIntuitivo ? tooltipsIntuitivo[valueIntuitivo - 1] : '' }}</span>
+              </nz-form-control>
+             </nz-form-item>
+            <br>
+            <nz-form-item style="width: 100%;">
+              <nz-form-label nzFor="comentario">
+                   ¿Le recomendarias Restaurant SXXI a alguien?
+              </nz-form-label>
+              <nz-form-control nzErrorTip="Seleccione una opción" style="width: 74.5%;" form>
+                <nz-radio-group [(ngModel)]="radioValueRecomendado" formControlName="recomendado">
+                  <label nz-radio nzValue="true">Sí</label>
+                  <label nz-radio nzValue="false">No</label>
+                </nz-radio-group>
+              </nz-form-control>
+           </nz-form-item>
+           <br>
+           <nz-form-item style="width: 100%;">
+              <nz-form-label nzFor="comentario">
+                  ¿Volverías a Restaurant SXXI?
+              </nz-form-label>
+              <nz-form-control nzErrorTip="Seleccione una opción" style="width: 74.5%;">
+                <nz-radio-group [(ngModel)]="radioValueVuelta" formControlName="vuelta">
+                  <label nz-radio nzValue="true">Sí</label>
+                  <label nz-radio nzValue="false">No</label>
+                </nz-radio-group>
+              </nz-form-control>
+         </nz-form-item>
+         <nz-divider></nz-divider>
+         <br>
+            <nz-form-item style="width: 100%;">
+                <nz-form-label nzFor="comentario">
+                     Comentario
+                </nz-form-label>
+                <nz-form-control nzErrorTip="Por favor ingrese algún comentario" style="width: 74.5%;">
+                     <textarea rows="4" nz-input name="comentario" id="comentario" placeholder="Añadir un comentario a la encuesta"
+                        formControlName="comentario">
+                    </textarea>
+                </nz-form-control>
+             </nz-form-item>
+          </div>
+         </div>
+      </form>
+    </ng-container>
+  </div>
+</nz-modal>

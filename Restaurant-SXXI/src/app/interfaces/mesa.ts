@@ -33,7 +33,8 @@ export interface Reserva {
     cant_consumidores: number,
     fecha_reserva : Date,
     hora_reserva : Date,
-    comentario : string
+    comentario : string,
+    interaccion? : boolean
 }
 
 export interface IngresarReserva{
@@ -43,4 +44,27 @@ export interface IngresarReserva{
 
 export interface CancelarReserva{
     id_reserva : string
+}
+
+export interface ModificarReserva{
+    id_reserva : string,
+    interaccion : boolean
+}
+
+export interface EncuestaCancelacion {
+    motivo : string,
+    puntuacion_atencion: number,
+    comentario : string,
+    id_reserva : number
+}
+
+export interface EncuestaSatisfaccion {
+    puntuacion_comida : number,
+    puntuacion_tiempo_atencion : number,
+    puntuacion_trato_del_personal : number,
+    puntuacion_interaccion_sistema : number, 
+    recomendado : boolean,
+    vuelta : boolean,
+    comentario : string,
+    id_reserva : number,
 }

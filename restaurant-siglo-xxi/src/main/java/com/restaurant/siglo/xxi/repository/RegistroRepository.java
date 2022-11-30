@@ -46,5 +46,8 @@ public interface RegistroRepository extends JpaRepository<Registro, Integer>{
 	
 	@Query(name = "obtenerSolicitudReabastecimientoProveedores", nativeQuery = true)
 	List<Registro> obtenerSolicitudReabastecimientoProveedores();
+	
+	@Query(name = "obtenerSolicitudIngredientes", nativeQuery = true)
+	List<Registro> obtenerSolicitudIngredientes();
 
 }

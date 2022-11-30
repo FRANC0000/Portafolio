@@ -58,5 +58,29 @@ export class BodegaService {
     return this.http.post(
       'http://localhost:8085/restaurantSXXI/rest-rsxii/registro/actualizarUltimaVersionRegistro', id_registro , {responseType : 'text'} //asi se tiene que llamar en el controller
     );
+  }
+
+  public obtenerPedidoPorId(id_pedido) {
+    return this.http.post(
+      'http://localhost:8085/restaurantSXXI/rest-rsxii/pedido/obtenerPedidoPorId', id_pedido , { headers : { 'Content-Type': 'application/json' }} //asi se tiene que llamar en el controller
+    );
   } 
+
+  public carritoRestarStock(carrito) {
+    return this.http.post(
+      'http://localhost:8085/restaurantSXXI/rest-rsxii/producto/carritoRestarStock', carrito , {responseType : 'text'}  //asi se tiene que llamar en el controller
+    );
+  } 
+
+  public obtenerSolicitudIngredientes() {
+    return this.http.post(
+      'http://localhost:8085/restaurantSXXI/rest-rsxii/registro/obtenerSolicitudIngredientes' , {responseType : 'text'} //asi se tiene que llamar en el controller
+    );
+  } 
+
+  public obtenerRecetas() {
+    return this.http.get(
+      'http://localhost:8085/restaurantSXXI/rest-rsxii/receta/obtenerRecetas'
+    );
+  }
 }

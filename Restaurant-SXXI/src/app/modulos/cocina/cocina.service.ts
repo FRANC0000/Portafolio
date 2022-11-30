@@ -151,4 +151,16 @@ export class CocinaService {
       'http://localhost:8085/restaurantSXXI/rest-rsxii/producto/eliminarProducto', productoAEliminar, { responseType : 'text' }
     );
   }
+
+  public crearReporte(reporte) {
+    return this.http.post(
+      'http://localhost:8085/restaurantSXXI/rest-rsxii/reporte/crearReporte', reporte, {responseType: 'text'}
+    );
+  } 
+
+  public crearRegistro(registro) {
+    return this.http.post(
+      'http://localhost:8085/restaurantSXXI/rest-rsxii/registro/crearRegistro', registro , {responseType : 'text'} //asi se tiene que llamar en el controller
+    );
+  } 
 }

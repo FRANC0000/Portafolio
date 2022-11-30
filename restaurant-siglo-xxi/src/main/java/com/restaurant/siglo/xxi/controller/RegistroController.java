@@ -82,6 +82,14 @@ public class RegistroController {
 		return resp;	
 	}
 	
+	@RequestMapping(value="/obtenerSolicitudIngredientes")
+	public String obtenerSolicitudIngredientes() throws JSONException {
+		
+		String resp = registroService.obtenerSolicitudIngredientes();
+		
+		return resp;	
+	}
+	
 	@RequestMapping(value="/actualizarUltimaVersionRegistro")
 	public String actualizarUltimaVersionRegistro(@RequestBody Map<String, Object> registro) throws JSONException {
 		

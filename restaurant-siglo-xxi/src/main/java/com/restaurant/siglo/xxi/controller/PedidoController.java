@@ -102,5 +102,15 @@ public class PedidoController {
 		return resp;	
 	}	
 	
+	@RequestMapping(value="/obtenerPedidoPorId")
+	public String obtenerPedidoPorId(@RequestBody int id_pedido) {
+		
+		String resp = "";
+		resp = pedidoService.obtenerPedidoPorId(id_pedido);
+
+		
+		return resp;	
+	}	
+	
 	
 }

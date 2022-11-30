@@ -198,6 +198,53 @@ public class ProductoServiceImpl implements ProductoService{
     }
     
     @Override
+    public String carritoRestarStock(Map<String, Object> carrito) {
+        
+    	String resp = "";
+        try {
+        	List<Map<String,Object>> miCarrito = (List<Map<String, Object>>) carrito.get("carrito");
+        	
+        	for (Map<String, Object> map : miCarrito) {
+				boolean esPlato = Boolean.parseBoolean(map.get("esPlato").toString()) ;
+				boolean esProducto = Boolean.parseBoolean(map.get("esProducto").toString());
+				
+				if (esPlato) {
+					List<Map<String,Object>> objetoRecetaSeleccionada = (List<Map<String,Object>>) map.get("objetoRecetaSeleccionada");
+					if (objetoRecetaSeleccionada.size() > 0) {					
+						for (Map<String, Object> receta : objetoRecetaSeleccionada) {
+							int id_receta = Integer.parseInt(receta.get("id_receta").toString());
+							List<Map<String,Object>> productosEnUnaReceta = (List<Map<String,Object>>) receta.get("productosEnUnaReceta");
+							for (Map<String, Object> producto : productosEnUnaReceta) {
+								Map<String, Object> prod = (Map<String, Object>) producto.get("producto");
+								int id_producto = Integer.parseInt(prod.get("id_producto").toString());
+								int cantidad = Integer.parseInt(producto.get("cantidad").toString());
+								productoRepository.restarStock(id_producto, cantidad);
+								System.out.println("Restar stock de: "+id_producto + " - cantidad: "+ cantidad);
+							}
+						}
+					}					
+				}
+				else if (esProducto) {
+					Map<String,Object> producto = (Map<String, Object>) map.get("producto");
+					int id_producto = Integer.parseInt(producto.get("id_producto").toString());
+					int cantidad = Integer.parseInt(map.get("cantidad").toString());
+					productoRepository.restarStock(id_producto, cantidad);
+					System.out.println("Restar stock de: "+id_producto + " - cantidad: "+ cantidad);
+				}
+			}
+//        	int id_producto = Integer.parseInt(producto.get("id_producto").toString());
+//        	int cantidad = Integer.parseInt(producto.get("cantidad").toString());
+        	resp = "Stock restado";
+            
+        } catch (Exception e) {
+            return "Producto no existe. \n"
+                    + "Mensaje de error: "+ e.getMessage();
+        }
+        
+        return resp.toString();
+    }
+    
+    @Override
     public String restarStock(Map<String, Object> producto) {
         
     	String resp = "";

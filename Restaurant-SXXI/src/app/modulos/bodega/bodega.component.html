@@ -23,6 +23,7 @@
                   <label for="" *ngIf="bzE.esAprobado" style="font-weight: bold; color: rgba(81, 0, 195, 0.733); font-size: large; "> Solicitud aprobada </label>
                   <label for="" *ngIf="bzE.esRechazado" style="font-weight: bold; color: red; font-size: large; ">Solicitud rechazada</label>
                   <label for="" *ngIf="bzE.esEnviada" style="font-weight: bold; color: rgba(0, 175, 228, 0.692); font-size: large; ">Solicitud enviada</label>
+                  <label for="" *ngIf="bzE.esIngrediente" style="font-weight: bold; color: rgba(5, 226, 31, 0.692); font-size: large; ">Solicitud de ingredientes</label>
                 </div>
                 <nz-divider style="margin:10px 0px"></nz-divider>
                 <label for="" style="text-overflow: ellipsis; overflow: hidden; white-space: nowrap; width: calc(100% - 5px); display: flex;">
@@ -36,8 +37,13 @@
               </div>
               <br>
               <div class="botones-pedidos">
-                <button nz-button (click)="verDetalleRegistroEnBuzon(bzE)" style="width: 100%;">
+                <button nz-button (click)="verDetalleRegistroEnBuzon(bzE)" style="width: 100%;"
+                *ngIf="bzE.esAprobado || bzE.esRechazado || bzE.esEnviada">
                   Ver detalle de la solicitud
+                </button>
+                <button nz-button (click)="verDetallePedidoEnBuzon(bzE)" style="width: 100%;"
+                *ngIf="bzE.esIngrediente ">
+                  Ver detalle del pedido
                 </button>
               </div>
             </nz-card>
@@ -76,14 +82,6 @@
           No hay solicitudes de reabastecimiento pendientes en este momento.
         </div>
       </div>
-
-      <div class="menu-header">
-        <h2>Solicitudes de cocina</h2>
-      </div>
-      <div>
-        CONTENIDO
-      </div>
-
       <div class="menu-header">
         <h2>Inventario</h2>
       </div>
@@ -143,6 +141,25 @@
 
           <div>
             <!-- <button nz-button> Aprobar solicitud </button> -->
+          </div>
+        </div>
+      </ng-container>
+    </nz-drawer>
+
+    <!-- VER DETALLE PEDIDO -->
+    <nz-drawer [nzWidth]="700" [nzClosable]="true" [nzVisible]="isVisibleDetallePedido" nzPlacement="right"
+      nzTitle="Detalle del pedido" (nzOnClose)="cerrarDetallePedidoEnBuzon()"
+      style="background-color: rgba(81, 0, 195, 0.319);">
+      <ng-container>
+        <div>
+          <h3 nz-title>Pedido : #{{pedidoSelected?.idPedido}}</h3>
+          <br>
+          <h3 nz-title>Fecha: {{pedidoSelected?.fechaIngreso}}</h3>
+          <br>
+          <h3 nz-title>Boleta : #{{pedidoSelected?.idBoleta}}</h3>
+          <br>
+          <div>
+            <button nz-button (click)="restarStock()"> Aprobar solicitud </button>
           </div>
         </div>
       </ng-container>

@@ -68,6 +68,14 @@ public class ProductoController {
         return resp;    
     }
     
+    @RequestMapping(value="/carritoRestarStock")
+    public String carritoRestarStock(@RequestBody Map<String, Object> carrito) throws ParseException {
+        
+        String resp = productoService.carritoRestarStock(carrito);
+        
+        return resp;    
+    }
+    
     @RequestMapping(value="/obtenerTipoProducto")
     public String obtenerTipoProducto() throws JSONException, ParseException{
         String listTipoProducto = productoService.obtenerTipoProducto();

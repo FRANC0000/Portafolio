@@ -3,13 +3,18 @@ import { ThrowStmt } from '@angular/compiler';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { RESOURCE_CACHE_PROVIDER } from '@angular/platform-browser-dynamic';
-import { Router } from '@angular/router';
+import { Routes, RouterModule, ActivatedRoute, Router } from '@angular/router';
 import { NzNotificationService } from 'ng-zorro-antd';
 import { Pedido, ProductoEnCarro } from 'src/app/interfaces/carrito-compras';
 import { Plato, Producto, ProductosReceta, Receta, TipoPlato, TipoProducto } from 'src/app/interfaces/cocina';
+import { Registro } from 'src/app/interfaces/registro';
+import { Reporte } from 'src/app/interfaces/reporte';
 import { isObject } from 'util';
 import { LoginComponent } from '../login/login.component';
 import { CocinaService } from './cocina.service';
+import { CancelarReserva, Cliente, EstadoMesa, IngresarReserva, Mesa, Reserva, TipoMesa } from 'src/app/interfaces/mesa';
+import { MesasService } from 'src/app/modulos/mesas/mesas.service';
+import { ClienteService } from 'src/app/modulos/cliente/cliente.service';
 
 @Component({
   selector: 'app-cocina',
@@ -20,12 +25,19 @@ export class CocinaComponent implements OnInit {
 
   constructor(private router: Router, 
     private cocinaService : CocinaService,
+    private mesasService : MesasService,
+    private ruta: ActivatedRoute,
+    private clienteService : ClienteService,
     private fb: FormBuilder,
-    private notification: NzNotificationService) { }
+    private notification: NzNotificationService) { 
+      this.ruta.params.subscribe(params => {
+      console.log('idMesa: ', params['idMesa']);
+      this.idMesaParam = params['idMesa']
+    })}
 
   usuarioLogeado :string = localStorage.getItem('id_usuario');
   rolUsuarioLogeado : string = localStorage.getItem('rol');
-
+  idMesaParam
   listaPlatos : Plato[] = [];
   listaProductos : Producto[] = [];
   visibleDetallePlato = false;
@@ -65,6 +77,12 @@ export class CocinaComponent implements OnInit {
   validateFormCrearProductosReceta : FormGroup;
   isVisibleCrearProductoReceta = false;
   cantidadProductoReceta : number = 1;
+  listadoMesas: Mesa[] = [];
+  listadoEstadosMesas: EstadoMesa [] = [];
+  listadoTiposMesas: TipoMesa [] = [];
+  reservaObjectParam : Reserva;
+  clienteObjectParam : Cliente;
+  mesaReservada : boolean = false;
 
   ngOnInit() {
     console.log('usuarioLogeado', this.usuarioLogeado);
@@ -74,6 +92,9 @@ export class CocinaComponent implements OnInit {
     this.obtenerTipoPlato();
     this.obtenerTipoProducto();
     this.obtenerRecetas();
+    this.obtenerMesas();
+    this.obtenerEstadosMesas();
+    this.obtenerTiposMesas();
 
     this.actualizarPedidos();
 
@@ -149,6 +170,52 @@ export class CocinaComponent implements OnInit {
       nombre_producto : new FormControl,
       cantidad : new FormControl,
       comentario : new FormControl,
+    })
+  }
+
+  obtenerMesas(){
+    this.mesasService.obtenerMesas().subscribe(resp => {
+      this.listadoMesas = resp["listado_mesas"];
+      console.log('listadoMesas', this.listadoMesas);
+      this.listadoMesas.sort(function(a,b){
+        if(a.id_mesa < b.id_mesa){
+          return -1
+        }
+        if (a.id_mesa > b.id_mesa){
+          return 1
+        }
+        return 0;
+      })
+    })
+  }
+
+  obtenerEstadosMesas(){
+    this.mesasService.obtenerEstadosMesas().subscribe(resp => {
+      let listadoEM = resp['listEstadoMesa'];
+      for (let eM of listadoEM){
+        const estadoMesa : EstadoMesa ={
+          id_estado_mesa : eM.id_estado_mesa,
+          nombre_estado_mesa: eM.nombre_estado_mesa
+        }
+        this.listadoEstadosMesas.push(estadoMesa)
+      }
+      console.log('listadoEstadosMesas', this.listadoEstadosMesas);
+    })
+  }
+
+  obtenerTiposMesas(){
+    this.mesasService.obtenerTipoMesas().subscribe(resp => {
+      let listadoTM = resp['tipoMesa'];
+      for (let tM of listadoTM){
+        const tipoMesa : TipoMesa ={
+          id_tipo_mesa : tM.id_tipo_mesa,
+          nombre_tipo_mesa: tM.nombre_tipo_mesa,
+          cantidad_asientos: tM.cantidad_asientos
+
+        }
+        this.listadoTiposMesas.push(tipoMesa)
+      }
+      console.log('listadoTiposMesas', this.listadoTiposMesas);
     })
   }
 
@@ -228,6 +295,7 @@ export class CocinaComponent implements OnInit {
       titulo_receta :[null, [Validators.required]],
     })
   }
+
   verPlatos(){
     console.log('verPlatos');
   }
@@ -327,6 +395,7 @@ export class CocinaComponent implements OnInit {
       console.log('formulario no válido.');
     }
   }
+
   cerrarModificarReceta(){
     this.isVisibleModificarReceta = false;
   }
@@ -710,6 +779,12 @@ export class CocinaComponent implements OnInit {
       })
       console.log('listaPedidosEnCola', this.listaPedidosEnCola);
     })
+  }
+
+  solicitarIngredientes(pedido){
+    console.log('pedido', pedido);
+    this.crearReporte(pedido.idPedido);
+    document.getElementById(pedido.idPedido).setAttribute('disabled', '')
   }
 
   verDetallePedidoEnCola(pedido){
@@ -1289,5 +1364,131 @@ export class CocinaComponent implements OnInit {
       comentario : [prod.comentario],
     })
     this.isVisibleCrearProductoReceta = true;
+  }
+
+  obtenerReservaActivaPorIdMesa(id_mesa){
+    this.clienteService.obtenerReservaActivaPorIdMesa(id_mesa).subscribe(resp=>{
+      // console.log('resp obtenerReservaActivaPorIdMesa', resp);
+      let reserva = Object(resp['arrayReserva']);
+      // console.log('reserva', reserva);
+      
+      if (reserva.length > 0){
+        this.mesaReservada = true;
+        this.reservaObjectParam = {
+          cant_consumidores : reserva[0].cant_consumidores,
+          comentario : reserva[0].comentario,
+          dv_cliente : reserva[0].dv_cliente,
+          fecha_reserva : reserva[0].fecha_reserva,
+          hora_reserva : reserva[0].hora_reserva,
+          id_estado_reserva : reserva[0].id_estado_reserva,
+          id_mesa : reserva[0].id_mesa,
+          id_reserva : reserva[0].id_reserva,
+          rut_cliente : reserva[0].rut_cliente,
+          interaccion : reserva[0].interaccion
+        }
+        console.log('reservaObjectParam', this.reservaObjectParam);
+        
+        this.clienteObjectParam = {
+          dv_cliente : reserva[0].dv_cliente,
+          nombre_cliente : reserva[0].nombre_cliente,
+          rut_cliente : reserva[0].rut_cliente
+        }
+        //console.log('clienteObjectParam', this.clienteObjectParam);
+        //this.obtenerBoletaEnProcesoPorIdCliente(this.clienteObjectParam.rut_cliente);
+        const cancelarReserva : CancelarReserva = {
+      
+          id_reserva : this.reservaObjectParam.id_reserva.toString()
+        }
+    
+        console.log('ID Reserva:', this.reservaObjectParam.id_reserva.toString())
+    
+        this.clienteService.cancelarReserva(cancelarReserva).subscribe(resp =>{
+          console.log('resp cancelarReserva', resp);
+            
+          if (resp.includes('cancelada con éxito')){
+            console.log('Reserva cancelada');
+            this.disponibilizarMesa(id_mesa)
+          }
+          
+        })
+      }
+      else{
+        console.log('Esta mesa está disponible y no tiene una reserva activa');
+        this.mesaReservada = false;
+      }
+    })
+  }
+
+  cancelarReserva(id_mesa){
+    console.log('Aquí se cancelará la reserva');
+    const mesa = {
+      "id_mesa" : id_mesa
+    }
+    this.obtenerReservaActivaPorIdMesa(mesa);
+  }
+  
+  disponibilizarMesa(mesa){
+
+    this.mesasService.disponibilizarMesa(mesa).subscribe(resp=>{
+      console.log('resp', resp);
+      this.obtenerMesas();
+    })
+  }
+
+  crearReporte(id_pedido){
+    let nombre_creacion ="Reporte_solicitud_ingredientes"+this.now.getDate()+this.now.getMonth()+this.now.getFullYear()+this.now.getHours()+this.now.getMinutes()+"_"+this.usuarioLogeado+'.pdf';
+
+    let crearReporte : Reporte = {
+      comentario: id_pedido,
+      extension: '.pdf',
+      fecha_creacion:this.now.toLocaleDateString(),
+      nombre_creacion: nombre_creacion,
+      titulo_reporte: 'Reporte solicitud de ingredientes '+this.now.getDay()+'/'+this.now.getMonth()+'/'+this.now.getFullYear(),
+      id_tipo_reporte: 7,
+      id_usuario: this.usuarioLogeado
+    }
+
+    let registroAIngresar : Registro = {
+      descripcion : id_pedido,
+      id_estado_registro : 8,
+      id_modulo : 3,
+      id_registro_padre : -1,
+      id_tipo_registro : 3,
+      id_usuario : this.usuarioLogeado,
+      titulo_registro : 'Reporte solicitud de ingredientes '+this.now.getDay()+'/'+this.now.getMonth()+'/'+this.now.getFullYear(),
+      version : 1,
+    }
+
+    this.cocinaService.crearReporte(crearReporte).subscribe(resp=>{
+      console.log('resp:', resp);
+      
+      registroAIngresar.id_reporte = parseInt(resp);
+      this.cocinaService.crearRegistro(registroAIngresar).subscribe(resp2=>{
+        console.log('resp2', resp2);
+        this.notification.create(
+          'success', 'Registro creado', 
+          resp2.toString()
+          // ''
+        );
+      },
+      error => {
+        // console.log('error', error); 
+        this.notification.create(
+          'error', 'Error al crear registro', 'No es posible crear el registro, intente nuevamente'
+        )
+      });
+
+      this.notification.create(
+        'success', 'Reporte creado', 
+        resp.toString()
+        // ''
+      );
+    },
+    error => {
+      // console.log('error', error); 
+      this.notification.create(
+        'error', 'Error al crear reporte', 'No es posible crear el reporte, intente nuevamente'
+      )
+    });
   }
 }
