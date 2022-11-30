@@ -69,4 +69,22 @@ public class BoletaController {
 		
 		return resp;	
 	}
+	
+	@RequestMapping(value="/obtenerBoletasPago1Reabastecimiento")
+	public String obtenerBoletasPago1Reabastecimiento() {
+		
+		String resp = "";
+		resp = boletaService.obtenerBoletasPago1Reabastecimiento();
+		
+		return resp;	
+	}
+	
+	@RequestMapping(value="/obtenerBoletasPago2Reabastecimiento")
+	public String obtenerBoletasPago2Reabastecimiento() {
+		
+		String resp = "";
+		resp = boletaService.obtenerBoletasPago2Reabastecimiento();
+		
+		return resp;	
+	}
 }

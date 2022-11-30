@@ -15,16 +15,19 @@
       </div>
       <div>
         <div class="pedidos-row" *ngIf="buzonEntrada?.length > 0"
-          style="height: 300px">
+          style="height: 350px">
           <div *ngFor="let bzE of buzonEntrada">
             <nz-card style="width:300px; margin: 0px 2px; margin-bottom: 10px;" nzTitle="Registro #{{bzE.registro.id_registro}}">
               <div>
                 <div style="text-align: center;">
                   <label for="" *ngIf="bzE.esAprobado" style="font-weight: bold; color: rgba(81, 0, 195, 0.733); font-size: large; "> Solicitud aprobada </label>
-                  <label for="" *ngIf="bzE.esRechazo" style="font-weight: bold; color: red; font-size: large; ">Solicitud rechazada</label>
+                  <label for="" *ngIf="bzE.esRechazado" style="font-weight: bold; color: red; font-size: large; ">Solicitud rechazada</label>
+                  <label for="" *ngIf="bzE.esEnviada" style="font-weight: bold; color: rgba(0, 175, 228, 0.692); font-size: large; ">Solicitud enviada</label>
                 </div>
                 <nz-divider style="margin:10px 0px"></nz-divider>
-                <label for=""> Título: {{bzE.registro.titulo_registro}}</label>
+                <label for="" style="text-overflow: ellipsis; overflow: hidden; white-space: nowrap; width: calc(100% - 5px); display: flex;">
+                  Título: {{bzE.registro.titulo_registro}}
+                </label>
                 <br>
                 <label for=""> Creado por: {{bzE.registro.id_usuario}}</label>
                 <br>
@@ -44,7 +47,7 @@
           No hay registros en el buzón.
         </div>
       </div>
-
+      <br>
       <div class="menu-header">
         <h2>Solicitudes de reabastecimiento</h2>
       </div>
@@ -120,7 +123,7 @@
           style="height: 700px; width: 100%;"></iframe>
 
           <div>
-            <button nz-button> Aprobar solicitud </button>
+            <button nz-button (click)="aprobarSolicitud()"> Aprobar solicitud </button>
           </div>
         </div>
       </ng-container>

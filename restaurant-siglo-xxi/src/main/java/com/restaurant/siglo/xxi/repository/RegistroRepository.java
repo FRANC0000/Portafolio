@@ -26,6 +26,9 @@ public interface RegistroRepository extends JpaRepository<Registro, Integer>{
 			@Param("version") int version,
 			@Param("id_reporte") int id_reporte);
 	
+	@Query(value = "select actualizar_ultima_version_registro(:id_registro)", nativeQuery = true)
+	String actualizarUltimaVersionRegistro(@Param("id_registro") int id_registro);
+	
 	@Query(name = "obtenerSolicitudReabastecimiento", nativeQuery = true)
 	List<Registro> obtenerSolicitudReabastecimiento();
 	
@@ -34,5 +37,14 @@ public interface RegistroRepository extends JpaRepository<Registro, Integer>{
 	
 	@Query(name = "obtenerSolicitudReabastecimientoAprobada", nativeQuery = true)
 	List<Registro> obtenerSolicitudReabastecimientoAprobada();
+	
+	@Query(name = "obtenerSolicitudReabastecimientoRechazada", nativeQuery = true)
+	List<Registro> obtenerSolicitudReabastecimientoRechazada();
+	
+	@Query(name = "obtenerSolicitudReabastecimientoModificada", nativeQuery = true)
+	List<Registro> obtenerSolicitudReabastecimientoModificada();
+	
+	@Query(name = "obtenerSolicitudReabastecimientoProveedores", nativeQuery = true)
+	List<Registro> obtenerSolicitudReabastecimientoProveedores();
 
 }

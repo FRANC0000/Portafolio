@@ -1,7 +1,8 @@
 export interface BuzonEntrada{
     registro : Object,
     esRechazado : boolean,
-    esAprobado  : boolean
+    esAprobado  : boolean,
+    esEnviada ?: boolean
 }
 
 export interface Registro {

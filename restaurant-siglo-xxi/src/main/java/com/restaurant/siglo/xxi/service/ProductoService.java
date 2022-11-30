@@ -13,5 +13,6 @@ public interface ProductoService {
 	public String eliminarProducto(Map<String, Object> producto) throws ParseException;
 	public String modificarProducto(Map<String, Object> producto) throws ParseException;
 	public String obtenerUnProducto(Map<String, Object> plato) throws ParseException;
+	public String restarStock(Map<String, Object> plato) throws ParseException;
     public String obtenerTipoProducto() throws ParseException, JSONException;
 }

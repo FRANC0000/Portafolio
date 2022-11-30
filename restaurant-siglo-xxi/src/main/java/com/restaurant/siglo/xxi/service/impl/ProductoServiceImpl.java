@@ -196,5 +196,23 @@ public class ProductoServiceImpl implements ProductoService{
         
         return resp.toString();
     }
+    
+    @Override
+    public String restarStock(Map<String, Object> producto) {
+        
+    	String resp = "";
+        try {
+        	int id_producto = Integer.parseInt(producto.get("id_producto").toString());
+        	int cantidad = Integer.parseInt(producto.get("cantidad").toString());
+        	
+        	resp = productoRepository.restarStock(id_producto, cantidad);	
+            
+        } catch (Exception e) {
+            return "Producto no existe. \n"
+                    + "Mensaje de error: "+ e.getMessage();
+        }
+        
+        return resp.toString();
+    }
 
 }

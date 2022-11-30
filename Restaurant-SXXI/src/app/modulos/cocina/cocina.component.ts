@@ -606,17 +606,20 @@ export class CocinaComponent implements OnInit {
         let carritoDeUnPedido : ProductoEnCarro[] = [];
 
         pedido.platos_del_pedido.forEach(plato => {
-          let recetaSelecccionada = JSON.parse(plato.recetas_pedidas)
-          // console.log('recetaSelecccionada',recetaSelecccionada);
           let rec : Receta[] = [];
-          for (let receta of recetaSelecccionada) {
-            let r = this.listaRecetas.filter(r => {
-              return r.id_receta === receta
-            })
-            // console.log('r', r);
-            
-            rec.push(r[0])
-            // console.log('recetaSelecccionada', recetaSelecccionada);
+          let recetaSelecccionada = []
+          if (plato.recetas_pedidas != undefined){
+            let recetaSelecccionada = JSON.parse(plato.recetas_pedidas)
+            // console.log('recetaSelecccionada',recetaSelecccionada);
+            for (let receta of recetaSelecccionada) {
+              let r = this.listaRecetas.filter(r => {
+                return r.id_receta === receta
+              })
+              // console.log('r', r);
+              
+              rec.push(r[0])
+              // console.log('recetaSelecccionada', recetaSelecccionada);
+            }
           }
           // console.log('rec', rec);
 

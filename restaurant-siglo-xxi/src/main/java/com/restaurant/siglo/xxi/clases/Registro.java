@@ -30,7 +30,22 @@ import javax.persistence.Table;
 					name = "obtenerSolicitudReabastecimientoAprobada", 
 					query = " select r from Registro r "
 							+ "where r.estado_registro.id_estado_registro = 4 "
-			)
+			),
+			@NamedQuery(
+					name = "obtenerSolicitudReabastecimientoRechazada", 
+					query = " select r from Registro r "
+							+ "where r.estado_registro.id_estado_registro = 5 "
+			),
+			@NamedQuery(
+					name = "obtenerSolicitudReabastecimientoProveedores", 
+					query = " select r from Registro r "
+							+ "where r.estado_registro.id_estado_registro = 6 "
+			),
+			@NamedQuery(
+					name = "obtenerSolicitudReabastecimientoModificada", 
+					query = " select r from Registro r "
+							+ "where r.estado_registro.id_estado_registro = 7 "
+					)
 		})
 public class Registro {
 	@Id

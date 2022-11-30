@@ -2,9 +2,14 @@ import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { NzNotificationService } from 'ng-zorro-antd';
-import { Boleta, Pedido, ProductoEnCarro } from 'src/app/interfaces/carrito-compras';
+import { Boleta, PagosReabastecimiento, Pedido, ProductoEnCarro } from 'src/app/interfaces/carrito-compras';
 import { Plato, Producto } from 'src/app/interfaces/cocina';
 import { FinanzasService } from './finanzas.service';
+
+import pdfMake from 'pdfmake/build/pdfmake'
+import pdfFonts from 'pdfmake/build/vfs_fonts'
+import { Reporte } from 'src/app/interfaces/reporte';
+pdfMake.vfs =  pdfFonts.pdfMake.vfs
 
 @Component({
   selector: 'app-finanzas',
@@ -31,8 +36,19 @@ export class FinanzasComponent implements OnInit {
   isVisibleEntregarVuelto = false;
   listaRegistrosRecepcionSolicitudReabastecimientoFinanzas = [];
   isVisibleDetalleRegistro = false;
+  isVisibleDetalleRegistroNoUltimaVersion = false;
   registroRecepcionSolicitudReabastecimiento;
   linkSolicitudReabastecimiento = "";
+  isVisibleEnviarPresupuestoAjustado = false;
+  listaProductos : Producto[] = [];
+  listModificarReabastecimiento = []
+  productoSelected;
+  addProd = false;
+  puedeEnviarSolicitudModificada = false;
+  now = new Date();
+  formDataPdfReporte = new FormData();
+  boletasPagoReabastecimiento = []
+  listPagosReabastecimiento = [];
   
 
   ngOnInit() {
@@ -40,6 +56,9 @@ export class FinanzasComponent implements OnInit {
     console.log('rolUsuarioLogeado', this.rolUsuarioLogeado);
     this.obtenerBoletasPorPagarEnCaja();
     this.obtenerSolicitudReabastecimiento();
+    this.obtenerProductos();
+    this.obtenerBoletasPago1Reabastecimiento();
+    this.obtenerBoletasPago2Reabastecimiento();
   }
 
   obtenerBoletasPorPagarEnCaja(){
@@ -55,6 +74,58 @@ export class FinanzasComponent implements OnInit {
       });
       console.log('boletasPorPagarEnCaja', this.boletasPorPagarEnCaja);
 
+    })
+  }
+
+  obtenerBoletasPago1Reabastecimiento(){
+    this.finanzasService.obtenerBoletasPago1Reabastecimiento().subscribe(resp=>{
+      let boletasPago1Reabastecimiento = resp['boleta'].sort(function(a,b){
+        if(a.hora_emision > b.hora_emision){
+          return 1
+        }
+        if(a.hora_emision < b.hora_emision){
+          return -1
+        }
+        return 0;
+      });
+      console.log('boletasPago1Reabastecimiento', boletasPago1Reabastecimiento);
+      if (boletasPago1Reabastecimiento.length > 0){
+        for (let bol of boletasPago1Reabastecimiento){
+          let pagosReabastecimiento : PagosReabastecimiento = {
+            boleta : bol,
+            esPago1 : true,
+            esPago2 : false
+          }
+          this.listPagosReabastecimiento.push(pagosReabastecimiento);
+        }
+      }
+      console.log('listPagosReabastecimiento', this.listPagosReabastecimiento);
+    })
+  }
+
+  obtenerBoletasPago2Reabastecimiento(){
+    this.finanzasService.obtenerBoletasPago2Reabastecimiento().subscribe(resp=>{
+      let boletasPago2Reabastecimiento = resp['boleta'].sort(function(a,b){
+        if(a.hora_emision > b.hora_emision){
+          return 1
+        }
+        if(a.hora_emision < b.hora_emision){
+          return -1
+        }
+        return 0;
+      });
+      console.log('boletasPago2Reabastecimiento', boletasPago2Reabastecimiento);
+      if (boletasPago2Reabastecimiento.length > 0){
+        for (let bol of boletasPago2Reabastecimiento){
+          let pagosReabastecimiento : PagosReabastecimiento = {
+            boleta : bol,
+            esPago1 : false,
+            esPago2 : true
+          }
+          this.listPagosReabastecimiento.push(pagosReabastecimiento);
+        }
+      }
+      console.log('listPagosReabastecimiento', this.listPagosReabastecimiento);
     })
   }
 
@@ -289,7 +360,10 @@ export class FinanzasComponent implements OnInit {
 
   obtenerSolicitudReabastecimiento(){
     this.finanzasService.obtenerSolicitudReabastecimientoFinanzas().subscribe(resp=>{
-      this.listaRegistrosRecepcionSolicitudReabastecimientoFinanzas = resp['registros']
+      this.listaRegistrosRecepcionSolicitudReabastecimientoFinanzas = []
+      this.listaRegistrosRecepcionSolicitudReabastecimientoFinanzas = resp['registros'].filter(r =>{
+        return r.ultima_version == true
+      })
 
       console.log('listaRegistrosRecepcionSolicitudReabastecimientoFinanzas', this.listaRegistrosRecepcionSolicitudReabastecimientoFinanzas);
     })
@@ -300,10 +374,20 @@ export class FinanzasComponent implements OnInit {
     this.registroRecepcionSolicitudReabastecimiento  = reg;
     this.linkSolicitudReabastecimiento = 'http://localhost:8085/restaurantSXXI/imagenes-rxxi/reportes/'+ reg.reporte.nombre_creacion + "#toolbar=0"
     // console.log('url', this.linkSolicitudReabastecimiento);
+    console.log('reg', reg);
+  }
+
+  verDetalleRegistroNoUltimaVersion(reg){
+    this.isVisibleDetalleRegistroNoUltimaVersion = true;
+    this.registroRecepcionSolicitudReabastecimiento  = reg;
+    this.linkSolicitudReabastecimiento = 'http://localhost:8085/restaurantSXXI/imagenes-rxxi/reportes/'+ reg.reporte.nombre_creacion + "#toolbar=0"
+    // console.log('url', this.linkSolicitudReabastecimiento);
+    console.log('reg', reg);
   }
 
   cerrarDrawerDetalleSolicitudReabastecimiento(){
     this.isVisibleDetalleRegistro = false;
+    this.isVisibleDetalleRegistroNoUltimaVersion = false;
     this.registroRecepcionSolicitudReabastecimiento = null;
   }
 
@@ -313,16 +397,283 @@ export class FinanzasComponent implements OnInit {
     this.isVisibleAprobarSolicitud = false;
   }
 
-  okAprobarSolicitud(id_registro){
+  okAprobarSolicitud(reg){
     console.log('Aprobar solicitud');
     console.log('Ingresar solicitud al sistema');
+    let registroNuevo = {
+      descripcion : this.registroRecepcionSolicitudReabastecimiento['descripcion'],
+      id_estado_registro : 4, //estado_registro 2 = Recepcionar solicitud de reabastecimiento (bodega)
+      id_modulo : 5,
+      id_registro_padre : this.registroRecepcionSolicitudReabastecimiento['id_registro'],
+      id_tipo_registro : 1, //tipo_registro 1 = Solicitud de reabastecimiento
+      id_usuario : this.usuarioLogeado,
+      titulo_registro : this.registroRecepcionSolicitudReabastecimiento['titulo_registro'],
+      version : this.registroRecepcionSolicitudReabastecimiento['version'] + 1,
+      id_reporte : this.registroRecepcionSolicitudReabastecimiento['reporte']['id_reporte']
+    }
+    let registroAntiguo = {
+      "id_registro" : this.registroRecepcionSolicitudReabastecimiento['id_registro']
+    }
+    console.log('registroNuevo', registroNuevo);
+    console.log('registroAntiguo', registroAntiguo);
+
+    this.finanzasService.crearRegistro(registroNuevo).subscribe(resp=>{
+      console.log('resp crearRegistro()', resp);
+    })
+
+    this.finanzasService.actualizarUltimaVersionRegistro(registroAntiguo).subscribe(resp=>{
+      console.log('resp actualizarUltimaVersionRegistro()', resp);
+    })
+    
     console.log('Ingresar presupuesto de gastos');
+
+    
+    this.obtenerSolicitudReabastecimiento();
     this.isVisibleDetalleRegistro = false;
   }
 
-  rechazarSolicitud(id_registro){
+  rechazarSolicitud(reg){
     console.log('Rechazar solicitud');
-    this.isVisibleDetalleRegistro = false;
+    this.isVisibleEnviarPresupuestoAjustado = true;
+    this.listModificarReabastecimiento = [];
+  }
+
+  obtenerProductos(){
+    this.finanzasService.obtenerProductos().subscribe(resp=>{
+      this.listaProductos = resp['productos'].sort((a,b) =>{
+        if(a.id_producto < b.id_producto){
+          return -1
+        }
+        if (a.id_producto > b.id_producto){
+          return 1
+        }
+        return 0;
+      });
+      console.log('listaProductos', this.listaProductos);
+    })
+  }
+
+  cancelarEnviarPresupuestoAjustado(){
+    this.isVisibleEnviarPresupuestoAjustado = false;
+  }
+
+  okEnviarPresupuestoAjustado(){
+    console.log('okEnviarPresupuestoAjustado');
+    
+  }
+
+  addFila(){
+    // console.log('producto', this.productoSelected);
+    let sri = Math.trunc((this.productoSelected.stock_producto * 100)/ this.productoSelected.stock_ideal)
+    let fila = [''+this.productoSelected.id_producto,
+                ''+this.productoSelected.nombre_producto,
+                ''+this.productoSelected.medida_producto,
+                ''+this.productoSelected.stock_ideal,
+                ''+this.productoSelected.stock_producto,
+                ''+sri+'%',
+                ''+this.productoSelected.valor_unitario,
+                '',
+                ''
+              ]
+    // console.log('fila',fila);
+    this.listModificarReabastecimiento.push(fila)
+
+    this.addProd = false;
+    this.puedeEnviarSolicitudModificada = false;
+    this.productoSelected = null
+  }
+
+  onChangeCantidadComprar(ev, row){
+  // console.log('onChangeCantidadComprar', ev);
+  // console.log('onChangeCantidadComprar', row);
+    if (ev != null && ev > 0){
+      this.listModificarReabastecimiento.find(p =>{
+        if (p[0] === row[0]){
+          // console.log('p6 ' + parseInt(p[6]));
+          p[8] = (parseInt(p[6]) * parseInt(ev));
+        }
+      })
+      this.puedeEnviarSolicitudModificada = true;
+    }
+    else{
+      this.listModificarReabastecimiento.find(p => {
+        if (ev <= 0 || ev == null){
+          if (p[0] === row[0]){
+            p[8] = 0;
+          }
+        }
+      })
+      this.puedeEnviarSolicitudModificada = false;
+    }
   }
   
+  activarBtn(){
+    this.addProd = true;
+  }
+
+  enviarSolicitudModificada(){
+    console.log('this.listModificarReabastecimiento', this.listModificarReabastecimiento);
+    console.log('pdf');
+
+    this.formDataPdfReporte = new FormData();
+    let tabla = [];
+    let headerTabla = ['#', 'Nombre', 'Medida', 'Stock ideal', 'Stock actual', '%S.R.I.', 'Valor un.', 'Cant. comprar', 'Valor X Cant']
+    tabla.push(headerTabla);
+
+    let totalAComprar = 0;
+    for (let i of this.listModificarReabastecimiento) {
+      totalAComprar += parseInt(i[8])
+      tabla.push(i)
+    }
+    console.log('tabla', tabla);
+
+    let tabla2 =  []
+    tabla2.push(['Total'])
+    tabla2.push(['$'+totalAComprar])
+    console.log('tabla2', tabla2);
+
+    let nombre_creacion ="Reporte_reabastecimiento_"+this.now.getDate()+this.now.getMonth()+this.now.getFullYear()+this.now.getHours()+this.now.getMinutes()+"_"+this.usuarioLogeado+'.pdf';
+
+
+    const pdfDefinitions :any = {
+      content: [
+        {
+          text: 'Reporte de reabastecimiento modificado', alignment: 'center', style: 'header',
+          margin: [0, 10, 0, 30]
+        },
+        {
+          text: 'Este reporte de reabastecimiento fue generado el día ' + this.now.toLocaleString() + ' por el usuario ' + this.usuarioLogeado + ' y representan los productos que requieren de reabastecerse. El anterior reporte de reabastecimiento fue generado por ' + this.registroRecepcionSolicitudReabastecimiento['id_usuario'] + ' el día ' + this.registroRecepcionSolicitudReabastecimiento['fecha_instancia']+ '. Este documento será utilizado para gestión y apoyo en la toma de decisiones del propio Restaurant Siglo XXI.' , 
+          margin: [0, 0, 0, 20] //izquierda, arriba, derecha, abajo
+        },
+        {
+          table: {
+            body: tabla
+          }
+        },
+        {
+          table : {
+            body: tabla2
+          }, margin: [455, 10, 0, 0]
+        }
+      ],
+      footer: [
+        {
+          text: 'TLNS S.A.', alignment: 'center', fontSize: 10
+        },
+        {
+          text: this.now.getFullYear(),  alignment: 'center', fontSize: 8,
+          margin: [0, 5, 0, 0]
+        }
+      ],
+      styles: {
+        header: {
+          fontSize: 18,
+          bold: true,
+        },
+        subheader: {
+          fontSize: 15,
+          bold: true
+        },
+        quote: {
+          italics: true
+        },
+        small: {
+          fontSize: 8
+        }
+      }
+    }
+
+    const pdf = pdfMake.createPdf(pdfDefinitions)
+    // pdf.open()
+
+    pdf.getBlob((blob) => {
+      // console.log('blob', blob);
+      this.formDataPdfReporte.append("fichero", blob);
+      this.formDataPdfReporte.append("nombre", nombre_creacion);
+      this.finanzasService.subirPdfReporte(this.formDataPdfReporte).subscribe(resp =>{
+        // console.log('resp', resp);
+      })
+    });
+
+
+    let registroNuevo = {
+      descripcion : this.registroRecepcionSolicitudReabastecimiento['descripcion'],
+      id_estado_registro : 7, //estado_registro 2 = Recepcionar solicitud de reabastecimiento (bodega)
+      id_modulo : 5,
+      id_registro_padre : this.registroRecepcionSolicitudReabastecimiento['id_registro'],
+      id_tipo_registro : 1, //tipo_registro 1 = Solicitud de reabastecimiento
+      id_usuario : this.usuarioLogeado,
+      titulo_registro : 'Modificación: '+this.registroRecepcionSolicitudReabastecimiento['titulo_registro'],
+      version : this.registroRecepcionSolicitudReabastecimiento['version'] + 1,
+      id_reporte : -1
+    }
+    let registroAntiguo = {
+      "id_registro" : this.registroRecepcionSolicitudReabastecimiento['id_registro']
+    }
+
+    // console.log('json pdf string', JSON.stringify(pdfDefinitions));
+    // console.log('json datos tabla string', JSON.stringify(tabla));
+
+    const reporteACrear : Reporte = {
+      comentario : 'Reporte modificado del '+this.registroRecepcionSolicitudReabastecimiento['fecha_instancia'].toString(),
+      extension : ".pdf",
+      fecha_creacion : this.now.toLocaleDateString(),
+      id_tipo_reporte : 4,
+      id_usuario : this.usuarioLogeado,
+      nombre_creacion : nombre_creacion,
+      titulo_reporte : 'Sugerencia de reabastecimiento: '+this.registroRecepcionSolicitudReabastecimiento['titulo_registro'],
+    }
+    console.log('reporteACrear: ', reporteACrear);
+    console.log('registroNuevo', registroNuevo);
+    console.log('registroAntiguo', registroAntiguo);
+
+    this.finanzasService.crearReporte(reporteACrear).subscribe(resp => {
+      console.log('resp:', resp);
+      // this.cerrarCrearReporte();
+      registroNuevo.id_reporte = parseInt(resp);
+
+      this.finanzasService.crearRegistro(registroNuevo).subscribe(resp2 => {
+        console.log('resp2', resp2);
+        this.nzNotificacionService.create(
+          'success', 'Registro creado',
+          resp2.toString()
+          // ''
+        );
+
+        this.finanzasService.actualizarUltimaVersionRegistro(registroAntiguo).subscribe(resp => {
+          console.log('resp actualizarUltimaVersionRegistro()', resp);
+        })
+      },
+        error => {
+          // console.log('error', error); 
+          this.nzNotificacionService.create(
+            'error', 'Error al crear registro', 'No es posible crear el registro, intente nuevamente'
+          )
+        });
+
+      this.nzNotificacionService.create(
+        'success', 'Reporte creado',
+        resp.toString()
+        // ''
+      );
+    },
+      error => {
+        // console.log('error', error); 
+        this.nzNotificacionService.create(
+          'error', 'Error al crear reporte', 'No es posible crear el reporte, intente nuevamente'
+        )
+      });
+
+    
+    this.isVisibleDetalleRegistro = false;
+    this.obtenerSolicitudReabastecimiento();
+  }
+
+  eliminarFila(row){
+    let index = this.listModificarReabastecimiento.findIndex( p =>{
+      return p[0] == row[0]
+    })
+    console.log('index', index);
+    this.listModificarReabastecimiento.splice(index, 1);
+  }
 }

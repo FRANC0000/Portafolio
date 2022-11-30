@@ -11,7 +11,9 @@ import { AdministadorService } from './administador.service';
 
 import pdfMake from 'pdfmake/build/pdfmake'
 import pdfFonts from 'pdfmake/build/vfs_fonts'
-import { Registro } from 'src/app/interfaces/registro';
+import { BuzonEntrada, Registro } from 'src/app/interfaces/registro';
+import { Boleta, InstanciarBoleta } from 'src/app/interfaces/carrito-compras';
+import { parse } from 'querystring';
 pdfMake.vfs =  pdfFonts.pdfMake.vfs
 
 @Component({
@@ -101,6 +103,10 @@ export class AdministradorComponent implements OnInit {
   obtenerPlatosConsumidos = [];
   reporteReabastecimiento = [];
   isVisibleSolicitudReabastecimiento = false;
+  buzonEntrada : BuzonEntrada[] = [];
+  listaRegistrosRecepcionSolicitudReabastecimientoModificada = [];
+  listaRegistrosRecepcionSolicitudReabastecimientoAprobada = [];
+  isVisibleMostrarRegistrosAprobadas = false;
 
   ngOnInit() {
     console.log('usuarioLogeado', this.usuarioLogeado);
@@ -112,6 +118,8 @@ export class AdministradorComponent implements OnInit {
     this.obtenerProductos();
     this.obtenerTipoProducto();
     this.obtenerClientes();
+    this.obtenerSolicitudReabastecimientoAprobada();
+    this.obtenerSolicitudReabastecimientoModificada();
 
     this.validateFormCrearUsuario = new FormGroup({
       id_usuario : new FormControl,
@@ -215,6 +223,52 @@ export class AdministradorComponent implements OnInit {
       }
       console.log('listRoles', this.listRoles);
       
+    })
+  }
+
+  obtenerSolicitudReabastecimientoAprobada(){
+    this.administadorService.obtenerSolicitudReabastecimientoAprobada().subscribe(resp=>{
+      this.listaRegistrosRecepcionSolicitudReabastecimientoAprobada = resp['registros']
+
+      console.log('listaRegistrosRecepcionSolicitudReabastecimientoAprobada', this.listaRegistrosRecepcionSolicitudReabastecimientoAprobada);
+
+      for (let reg of this.listaRegistrosRecepcionSolicitudReabastecimientoAprobada){
+        let bzE : BuzonEntrada = {
+          registro : Object(reg),
+          esAprobado : true,
+          esRechazado : false,
+          esEnviada : false
+        }
+        this.buzonEntrada.push(bzE);
+      }
+      this.quitarUltimaVersionFalseBuzon();
+      console.log('buzon',this.buzonEntrada);
+    })    
+  }
+
+  obtenerSolicitudReabastecimientoModificada(){
+    this.administadorService.obtenerSolicitudReabastecimientoModificada().subscribe(resp=>{
+      this.listaRegistrosRecepcionSolicitudReabastecimientoModificada = resp['registros']
+
+      console.log('listaRegistrosRecepcionSolicitudReabastecimientoModificada', this.listaRegistrosRecepcionSolicitudReabastecimientoModificada);
+
+      for (let reg of this.listaRegistrosRecepcionSolicitudReabastecimientoModificada){
+        let bzE : BuzonEntrada = {
+          registro : Object(reg),
+          esAprobado : true,
+          esRechazado : false,
+          esEnviada : false
+        }
+        this.buzonEntrada.push(bzE);
+      }
+      this.quitarUltimaVersionFalseBuzon();
+      console.log('buzon',this.buzonEntrada);
+    })    
+  }
+
+  quitarUltimaVersionFalseBuzon(){
+    this.buzonEntrada = this.buzonEntrada.filter( b=> {
+      return b.registro['ultima_version'] != false
     })
   }
 
@@ -1481,9 +1535,10 @@ export class AdministradorComponent implements OnInit {
           console.log('resp2', resp2);
           this.notification.create(
             'success', 'Registro creado', 
-            resp.toString()
+            resp2.toString()
             // ''
           );
+          this.cerrarCrearReporte();
         },
         error => {
           // console.log('error', error); 
@@ -1563,4 +1618,103 @@ export class AdministradorComponent implements OnInit {
     this.isVisibleSolicitudReabastecimiento = false;
   }
 
+  mostrarRegistrosSolicitudesAprobadas(){
+    this.isVisibleMostrarRegistrosAprobadas = true;
+  }
+
+  cerrarRegistrosSolicitudesAprobadas(){
+    this.isVisibleMostrarRegistrosAprobadas = false;
+  }
+
+  contactarProveedores(reg){
+    console.log('reg', reg);
+    
+    let registroNuevo = {
+      descripcion : reg['descripcion'],
+      id_estado_registro : 6, //estado_registro 2 = Recepcionar solicitud de reabastecimiento (bodega)
+      id_modulo : 1,
+      id_registro_padre : reg['id_registro'],
+      id_tipo_registro : 1, //tipo_registro 1 = Solicitud de reabastecimiento
+      id_usuario : this.usuarioLogeado,
+      titulo_registro : reg['titulo_registro'],
+      version : reg['version'] + 1,
+      id_reporte : reg['reporte']['id_reporte']
+    }
+    let registroAntiguo = {
+      "id_registro" : reg['id_registro']
+    }
+    let boletaAIngresar  : Boleta = {
+      fechaAtencion : this.now.toLocaleDateString(),
+      horaAtencion : this.now.toLocaleTimeString(),
+      idUsuario : 'admin',
+      rutCliente : -1,
+      subtotal : 1
+    }
+    console.log('boletaAIngresar', boletaAIngresar);
+    const instanciarBoleta : InstanciarBoleta ={
+      boleta : boletaAIngresar
+    }
+
+    console.log('registroNuevo', registroNuevo);
+    console.log('registroAntiguo', registroAntiguo);
+
+    this.administadorService.crearRegistro(registroNuevo).subscribe(resp2 => {
+      console.log('resp2', resp2);
+      this.notification.create(
+        'success', 'Registro creado',
+        resp2.toString()
+        // ''
+      );
+
+      // this.administadorService.actualizarUltimaVersionRegistro(registroAntiguo).subscribe(resp => {
+      //   console.log('resp actualizarUltimaVersionRegistro()', resp);
+      // })
+
+      this.administadorService.instanciarBoleta(instanciarBoleta).subscribe(resp => {
+        let boletaAPagar: Boleta = {
+          fechaAtencion: this.now.toLocaleDateString(),
+          horaAtencion: boletaAIngresar.horaAtencion,
+          idUsuario: boletaAIngresar.idUsuario,
+          rutCliente: boletaAIngresar.rutCliente,
+          subtotal: boletaAIngresar.subtotal,
+          descuentos: 0,
+          extras: 0,
+          horaEmision: this.now.toLocaleTimeString(),
+          id_boleta: parseInt(resp),
+          idEstadoBoleta: 5,
+          idTipoPago: 1,
+          total: boletaAIngresar.subtotal
+        }
+        console.log('boletaAPagar', boletaAPagar);
+
+        const boleta = {
+          "boleta": boletaAPagar
+        }
+        console.log('boleta', boleta);
+
+        // this.administadorService.modificarBoleta(boleta).subscribe(resp => {
+        //   console.log('resp modificarBoleta', resp);
+        //   const transaccion = {
+        //     "rut_cliente": boletaAPagar.rutCliente,
+        //     "id_boleta": boletaAPagar.id_boleta,
+        //     "valor": boletaAPagar.total,
+        //     "id_cartera_pagos": "-3",
+        //   }
+
+        //   this.administadorService.crearTransaccion(transaccion).subscribe(resp3 => {
+        //     console.log('resp', resp3);
+        //   })
+        // })
+      })
+    },
+      error => {
+        // console.log('error', error); 
+        this.notification.create(
+          'error', 'Error al crear registro', 'No es posible crear el registro, intente nuevamente'
+        )
+      });
+    this.obtenerSolicitudReabastecimientoAprobada();
+    this.obtenerSolicitudReabastecimientoModificada();
+    this.cerrarRegistrosSolicitudesAprobadas();
+  }
 }

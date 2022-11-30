@@ -47,28 +47,80 @@
             <div>
                 <div class="pedidos-row" *ngIf="listaRegistrosRecepcionSolicitudReabastecimientoFinanzas?.length > 0">
                   <div *ngFor="let reg of listaRegistrosRecepcionSolicitudReabastecimientoFinanzas">
-                    <nz-card style="width:300px; margin: 0px 2px; margin-bottom: 10px;" nzTitle="Registro #{{reg.id_registro}}">
-                      <div>
-                        <label for=""> Título: {{reg.titulo_registro}}</label>
-                        <br>
-                        <label for=""> Creado por: {{reg.id_usuario}}</label>
-                        <br>
-                        <label for=""> Fecha: {{reg.fecha_instancia | date: 'dd/MM/yyyy HH:mm:ss'}}</label>
-        
-                      </div>
-                      <br>
-                      <div class="botones-pedidos">
-                        <button nz-button (click)="verDetalleRegistro(reg)" style="width: 100%;">
-                          Ver detalle de la solicitud
-                        </button>
-                      </div>
-                    </nz-card>
+                    <div *ngIf="reg.ultima_version" class="ultima-version">
+                        <nz-card style="width:300px; margin: 0px 2px; margin-bottom: 10px;" nzTitle="Registro #{{reg.id_registro}}">
+                          <div>
+                            <label for=""> Título: {{reg.titulo_registro}}</label>
+                            <br>
+                            <label for=""> Creado por: {{reg.id_usuario}}</label>
+                            <br>
+                            <label for=""> Fecha: {{reg.fecha_instancia | date: 'dd/MM/yyyy HH:mm:ss'}}</label>
+            
+                          </div>
+                          <br>
+                          <div class="botones-pedidos">
+                            <button nz-button (click)="verDetalleRegistro(reg)" style="width: 100%;">
+                              Ver detalle de la solicitud
+                            </button>
+                          </div>
+                        </nz-card>
+                    </div>
+                    <!-- <div *ngIf="!reg.ultima_version" class="no-ultima-version">
+                        <nz-card style="width:300px; margin: 0px 2px; margin-bottom: 10px; background-color: rgba(228, 228, 228, 0.493);" nzTitle="Registro #{{reg.id_registro}}">
+                          <div>
+                            <label for=""> Título: {{reg.titulo_registro}}</label>
+                            <br>
+                            <label for=""> Creado por: {{reg.id_usuario}}</label>
+                            <br>
+                            <label for=""> Fecha: {{reg.fecha_instancia | date: 'dd/MM/yyyy HH:mm:ss'}}</label>
+            
+                          </div>
+                          <br>
+                          <div class="botones-pedidos">
+                            <button nz-button (click)="verDetalleRegistroNoUltimaVersion(reg)" style="width: 100%;">
+                              Ver detalle de la solicitud
+                            </button>
+                          </div>
+                        </nz-card>
+                    </div> -->
                   </div>
                 </div>
                 <div class="pedidos-row sin-pedidos" *ngIf="listaRegistrosRecepcionSolicitudReabastecimientoFinanzas?.length == 0">
                   No hay solicitudes de reabastecimiento pendientes en este momento.
                 </div>
-              </div>
+            </div>
+            <br>
+            <div class="menu-header">
+                <h2>Pago de reabastecimiento</h2>
+            </div>
+            <div>
+                <div class="pedidos-row" *ngIf="listPagosReabastecimiento.length > 0">
+                    <div *ngFor="let b of listPagosReabastecimiento">
+                        <nz-card style="width:300px; margin: 0px 2px; margin-bottom: 10px;"
+                            nzTitle="Boleta #{{b.boleta.id_boleta}}">
+                            <div>
+                                <h3 *ngIf="b.esPago1" style="color: mediumorchid; font-weight: bold; text-align: center">Primer pago</h3>
+                                <h3 *ngIf="b.esPago2" style="color: mediumturquoise; font-weight: bold; text-align: center">Segundo pago</h3>
+                                <nz-divider style="margin: 10px 0px;"></nz-divider>
+                                <label for=""> Fecha de atención: {{b.boleta.fecha_atencion}}</label>
+                                <br>
+                                <label for=""> Hora: {{b.boleta.hora_atencion}}</label>
+                                <br>
+                                <label for=""> Total a pagar: ${{b.boleta.total | currency: 'CLP'}}</label>
+                            </div>
+                            <br>
+                            <div class="botones-pedidos">
+                                <button nz-button style="width: 100%;" (click)="abrirCaja(b.boleta)">
+                                    Abrir caja
+                                </button>
+                            </div>
+                        </nz-card>
+                    </div>
+                </div>
+                <div class="pedidos-row sin-pedidos" *ngIf="listPagosReabastecimiento.length == 0">
+                    No hay pagos de reabastecimiento
+                </div>
+            </div>
         </div>
         
         <!-- ABRIR CAJA PARA RECIBIR PAGO EN EFECTIVO -->
@@ -146,13 +198,13 @@
                         <button nz-button 
                         nz-popconfirm
                         nzPopconfirmTitle="¿Seguro que quieres aprobar la solicitud?" nzPopconfirmPlacement="top"
-                        (nzOnConfirm)="okAprobarSolicitud(registroRecepcionSolicitudReabastecimiento?.id_registro)">
+                        (nzOnConfirm)="okAprobarSolicitud(registroRecepcionSolicitudReabastecimiento)">
                             Aprobar solicitud 
                         </button>
                         <button nz-button nzType="danger"
                         nz-popconfirm
                         nzPopconfirmTitle="¿Seguro que quieres rechazar la solicitud?" nzPopconfirmPlacement="top"
-                        (nzOnConfirm)="rechazarSolicitud(registroRecepcionSolicitudReabastecimiento?.id_registro)">
+                        (nzOnConfirm)="rechazarSolicitud(registroRecepcionSolicitudReabastecimiento)">
                             Rechazar solicitud 
                         </button>
                     </div>
@@ -160,12 +212,106 @@
             </ng-container>
         </nz-drawer>
 
-        <!-- APROBAR SOLICITUD -->
-        <nz-modal [(nzVisible)]="isVisibleAprobarSolicitud" nzTitle="Solicitud de reabastecimiento" (nzOnCancel)="cancelarAprobarSolicitud()" (nzOnOk)="okAprobarSolicitud()">
+        <!-- VER DETALLE SOLICITUD REABASTECIMIENTO NO ES ULTIMA VERSION-->
+        <nz-drawer [nzWidth]="700" [nzClosable]="true" [nzVisible]="isVisibleDetalleRegistroNoUltimaVersion" nzPlacement="right"
+        nzTitle="Detalle de la solicitud" (nzOnClose)="cerrarDrawerDetalleSolicitudReabastecimiento()"
+        style="background-color: rgba(81, 0, 195, 0.319);">
+        <ng-container>
+        <div>
+            {{registroRecepcionSolicitudReabastecimiento?.id_registro}}
+            {{registroRecepcionSolicitudReabastecimiento?.reporte.nombre_creacion}}
+
+            <iframe [src]="linkSolicitudReabastecimiento | safe" style="height: 700px; width: 100%;"></iframe>
+
+            <!-- <div style="text-align: center;">
+                <button nz-button 
+                nz-popconfirm
+                nzPopconfirmTitle="¿Seguro que quieres aprobar la solicitud?" nzPopconfirmPlacement="top"
+                (nzOnConfirm)="okAprobarSolicitud(registroRecepcionSolicitudReabastecimiento)">
+                    Aprobar solicitud 
+                </button>
+                <button nz-button nzType="danger"
+                nz-popconfirm
+                nzPopconfirmTitle="¿Seguro que quieres rechazar la solicitud?" nzPopconfirmPlacement="top"
+                (nzOnConfirm)="rechazarSolicitud(registroRecepcionSolicitudReabastecimiento)">
+                    Rechazar solicitud 
+                </button>
+            </div> -->
+        </div>
+        </ng-container>
+        </nz-drawer>
+
+        <!-- ENVIAR PRESUPUESTO AJUSTADO -->
+        <nz-drawer [nzWidth]="700" [nzClosable]="true" [nzVisible]="isVisibleEnviarPresupuestoAjustado" nzPlacement="left"
+        nzTitle="Ajustar presupuesto" (nzOnClose)="cancelarEnviarPresupuestoAjustado()"
+        style="background-color: rgba(81, 0, 195, 0.319);">
             <ng-container>
-                <h4 nz-title>¿Seguro que quieres aprobar la solicitud de reabastecimiento?</h4>
+                <div>
+                    <h3 nz-title> Título: {{registroRecepcionSolicitudReabastecimiento?.titulo_registro}} </h3>
+                    <h5 nz-title> Creado por:{{registroRecepcionSolicitudReabastecimiento?.id_usuario}} </h5>
+                    <h5 nz-title> Fecha: {{registroRecepcionSolicitudReabastecimiento?.fecha_instancia}} </h5>
+                </div>
+                <nz-divider></nz-divider>
+                <div>
+                    <div>
+                        <nz-select nzPlaceHolder="Elegir producto" [(ngModel)]="productoSelected" style="width: 200px;" (ngModelChange)="activarBtn()" nzShowSearch nzAllowClear>
+                            <ng-container *ngFor="let pr of listaProductos">
+                                <nz-option [nzValue]="pr" [nzLabel]="pr.nombre_producto"></nz-option>
+                            </ng-container>
+                        </nz-select>
+                        <button *ngIf="!addProd" nz-button disabled>Añadir producto</button>
+                        <button *ngIf="addProd" (click)="addFila()" nzType="primary" nz-button>Añadir producto</button>
+                    </div>
+                    <br>
+                    <div>
+                        <table>
+                            <tr>
+                                <!-- <th>#</th> -->
+                                <!-- <th>ID</th> -->
+                                <th>Nombre</th>
+                                <th>Medida</th>
+                                <th>Stock ideal</th>
+                                <th>Stock actual</th>
+                                <th>%S.R.I.</th>
+                                <th>Valor unitario</th>
+                                <th>Cant. comprar</th>
+                                <th>Valor X cantidad</th>
+                                <th>Acción</th>
+                            </tr>
+    
+                            <tr *ngFor="let row of listModificarReabastecimiento; let i = index;" class="mesa-row">
+                                <!-- <td>{{i+1}}</td> -->
+                                <!-- <td>{{row[0]}}</td> -->
+                                <td>{{row[1]}}</td>
+                                <td>{{row[2]}}</td>
+                                <td>{{row[3]}}</td>
+                                <td>{{row[4]}}</td>
+                                <td>{{row[5]}}</td>
+                                <td>{{row[6]}}</td>
+                                <td> <!--cant comprar -->
+                                    <input nz-input [ngModel]="undefined" (ngModelChange)="onChangeCantidadComprar($event, row)"/>
+                                </td>  
+                                <td>${{row[8]}}</td> <!--valor x cantidad -->
+                                <td>
+                                    <a (click)="eliminarFila(row)">Eliminar</a>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                    <br>
+                    <div>
+                        <button *ngIf="listModificarReabastecimiento.length > 0 && puedeEnviarSolicitudModificada" nz-button nz-popconfirm
+                        nzPopconfirmTitle="¿Seguro que quieres enviar la solicitud?" nzPopconfirmPlacement="top"
+                        (nzOnConfirm)="enviarSolicitudModificada()">
+                            Enviar solicitud modificada
+                        </button>
+                        <button *ngIf="listModificarReabastecimiento.length <= 0 || !puedeEnviarSolicitudModificada" nz-button disabled>
+                            Enviar solicitud modificada
+                        </button>
+                    </div>
+                </div>
             </ng-container>
-        </nz-modal>
+        </nz-drawer>
     </div>
 
     <div *ngIf="resumenPago">

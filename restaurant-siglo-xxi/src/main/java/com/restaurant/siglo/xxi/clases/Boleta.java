@@ -26,6 +26,18 @@ import javax.persistence.Table;
 					query = " select b from Boleta b "
 							+ "where b.estadoBoleta.id_estado_boleta = 4 "
 							+ "order by 4 desc "
+			),
+			@NamedQuery(
+					name = "obtenerBoletasPago1Reabastecimiento", 
+					query = " select b from Boleta b "
+							+ "where b.estadoBoleta.id_estado_boleta = 5 "
+							+ "order by 4 desc "
+			),
+			@NamedQuery(
+					name = "obtenerBoletasPago2Reabastecimiento", 
+					query = " select b from Boleta b "
+							+ "where b.estadoBoleta.id_estado_boleta = 6 "
+							+ "order by 4 desc "
 			)
 		})
 public class Boleta {

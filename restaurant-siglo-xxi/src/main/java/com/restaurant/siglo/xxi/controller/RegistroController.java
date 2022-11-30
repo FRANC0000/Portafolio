@@ -50,10 +50,42 @@ public class RegistroController {
 		return resp;	
 	}
 	
+	@RequestMapping(value="/obtenerSolicitudReabastecimientoRechazada")
+	public String obtenerSolicitudReabastecimientoRechazada() throws JSONException {
+		
+		String resp = registroService.obtenerSolicitudReabastecimientoRechazada();
+		
+		return resp;	
+	}
+	
 	@RequestMapping(value="/obtenerSolicitudReabastecimientoAprobada")
 	public String obtenerSolicitudReabastecimientoAprobada() throws JSONException {
 		
 		String resp = registroService.obtenerSolicitudReabastecimientoAprobada();
+		
+		return resp;	
+	}
+	
+	@RequestMapping(value="/obtenerSolicitudReabastecimientoModificada")
+	public String obtenerSolicitudReabastecimientoModificada() throws JSONException {
+		
+		String resp = registroService.obtenerSolicitudReabastecimientoModificada();
+		
+		return resp;	
+	}
+	
+	@RequestMapping(value="/obtenerSolicitudReabastecimientoProveedores")
+	public String obtenerSolicitudReabastecimientoProveedores() throws JSONException {
+		
+		String resp = registroService.obtenerSolicitudReabastecimientoProveedores();
+		
+		return resp;	
+	}
+	
+	@RequestMapping(value="/actualizarUltimaVersionRegistro")
+	public String actualizarUltimaVersionRegistro(@RequestBody Map<String, Object> registro) throws JSONException {
+		
+		String resp = registroService.actualizarUltimaVersionRegistro(registro);
 		
 		return resp;	
 	}

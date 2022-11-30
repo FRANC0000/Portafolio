@@ -47,4 +47,10 @@ public interface BoletaRepository extends JpaRepository<Boleta, Integer>{
 	
 	@Query(name = "obtenerBoletasPorPagarEnCaja", nativeQuery = true)
 	List<Boleta> obtenerBoletasPorPagarEnCaja();
+	
+	@Query(name = "obtenerBoletasPago1Reabastecimiento", nativeQuery = true)
+	List<Boleta> obtenerBoletasPago1Reabastecimiento();
+	
+	@Query(name = "obtenerBoletasPago2Reabastecimiento", nativeQuery = true)
+	List<Boleta> obtenerBoletasPago2Reabastecimiento();
 }

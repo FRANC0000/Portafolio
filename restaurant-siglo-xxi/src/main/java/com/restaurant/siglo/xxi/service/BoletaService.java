@@ -12,6 +12,8 @@ public interface BoletaService {
 	public String obtenerBoletaEnProcesoPorIdCliente(Map<String, Object> idCliente) throws ParseException;
 	public String boletaAModificar(Map<String, Object> boletaAModificar) throws ParseException;
 	public String obtenerBoletasPorPagarEnCaja();
+	public String obtenerBoletasPago1Reabastecimiento();
+	public String obtenerBoletasPago2Reabastecimiento();
 	
 	
 }

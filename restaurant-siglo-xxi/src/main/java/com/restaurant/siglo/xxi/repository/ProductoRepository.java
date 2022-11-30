@@ -40,5 +40,8 @@ public interface ProductoRepository extends JpaRepository<Producto, Integer>{
 	String agregarNombreImagenPorIdProducto(
 			@Param("id_producto") int id_producto,
 			@Param("nombre_archivo") String nombre_archivo);
-
+	
+	@Query(value = "select restar_stock(:id_producto, :cantidad) ", nativeQuery = true)
+	String restarStock(@Param("id_producto") int id_producto,
+			@Param("cantidad") int nombre_archivo);
 }

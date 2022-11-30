@@ -106,7 +106,13 @@
         <div class="funcionalidades">
           <br>
           <div class="card" (click)="mostrarRegistros()">
-            <h3>Historial de registros</h3>
+            <h3>Historial de solicitudes de reabastecimiento</h3>
+          </div>
+        </div>
+        <div class="funcionalidades">
+          <br>
+          <div class="card" (click)="mostrarRegistrosSolicitudesAprobadas()">
+            <h3>Solicitudes aprobadas</h3>
           </div>
         </div>
       </div>
@@ -1234,7 +1240,7 @@
   </nz-modal>
 
    <!-- VER LISTADO DE REPORTES -->
-    <nz-modal nzTitle="Listado de reportes" [nzContent]="listadoReportesContent" [nzWidth]="800" [(nzVisible)]="isVisibleVerReportes" (nzOnOk)="okVerReportes()" (nzOnCancel)="okVerReportes()" [nzFooter]="null">
+    <nz-modal nzTitle="Listado de reportes" [nzContent]="listadoReportesContent" [nzWidth]="1200" [(nzVisible)]="isVisibleVerReportes" (nzOnOk)="okVerReportes()" (nzOnCancel)="okVerReportes()" [nzFooter]="null">
 
       <ng-container #listadoReportesContent>
           <div>
@@ -1244,8 +1250,9 @@
             </div> -->
               <table>
                   <tr>
-                      <th>ID reporte</th>
+                      <th>#</th>
                       <th>Título</th>
+                      <th>Descripción</th>
                       <th>Fecha creación</th>
                       <th>Tipo</th>
                       <th>Acción</th>
@@ -1253,13 +1260,15 @@
                   <tr *ngFor="let reporte of listReportes" class="mesa-row">
                       <td>{{reporte.id_reporte}}</td>
                       <td>{{reporte.titulo_reporte}}</td>
+                      <td>{{reporte.comentario}}</td>
                       <td>{{reporte.fecha_creacion | date : 'dd/MM/yyyy'}}</td>
                       <td>{{reporte.nombre_tipo_reporte}}</td>
                       <td>
                           <a nz-popconfirm
                           nzPopconfirmTitle="¿Seguro que quieres eliminar este reporte?" nzPopconfirmPlacement="top"
                           (nzOnConfirm)="eliminarReporte(reporte.id_reporte)">Eliminar</a>
-                          <a>Descargar archivo</a>
+                          <br>
+                          <a href="http://localhost:8085/restaurantSXXI/imagenes-rxxi/reportes/{{reporte.nombre_creacion}}" target="_blank">Abrir archivo</a>
                       </td>
 
                   </tr>
@@ -1270,13 +1279,13 @@
     </nz-modal>
 
     <!-- VER LISTADO DE SOLICITUDES DE REABASTECIMIENTO -->
-    <nz-modal nzTitle="Listado de solicitudes de reabastecimiento" [nzContent]="listadoSolicitudesReabastecimientoContent" [nzWidth]="800" [(nzVisible)]="isVisibleSolicitudReabastecimiento" (nzOnOk)="okSolicitudReabastecimiento()" (nzOnCancel)="okSolicitudReabastecimiento()" [nzFooter]="null">
+    <nz-modal nzTitle="Listado de solicitudes de reabastecimiento" [nzContent]="listadoSolicitudesReabastecimientoContent" [nzWidth]="1000" [(nzVisible)]="isVisibleSolicitudReabastecimiento" (nzOnOk)="okSolicitudReabastecimiento()" (nzOnCancel)="okSolicitudReabastecimiento()" [nzFooter]="null">
 
       <ng-container #listadoSolicitudesReabastecimientoContent>
           <div>
               <table>
                   <tr>
-                      <th>ID reporte</th>
+                      <th>#</th>
                       <th>Título</th>
                       <th>Fecha creación</th>
                       <th>Tipo</th>
@@ -1291,9 +1300,38 @@
                           <a nz-popconfirm
                           nzPopconfirmTitle="¿Seguro que quieres eliminar este reporte?" nzPopconfirmPlacement="top"
                           (nzOnConfirm)="eliminarReporte(reporte.id_reporte)">Eliminar</a>
-                          <a>Descargar archivo</a>
+                          <br>
+                          <a href="http://localhost:8085/restaurantSXXI/imagenes-rxxi/reportes/{{reporte.nombre_creacion}}" target="_blank">Abrir archivo</a>
                       </td>
 
+                  </tr>
+              </table>
+          </div>
+      </ng-container>
+
+    </nz-modal>
+
+    <!-- VER LISTADO DE SOLICITUDES DE REABASTECIMIENTO APROBADAS-->
+    <nz-modal nzTitle="Listado de solicitudes aprobadas" [nzContent]="listadoSolicitudesReabastecimientoAprobadasContent" [nzWidth]="1000" [(nzVisible)]="isVisibleMostrarRegistrosAprobadas" (nzOnOk)="cerrarRegistrosSolicitudesAprobadas()" (nzOnCancel)="cerrarRegistrosSolicitudesAprobadas()" [nzFooter]="null">
+
+      <ng-container #listadoSolicitudesReabastecimientoAprobadasContent>
+          <div>
+              <table>
+                  <tr>
+                      <th>Título</th>
+                      <th>Usuario</th>
+                      <th>Fecha creación</th>
+                      <th>Acción</th>
+                  </tr>
+                  <tr *ngFor="let bzE of buzonEntrada" class="mesa-row">
+                      <td>{{bzE.registro.titulo_registro}}</td>
+                      <td>{{bzE.registro.id_usuario}}</td>
+                      <td>{{bzE.registro.fecha_instancia | date: 'dd/MM/yyyy HH:mm:ss'}}</td>
+                      <td>
+                        <a href="http://localhost:8085/restaurantSXXI/imagenes-rxxi/reportes/{{bzE.registro.reporte.nombre_creacion}}" target="_blank">Abrir archivo</a>
+                        <br>
+                        <button nz-button (click)="contactarProveedores(bzE.registro)" nzType="primary"> Contactar proveedores </button>
+                      </td>
                   </tr>
               </table>
           </div>

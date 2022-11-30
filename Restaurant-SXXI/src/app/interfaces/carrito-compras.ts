@@ -40,6 +40,12 @@ export interface Boleta{
     idEstadoBoleta ?: number
 }
 
+export interface PagosReabastecimiento{
+    boleta : Boleta,
+    esPago1 : boolean,
+    esPago2 : boolean
+}
+
 export interface TipoPago{
     id_tipo_pago,
     nombre_tipo_pago,

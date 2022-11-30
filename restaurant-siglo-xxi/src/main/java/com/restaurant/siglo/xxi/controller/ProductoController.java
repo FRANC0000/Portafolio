@@ -60,6 +60,14 @@ public class ProductoController {
         return resp;    
     }
     
+    @RequestMapping(value="/restarStock")
+    public String restarStock(@RequestBody Map<String, Object> producto) throws ParseException {
+        
+        String resp = productoService.restarStock(producto);
+        
+        return resp;    
+    }
+    
     @RequestMapping(value="/obtenerTipoProducto")
     public String obtenerTipoProducto() throws JSONException, ParseException{
         String listTipoProducto = productoService.obtenerTipoProducto();

@@ -1,5 +1,6 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { InstanciarBoleta } from 'src/app/interfaces/carrito-compras';
 import { user } from 'src/app/interfaces/user';
 
 @Injectable({
@@ -206,4 +207,46 @@ export class AdministadorService {
       'http://localhost:8085/restaurantSXXI/rest-rsxii/registro/crearRegistro', registro , {responseType : 'text'} //asi se tiene que llamar en el controller
     );
   } 
+
+  public instanciarBoleta(instanciarBoleta : InstanciarBoleta){
+    return this.http.post(
+      'http://localhost:8085/restaurantSXXI/rest-rsxii/boleta/instanciarBoleta', instanciarBoleta, {responseType : 'text'}
+    );
+  }
+
+  obtenerSolicitudReabastecimientoAprobada(){
+    return this.http.get(
+      'http://localhost:8085/restaurantSXXI/rest-rsxii/registro/obtenerSolicitudReabastecimientoAprobada'
+    );
+  }
+  
+  obtenerSolicitudReabastecimientoModificada(){
+    return this.http.get(
+      'http://localhost:8085/restaurantSXXI/rest-rsxii/registro/obtenerSolicitudReabastecimientoModificada'
+    );
+  }
+
+  public actualizarUltimaVersionRegistro(id_registro) {
+    return this.http.post(
+      'http://localhost:8085/restaurantSXXI/rest-rsxii/registro/actualizarUltimaVersionRegistro', id_registro , {responseType : 'text'} //asi se tiene que llamar en el controller
+    );
+  } 
+
+  public crearTransaccion(trans){
+    return this.http.post(
+      'http://localhost:8085/restaurantSXXI/rest-rsxii/transaccion/crearTransaccion', trans, {headers : this.headers}
+    );
+  }
+
+  public crearCarteraPagos(cart){
+    return this.http.post(
+      'http://localhost:8085/restaurantSXXI/rest-rsxii/cartera/crearCarteraPagos', cart, {headers : this.headers}
+    );
+  }
+
+  public modificarBoleta(boleta){
+    return this.http.post(
+      'http://localhost:8085/restaurantSXXI/rest-rsxii/boleta/boletaAModificar', boleta, {headers : this.headers}
+    );
+  }
 }
