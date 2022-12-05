@@ -214,3 +214,8 @@ tr:nth-child(even) {
   white-space: nowrap;
   width: 150px;
 }
+
+::ng-deep .advanced-pie-legend-wrapper {
+  display: grid !important;
+}
+

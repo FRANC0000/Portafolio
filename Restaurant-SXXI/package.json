@@ -19,6 +19,8 @@
     "@angular/platform-browser": "~8.2.14",
     "@angular/platform-browser-dynamic": "~8.2.14",
     "@angular/router": "~8.2.14",
+    "@swimlane/ngx-charts": "^13.0.2",
+    "dom-to-image": "^2.6.0",
     "ng-zorro-antd": "^8.5.2",
     "pdfmake": "^0.2.6",
     "rxjs": "~6.4.0",

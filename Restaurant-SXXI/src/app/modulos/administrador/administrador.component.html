@@ -1104,7 +1104,7 @@
                             <nz-select nzPlaceHolder="Elegir tipo de reporte" name="id_tipo_reporte" formControlName="id_tipo_reporte"
                             (ngModelChange)="onChangeTipoReporte($event)">
                                 <ng-container *ngFor="let tr of listTipoReportes">
-                                    <nz-option [nzValue]="tr.id_tipo_reporte" [nzLabel]="tr.nombre_tipo_reporte"></nz-option>
+                                    <nz-option [nzValue]="tr.id_tipo_reporte" [nzLabel]="tr.nombre_tipo_reporte" *ngIf="tr.id_tipo_reporte != 7"></nz-option>
                                 </ng-container>
                             </nz-select>
                         </nz-form-control>
@@ -1123,8 +1123,59 @@
 
         <br>
 
-        <div *ngIf="mostrarDetalleVistaReporte">
+        <div *ngIf="mostrarDetalleVistaReporte" id="vista-reporte" style="background-color: white; padding: 2px;">
           <div *ngIf="tipoReporteSelected == 1">
+            <div nz-row>
+              <div nz-col nzSpan="11">
+                <div>
+                  <h3 nz-title style="background-color: rgba(81, 0, 195, 0.319); text-align: center; margin-bottom: 0;"> Cantidad de productos </h3>
+                </div>
+                <div style="display: grid; border: 1px solid rgba(81, 0, 195, 0.319); border-radius: 0px 0px 10px 10px; justify-items: center; align-items: center;">
+                  <ngx-charts-number-card
+                    [view]="viewCantidadProductos"
+                    [results]="kpiCantidadProductos"
+                    [cardColor]="cardColor">
+                  </ngx-charts-number-card>
+                </div>
+              </div>
+              <div nz-col nzSpan="2"></div>
+              <div nz-col nzSpan="11">
+                <div>
+                  <h3 nz-title style="background-color: rgba(81, 0, 195, 0.319); text-align: center; margin-bottom: 0;"> Relación tipo de productos </h3>
+                </div>
+                <div style="display: grid; border: 1px solid rgba(81, 0, 195, 0.319); border-radius: 0px 0px 10px 10px;  justify-items: center; align-items: center;">
+                  <ngx-charts-pie-chart
+                    [view]="viewCantidadProductos"
+                    [scheme]="colorScheme"
+                    [results]="kpiRelacionProductos"
+                    [gradient]="true"
+                    [legend]="false"
+                    [labels]="true"
+                    [doughnut]="false"
+                    >
+                  </ngx-charts-pie-chart>
+                </div>
+              </div>
+            </div>
+            <br>
+            <div nz-row>
+              <div>
+                <h3 nz-title style="background-color: rgba(81, 0, 195, 0.319); text-align: center; margin-bottom: 0;"> Reporte de stock de productos </h3>
+              </div>
+              <div style="display: grid; border: 1px solid rgba(81, 0, 195, 0.319); border-radius: 0px 0px 10px 10px; justify-items: center; align-items: center;">
+                <ngx-charts-bar-vertical-2d
+                    [view]="viewStock"
+                    [scheme]="colorScheme"
+                    [results]="kpiDetalleProductos"
+                    [gradient]="true"
+                    [xAxis]="true"
+                    [yAxis]="true"
+                    [legend]="true"
+                    legendTitle="Cantidades">
+                  </ngx-charts-bar-vertical-2d> 
+              </div>
+            </div>
+
             <h3 nz-title> Reporte de stock de productos </h3>
             <table>
               <tr>
@@ -1135,8 +1186,8 @@
                 <th>Stock ideal</th>
                 <th>Stock actual</th>
                 <th>%Respecto ideal</th>
-                <th>%Productos faltantes</th>
-                <th>Valor unitario</th>
+                <th>Tipo</th>
+                <th>Vence en</th>
               </tr>
               <tr *ngFor="let row of valoresRespuestaObtenerReporte; let i = index;" class="mesa-row">
                 <td>{{i+1}}</td>
@@ -1152,18 +1203,80 @@
             </table>
           </div>
           <div *ngIf="tipoReporteSelected == 2">
-            <h3 nz-title> Reporte de clientes atendidos </h3>
-            <table>
+            <div nz-row>
+              <div nz-col nzSpan="11">
+                <div>
+                  <h3 nz-title style="background-color: rgba(81, 0, 195, 0.319); text-align: center; margin-bottom: 0;"> Reporte de clientes atendidos </h3>
+                </div>
+                <div style="display: grid; border: 1px solid rgba(81, 0, 195, 0.319); border-radius: 0px 0px 10px 10px; justify-items: center; align-items: center;">
+                  <ngx-charts-number-card
+                    [view]="viewClientesAtendidos"
+                    [results]="kpiClientesAtendidos"
+                    [cardColor]="cardColor">
+                  </ngx-charts-number-card>
+                </div>
+              </div>
+              <div nz-col nzSpan="2"></div>
+              <div nz-col nzSpan="11">
+                <div>
+                  <h3 nz-title style="background-color: rgba(81, 0, 195, 0.319); text-align: center; margin-bottom: 0;"> Reporte de clientes atendidos por boleta </h3>
+                </div>
+                <div style="display: grid; border: 1px solid rgba(81, 0, 195, 0.319); border-radius: 0px 0px 10px 10px;  justify-items: center; align-items: center;">
+                  <ngx-charts-pie-chart
+                    [view]="viewTipoPago"
+                    [scheme]="colorScheme"
+                    [results]="kpiTipoPago"
+                    [gradient]="true"
+                    [legend]="false"
+                    [labels]="true"
+                    [doughnut]="false"
+                    >
+                  </ngx-charts-pie-chart>
+                </div>
+              </div>
+            </div>
+            <br>
+            <div>
+              <div>
+                <h3 nz-title style="background-color: rgba(81, 0, 195, 0.319); text-align: center; margin-bottom: 0;"> Reporte de ingresos por cliente este mes </h3>
+              </div>
+              <div style="display: grid; border: 1px solid rgba(81, 0, 195, 0.319); border-radius: 0px 0px 10px 10px; justify-items: center; align-items: center;">
+                <ngx-charts-bar-vertical
+                  [view]="viewIngresoClientes"
+                  [scheme]="colorScheme"
+                  [results]="kpiIngresoClientes"
+                  [gradient]="gradient"
+                  [xAxis]="showXAxis"
+                  [yAxis]="showYAxis"
+                  [legend]="showLegend"
+                  [showXAxisLabel]="showXAxisLabel"
+                  [showYAxisLabel]="showYAxisLabel"
+                  [xAxisLabel]="xAxisLabel"
+                  [yAxisLabel]="yAxisLabel"
+                >
+                </ngx-charts-bar-vertical>
+              </div>
+            </div>
+
+            <!-- <h3 nz-title> Reporte de clientes atendidos </h3> -->
+            <!-- <table>
               <tr>
                 <th>Clientes atendidos</th>
               </tr>
               <tr *ngFor="let row of clientesAtendidosMes; let i = index;" class="mesa-row">
                 <td>{{row[0]}}</td>
               </tr>
-            </table>
+            </table> -->
+            <!-- <div style="display: grid;">
+              <ngx-charts-number-card
+                [view]="viewClientesAtendidos"
+                [results]="kpiClientesAtendidos"
+                [cardColor]="cardColor">
+              </ngx-charts-number-card>
+            </div>
             <br>
-            <h3 nz-title> Reporte de ingresos por cliente este mes </h3>
-            <table>
+            <h3 nz-title> Reporte de ingresos por cliente este mes </h3> -->
+            <!-- <table>
               <tr>
                 <th>RUT Cliente</th>
                 <th>Ingresos este mes</th>
@@ -1172,10 +1285,27 @@
                 <td>{{row[0]}}</td>
                 <td>{{row[1]}}</td>
               </tr>
-            </table>
+            </table> -->
+            <!-- <div style="display: grid;">
+              <ngx-charts-bar-vertical
+                [view]="viewIngresoClientes"
+                [scheme]="colorScheme"
+                [results]="kpiIngresoClientes"
+                [gradient]="gradient"
+                [xAxis]="showXAxis"
+                [yAxis]="showYAxis"
+                [legend]="showLegend"
+                [showXAxisLabel]="showXAxisLabel"
+                [showYAxisLabel]="showYAxisLabel"
+                [xAxisLabel]="xAxisLabel"
+                [yAxisLabel]="yAxisLabel"
+              >
+              </ngx-charts-bar-vertical>
+            </div>
+
             <br>
-            <h3 nz-title> Reporte de clientes atendidos por boleta </h3>
-            <table>
+            <h3 nz-title> Reporte de clientes atendidos por boleta </h3> -->
+            <!-- <table>
               <tr>
                 <th>RUT Cliente</th>
                 <th>Estado boleta</th>
@@ -1186,11 +1316,39 @@
                 <td>{{row[1]}}</td>
                 <td>{{row[2]}}</td>
               </tr>
-            </table>
+            </table> -->
+            <!-- <div style="display: grid;">
+              <ngx-charts-pie-chart
+                [view]="viewTipoPago"
+                [scheme]="colorScheme"
+                [results]="kpiTipoPago"
+                [gradient]="gradient"
+                [legend]="showLegend"
+                [legendPosition]="legendPosition"
+                [labels]="showLabels"
+                [doughnut]="false"
+                >
+              </ngx-charts-pie-chart>
+            </div> -->
 
           </div>
           <div *ngIf="tipoReporteSelected == 3">
-            <h3 nz-title> Reporte de platos consumidos </h3>
+            <div nz-row>
+              <div>
+                <h3 nz-title style="background-color: rgba(81, 0, 195, 0.319); text-align: center; margin-bottom: 0;"> Reporte de platos consumidos </h3>
+              </div>
+              <div style="display: grid; border: 1px solid rgba(81, 0, 195, 0.319); border-radius: 0px 0px 10px 10px;  justify-items: center; align-items: center; height: 100%;">
+                <ngx-charts-advanced-pie-chart
+                  [view]="viewPlatosConsumidos"
+                  [scheme]="colorScheme"
+                  [results]="kpiPlatosConsumidos"
+                  [gradient]="true"
+                  >
+                </ngx-charts-advanced-pie-chart>
+              </div>
+            </div>
+            <br>
+            <h3 nz-title> Detalle </h3>
             <table>
               <tr>
                 <th>#</th>
@@ -1207,6 +1365,40 @@
             </table>
           </div>
           <div *ngIf="tipoReporteSelected == 4">
+            <div nz-row>
+              <div>
+                <h3 nz-title style="background-color: rgba(81, 0, 195, 0.319); text-align: center; margin-bottom: 0;"> Indicadores de cantidades </h3>
+              </div>
+              <div style="display: grid; border: 1px solid rgba(81, 0, 195, 0.319); border-radius: 0px 0px 10px 10px;  justify-items: center; align-items: center; height: 100%;">
+                <ngx-charts-bar-vertical-2d
+                  [view]="viewReporteReabastecimiento"
+                  [scheme]="colorScheme"
+                  [results]="kpiReporteReabastecimiento"
+                  [gradient]="true"
+                  [xAxis]="true"
+                  [yAxis]="true"
+                  [legend]="true"
+                  legendTitle="Cantidades">
+                </ngx-charts-bar-vertical-2d>
+              </div>
+              <br>
+              <div>
+                <h3 nz-title style="background-color: rgba(81, 0, 195, 0.319); text-align: center; margin-bottom: 0;"> Indicadores de costos </h3>
+              </div>
+              <div style="display: grid; border: 1px solid rgba(81, 0, 195, 0.319); border-radius: 0px 0px 10px 10px;  justify-items: center; align-items: center; height: 100%;">
+                <ngx-charts-bar-horizontal
+                  [view]="viewReporteReabastecimiento"
+                  [scheme]="colorScheme"
+                  [results]="kpiReporteReabastecimientoPrecios"
+                  [gradient]="true"
+                  [xAxis]="true"
+                  [yAxis]="true"
+                  [legend]="true"
+                  legendTitle="Producto">
+                </ngx-charts-bar-horizontal>
+              </div>
+            </div>
+            <br>
             <h3 nz-title> Reporte de reabastecimiento </h3>
             <table>
               <tr>
@@ -1237,7 +1429,46 @@
           </div>
           <div *ngIf="tipoReporteSelected == 5">
 
-            <h3 nz-title>Inversion de 30 millones</h3>
+            <div nz-row>
+              <div>
+                <h3 nz-title style="background-color: rgba(81, 0, 195, 0.319); text-align: center; margin-bottom: 0;"> Inversión de 30 millones </h3>
+              </div>
+              <div style="display: grid; border: 1px solid rgba(81, 0, 195, 0.319); border-radius: 0px 0px 10px 10px; justify-items: center; align-items: center;">
+                <ngx-charts-number-card
+                  [view]="viewFinanciero30m"
+                  [results]="kpiFinanciero30m"
+                  [cardColor]="cardColor">
+                </ngx-charts-number-card>
+              </div>
+            </div>
+            <br>
+            <div nz-row>
+              <div>
+                <h3 nz-title style="background-color: rgba(81, 0, 195, 0.319); text-align: center; margin-bottom: 0;"> Inversión de 40 millones </h3>
+              </div>
+              <div style="display: grid; border: 1px solid rgba(81, 0, 195, 0.319); border-radius: 0px 0px 10px 10px; justify-items: center; align-items: center;">
+                <ngx-charts-number-card
+                  [view]="viewFinanciero40m"
+                  [results]="kpiFinanciero40m"
+                  [cardColor]="cardColor">
+                </ngx-charts-number-card>
+              </div>
+            </div>
+            <br>
+            <div nz-row>
+              <div>
+                <h3 nz-title style="background-color: rgba(81, 0, 195, 0.319); text-align: center; margin-bottom: 0;"> Inversión de 50 millones </h3>
+              </div>
+              <div style="display: grid; border: 1px solid rgba(81, 0, 195, 0.319); border-radius: 0px 0px 10px 10px; justify-items: center; align-items: center;">
+                <ngx-charts-number-card
+                  [view]="viewFinanciero50m"
+                  [results]="kpiFinanciero50m"
+                  [cardColor]="cardColor">
+                </ngx-charts-number-card>
+              </div>
+            </div>
+            <!-- 
+            <h3 nz-title>Inversión de 30 millones</h3>
             <table>
                 <tr>
                     <th>Inversión inicial (pesos)</th>
@@ -1255,7 +1486,7 @@
 
             <br>
 
-            <h3 nz-title>Inversion de 40 millones</h3>
+            <h3 nz-title>Inversión de 40 millones</h3>
             <table>
                 <tr>
                     <th>Inversión inicial (pesos)</th>
@@ -1273,7 +1504,7 @@
 
             <br>
 
-            <h3 nz-title>Inversion de 50 millones</h3>
+            <h3 nz-title>Inversión de 50 millones</h3>
             <table>
                 <tr>
                     <th>Inversión inicial (pesos)</th>
@@ -1287,12 +1518,23 @@
                     <td>{{row[2]}}</td>
                     <td>{{row[3]}}</td>
                 </tr>
-            </table>
+            </table> -->
 
           </div>
           <div *ngIf="tipoReporteSelected == 6">
-
-              <h3 nz-title>Reporte de tiempo de atencion - promedio de tiempo</h3>
+            <div nz-row>
+              <div>
+                <h3 nz-title style="background-color: rgba(81, 0, 195, 0.319); text-align: center; margin-bottom: 0;"> Reporte de tiempo de atencion </h3>
+              </div>
+              <div style="display: grid; border: 1px solid rgba(81, 0, 195, 0.319); border-radius: 0px 0px 10px 10px; justify-items: center; align-items: center;">
+                <ngx-charts-number-card
+                  [view]="viewTiempoAtencion"
+                  [results]="kpiTiempoAtencion"
+                  [cardColor]="cardColor">
+                </ngx-charts-number-card>
+              </div>
+            </div>
+              <!-- <h3 nz-title>Reporte de tiempo de atencion - promedio de tiempo</h3>
               <table>
                   <tr>
                       <th>Tiempo de atencion promedio</th>
@@ -1300,10 +1542,8 @@
                   <tr *ngFor="let row of reporteTiempoAtencionPromedio; let i = index;" class="mesa-row">
                       <td>{{row[0]}}</td>
                   </tr>
-              </table>
-
+              </table> -->
               <br>
-
               <h3 nz-title>Reporte de tiempo de atencion - duracion por boleta</h3>
               <table>
                   <tr>
@@ -1318,6 +1558,9 @@
 
           </div>
         </div>
+        <!-- <div>
+          <button nz-button (click)="pdfVistaPrevia()">vista previa</button>
+        </div> -->
     </ng-container>
   </nz-modal>
 

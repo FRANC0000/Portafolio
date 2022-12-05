@@ -49,6 +49,8 @@ import { NzTableModule } from 'ng-zorro-antd/table';
 import { AdministradorComponent } from './modulos/administrador/administrador.component';
 import { NzPaginationModule } from 'ng-zorro-antd/pagination';
 import { NzRateModule } from 'ng-zorro-antd/rate';
+import { NgxChartsModule } from '@swimlane/ngx-charts';
+
 
 registerLocaleData(es);
 
@@ -100,9 +102,10 @@ registerLocaleData(es);
     NzTransferModule,
     NzTableModule,
     NzPaginationModule,
-    NzRateModule
+    NzRateModule,
+    NgxChartsModule
   ],
   providers: [{ provide: NZ_I18N, useValue: es_ES }],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
 export class AppModule { }
