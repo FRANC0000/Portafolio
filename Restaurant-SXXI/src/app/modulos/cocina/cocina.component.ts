@@ -83,6 +83,8 @@ export class CocinaComponent implements OnInit {
   reservaObjectParam : Reserva;
   clienteObjectParam : Cliente;
   mesaReservada : boolean = false;
+  isVisibleVerDetallePedido = false;
+  pedidoSelected;
 
   ngOnInit() {
     console.log('usuarioLogeado', this.usuarioLogeado);
@@ -175,7 +177,9 @@ export class CocinaComponent implements OnInit {
 
   obtenerMesas(){
     this.mesasService.obtenerMesas().subscribe(resp => {
-      this.listadoMesas = resp["listado_mesas"];
+      this.listadoMesas = resp["listado_mesas"].filter(r => {
+        return r['id_estado_mesa'] === 2
+      });
       console.log('listadoMesas', this.listadoMesas);
       this.listadoMesas.sort(function(a,b){
         if(a.id_mesa < b.id_mesa){
@@ -789,7 +793,8 @@ export class CocinaComponent implements OnInit {
 
   verDetallePedidoEnCola(pedido){
     console.log('pedido verDetallePedidoEnCola', pedido);
-    
+    this.pedidoSelected = pedido;
+    this.isVisibleVerDetallePedido = true;
   }
 
   moverPedidoAEnPreparacion(pedido){
@@ -1490,5 +1495,9 @@ export class CocinaComponent implements OnInit {
         'error', 'Error al crear reporte', 'No es posible crear el reporte, intente nuevamente'
       )
     });
+  }
+
+  cancelarVerDetallePedido(){
+    this.isVisibleVerDetallePedido = false;
   }
 }

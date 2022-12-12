@@ -399,82 +399,92 @@ export class ClienteComponent implements OnInit {
       "id_boleta" : idBoleta
     }
     this.clienteService.obtenerPedidosPorIdBoleta(id_boleta).subscribe(resp=>{
+      this.puedePagar = false
       this.pedidoEnBoleta = [];
       // console.log('resp obtenerPedidosPorIdBoleta', resp);
       let pedidos = Object(resp["pedidos"]);
       let sumaPedidosEntregados = 0;
       // console.log('pedidos', pedidos);
       for (let pedido of pedidos){
-        if (pedido.id_estado_instancia === 4){
-          sumaPedidosEntregados +=1;
-        }
-        // console.log('pedido', pedido);
-        // console.log('pedido', pedido.platos_del_pedido);
-        // console.log('pedido', pedido.productos_del_pedido);
-        const carroDeCompras : ProductoEnCarro[] = []
-        for (let plato of Object(pedido.platos_del_pedido)){
-          // console.log('plato', plato);
-          let platoEnCarro : ProductoEnCarro;
-          const unPlato : Plato = {
-            id_plato : plato.id_plato,
-            cantidad_personas_recomendadas : plato.cantidad_personas_recomendadas,
-            comentario : plato.comentario_plato,
-            descripcion_plato : plato.descripcion_plato,
-            disponibilidad : plato.disponibilidad_plato,
-            id_tipo_plato : plato.id_tipo_plato,
-            nombre_plato : plato.nombre_plato,
-            precio_plato : plato.precio_plato
+        if (pedido.id_estado_instancia != 6){
+          if (pedido.id_estado_instancia === 4){
+            sumaPedidosEntregados +=1;
           }
-          platoEnCarro = {
-            plato : unPlato,
-            cantidad : plato.cantidad_platos_en_pedido,
-            esPlato : true,
-            esProducto : false,
-            valorUnitario : plato.precio_plato
+          // console.log('pedido', pedido);
+          // console.log('pedido', pedido.platos_del_pedido);
+          // console.log('pedido', pedido.productos_del_pedido);
+          const carroDeCompras : ProductoEnCarro[] = []
+          for (let plato of Object(pedido.platos_del_pedido)){
+            // console.log('plato', plato);
+            let platoEnCarro : ProductoEnCarro;
+            const unPlato : Plato = {
+              id_plato : plato.id_plato,
+              cantidad_personas_recomendadas : plato.cantidad_personas_recomendadas,
+              comentario : plato.comentario_plato,
+              descripcion_plato : plato.descripcion_plato,
+              disponibilidad : plato.disponibilidad_plato,
+              id_tipo_plato : plato.id_tipo_plato,
+              nombre_plato : plato.nombre_plato,
+              precio_plato : plato.precio_plato
+            }
+            platoEnCarro = {
+              plato : unPlato,
+              cantidad : plato.cantidad_platos_en_pedido,
+              esPlato : true,
+              esProducto : false,
+              valorUnitario : plato.precio_plato
+            }
+            carroDeCompras.push(platoEnCarro);
           }
-          carroDeCompras.push(platoEnCarro);
-        }
-
-        for (let producto of Object(pedido.productos_del_pedido)){
-          // console.log('producto', producto);
-          let prodEnCarro : ProductoEnCarro;
-          const unProducto : Producto = {
-            comentario : producto.comentario_producto,
-            fecha_ingreso_producto : producto.fecha_ingreso_producto,
-            fecha_vencimiento : producto.fecha_vencimiento_producto,
-            id_producto : producto.id_producto,
-            id_tipo_producto : producto.id_tipo_producto,
-            medida_producto : producto.medida_producto,
-            nombre_producto : producto.nombre_producto,
-            stock_producto : producto.stock_producto,
-            valor_unitario : producto.valor_unitario_producto
+  
+          for (let producto of Object(pedido.productos_del_pedido)){
+            // console.log('producto', producto);
+            let prodEnCarro : ProductoEnCarro;
+            const unProducto : Producto = {
+              comentario : producto.comentario_producto,
+              fecha_ingreso_producto : producto.fecha_ingreso_producto,
+              fecha_vencimiento : producto.fecha_vencimiento_producto,
+              id_producto : producto.id_producto,
+              id_tipo_producto : producto.id_tipo_producto,
+              medida_producto : producto.medida_producto,
+              nombre_producto : producto.nombre_producto,
+              stock_producto : producto.stock_producto,
+              valor_unitario : producto.valor_unitario_producto
+            }
+            prodEnCarro = {
+              producto : unProducto,
+              cantidad : producto.cantidad_productos_en_pedido,
+              esPlato : false,
+              esProducto : true,
+              valorUnitario : producto.valor_unitario_producto
+            }
+            carroDeCompras.push(prodEnCarro);          
           }
-          prodEnCarro = {
-            producto : unProducto,
-            cantidad : producto.cantidad_productos_en_pedido,
-            esPlato : false,
-            esProducto : true,
-            valorUnitario : producto.valor_unitario_producto
+          // console.log('carroDeCompras', carroDeCompras);
+          
+          const unPedido :Pedido = {
+            fechaIngreso : pedido.fecha_ingreso,
+            idBoleta : pedido.id_boleta,
+            rutCliente : pedido.id_cliente,
+            idEstadoIinstancia : pedido.id_estado_instancia,
+            idMesa : pedido.id_mesa,
+            idPedido : pedido.id_pedido,
+            subtotal : pedido.subtotal,
+            carritoProductos : carroDeCompras,
+            nombreEstadoInstancia : pedido.nombre_estado_instancia,
           }
-          carroDeCompras.push(prodEnCarro);          
+  
+          if (pedido.id_estado_instancia == 1){
+            unPedido.puedeCancelar = true;
+          }
+          else{
+            unPedido.puedeCancelar = false;
+          }
+          // console.log('unPedido.idPedido', unPedido.idPedido);
+          // console.log('unPedido', unPedido);
+          // console.log('------------');
+          this.pedidoEnBoleta.push(unPedido);
         }
-        // console.log('carroDeCompras', carroDeCompras);
-        
-        const unPedido :Pedido = {
-          fechaIngreso : pedido.fecha_ingreso,
-          idBoleta : pedido.id_boleta,
-          rutCliente : pedido.id_cliente,
-          idEstadoIinstancia : pedido.id_estado_instancia,
-          idMesa : pedido.id_mesa,
-          idPedido : pedido.id_pedido,
-          subtotal : pedido.subtotal,
-          carritoProductos : carroDeCompras,
-          nombreEstadoInstancia : pedido.nombre_estado_instancia
-        }
-        // console.log('unPedido.idPedido', unPedido.idPedido);
-        // console.log('unPedido', unPedido);
-        // console.log('------------');
-        this.pedidoEnBoleta.push(unPedido);
       }
       if (this.pedidoEnBoleta.length === sumaPedidosEntregados){
         this.puedePagar = true;
@@ -1031,7 +1041,24 @@ export class ClienteComponent implements OnInit {
   onChangeRecetaSelected(ev,id_plato){
     // console.log('onChangeRecetaSelected', ev);
     document.getElementById(id_plato).setAttribute('ngmodel', ev)
+    document.getElementById('add-'+id_plato).removeAttribute('disabled');
     // console.log('dom', document.getElementById(id_plato));
+  }
+
+  cancelarPedido(idPedido, idBoleta){
+    console.log('cancelarPedido');
+    let pedido = {
+      "id_pedido" : idPedido
+    }
+    this.clienteService.cancelarPedido(pedido).subscribe( resp => {
+      console.log('resp', resp);
+      this.nzNotificacionService.create(
+        'success', 'Pedido cancelado', ''
+      );
+
+      this.obtenerPedidosPorIdBoleta(idBoleta);
+    })
+    
   }
 
 }

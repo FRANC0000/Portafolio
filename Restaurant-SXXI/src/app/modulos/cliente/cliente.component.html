@@ -50,7 +50,8 @@
                       <nz-option [nzValue]="rec.id_receta" [nzLabel]="rec.titulo_receta"></nz-option>
                     </ng-container>
                   </nz-select>
-                  <button nz-button (click)="agregarPlatoAlCarro(plato)" class="agregar-item"> Añadir </button>
+                  <button nz-button (click)="agregarPlatoAlCarro(plato)" class="agregar-item" disabled
+                  id="add-{{plato.id_plato}}"> Añadir </button>
                   <button nz-button (click)="verDetallePlato(plato)"> Ver detalle </button>
                 </div>
               </div>
@@ -297,6 +298,16 @@
                   <label for="" class="itemDelCarro-nombre">{{itemDelCarro.producto?.nombre_producto | uppercase}} </label>
                   <label for="" class="itemDelCarro-valor-cantidad">${{itemDelCarro.valorUnitario | currency:'CLP'}} (x{{itemDelCarro.cantidad}})</label>
                 </h5>
+              </div>
+              <br>
+              <div style="text-align: center;">
+                <button nz-button nzType="danger" *ngIf="item.puedeCancelar"
+                  nz-popconfirm
+                  nzPopconfirmTitle="¿Seguro que quieres cancelar este pedido?"
+                  nzPopconfirmPlacement="top"
+                  (nzOnConfirm)="cancelarPedido(item.idPedido, item.idBoleta)"> 
+                  Cancelar pedido 
+                </button>
               </div>
             </div>
             </nz-collapse-panel>

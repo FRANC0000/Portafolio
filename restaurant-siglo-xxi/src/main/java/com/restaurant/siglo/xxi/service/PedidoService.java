@@ -10,6 +10,7 @@ public interface PedidoService {
 	
 	public String ingresarPedido(Map<String, Object> ingresarPedido) throws ParseException;
 	public String modificarInstanciaPedido(Map<String, Object> modificarInstanciaPedido) throws ParseException;
+	public String cancelarPedido(Map<String, Object> cancelarPedido) throws ParseException;
 	public String obtenerPedidosPorIdBoleta(Map<String, Object> idBoleta) throws ParseException;
 	public String obtenerPedidosEnCola();
 	public String obtenerPedidosEnPreparacion();

@@ -147,7 +147,7 @@ export class AdministradorComponent implements OnInit {
   kpiRelacionProductos = [];
   kpiDetalleProductos = [];
   viewCantidadProductos = [300, 150];
-  viewStock = [900, 400];
+  viewStock = [900, 1000];
 
   // options
   showXAxis = true;

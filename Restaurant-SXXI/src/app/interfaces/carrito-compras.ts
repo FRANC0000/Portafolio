@@ -22,7 +22,8 @@ export interface Pedido{
     fechaIngreso : string,
     idEstadoIinstancia : number,
     idBoleta? : number
-    nombreEstadoInstancia? : string
+    nombreEstadoInstancia? : string,
+    puedeCancelar ?: boolean
 }
 
 export interface Boleta{

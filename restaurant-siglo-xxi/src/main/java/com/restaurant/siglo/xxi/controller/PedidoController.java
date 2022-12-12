@@ -72,6 +72,20 @@ public class PedidoController {
 		return resp;	
 	}
 	
+	@RequestMapping(value="/cancelarPedido")
+	public String cancelarPedido(@RequestBody Map<String, Object> cancelarPedido) {
+		
+		String resp = "";
+		try {
+			resp = pedidoService.cancelarPedido(cancelarPedido);
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return resp;	
+	}
+	
 	@RequestMapping(value="/obtenerPedidosEnPreparacion")
 	public String obtenerPedidosEnPreparacion() {
 		

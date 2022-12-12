@@ -130,11 +130,24 @@
         <div class="menu-header">
             <h2>Alertas mesas</h2>
         </div>
-        <nz-divider></nz-divider>
         <div class="menu-content">
-            <div class="grid">
-                <div *ngFor="let mesa of listadoMesas" class="mesas">
-                    <div class="card" *ngIf="mesa.nombre_estado_mesa == 'Ocupado'">
+            <div class="grid mesas">
+                <div *ngFor="let mesa of listadoMesas">
+                    <nz-card style="width:300px; margin: 0px 2px; margin-bottom: 10px;" nzTitle="Mesa #{{mesa.id_mesa}}">
+                        <div class="botones-pedidos" style="text-align: center;">
+                            <button nz-popconfirm
+                            nzPopconfirmTitle="¿Seguro que quieres cancelar la reserva y disponibilizar la mesa?"
+                            nzPopconfirmPlacement="top"
+                            (nzOnConfirm)="cancelarReserva(mesa.id_mesa)"
+                            nz-button> Disponibilizar mesa </button>
+                            <!-- <button nz-button (click)="moverPedidoAParaEntregar(pedido)"
+                             style="width: 100%;" class="agregar-item">
+                                Mover a 'Para entregar'
+                            </button> -->
+                        </div>
+                    </nz-card>
+
+                    <!-- <div class="card" *ngIf="mesa.nombre_estado_mesa == 'Ocupado'">
                         <div class="title-card">
                             Mesa nro. {{mesa.id_mesa}}
                             
@@ -151,10 +164,11 @@
                             nzPopconfirmPlacement="top"
                             (nzOnConfirm)="cancelarReserva(mesa.id_mesa)"> Disponibilizar mesa </button>
                         </div>
-                    </div>
+                    </div> -->
                 </div>
             </div>
         </div> 
+        <br>
         <div class="menu-header">
             <h2>Nuestro menú.</h2>
         </div>
@@ -1174,6 +1188,34 @@
                     </div>
                 </div>
             </form>
+        </ng-container>
+    </nz-modal>
+
+    <!-- VER DETALLE DE PEDIDO -->
+    <nz-modal [(nzVisible)]="isVisibleVerDetallePedido"  [nzWidth]="1000" nzTitle="Ver detalle de pedido" (nzOnCancel)="cancelarVerDetallePedido()" (nzOnOk)="cancelarVerDetallePedido()" >
+        <ng-container>
+            <div>
+                <h3 nz-title> Pedido: #{{pedidoSelected?.idPedido}}</h3>
+                <h4 nz-title> Fecha: {{pedidoSelected?.fechaIngreso}}</h4>
+                <h4 nz-title> Estado: {{pedidoSelected?.nombreEstadoInstancia}}</h4>
+                <h4 nz-title> Mesa: #{{pedidoSelected?.idMesa}}</h4>
+                <h4 nz-title> Cliente: {{pedidoSelected?.rutCliente}}</h4>
+                <h4 nz-title> Subtotal: ${{pedidoSelected?.subtotal}}</h4>
+            </div>
+            <br>
+            <nz-divider></nz-divider>
+            <br>
+            <div>
+                <h4 nz-title> Carrito de compras </h4>
+                <div *ngFor="let item of pedidoSelected?.carritoProductos">
+                    <div *ngIf="item.esPlato">
+                        {{item.plato.nombre_plato}} - ${{item.plato.precio_plato}}
+                    </div>
+                    <div *ngIf="item.esProducto">
+                        {{item.producto.nombre_plato}} - ${{item.producto.precio_plato}}
+                    </div>
+                </div>
+            </div>
         </ng-container>
     </nz-modal>
 </div>

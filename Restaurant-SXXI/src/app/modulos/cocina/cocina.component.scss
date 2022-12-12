@@ -240,6 +240,12 @@
     height: 270px;
 }
 
+.mesas{
+    display: flex;
+    overflow-x: scroll;
+    align-items: center;
+}
+
 .sin-pedidos{
     display: flex;
     align-items: center;

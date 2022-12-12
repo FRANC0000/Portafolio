@@ -268,6 +268,20 @@ public class PedidoServiceImpl implements PedidoService {
 		return resp;
 	}
 	
+	public String cancelarPedido(Map<String, Object> cancelarPedido) throws ParseException {
+		String resp = "";
+		try {
+			int id_pedido = Integer.parseInt(cancelarPedido.get("id_pedido").toString());
+			
+			resp = pedidoRepository.cancelarPedido(id_pedido);
+		} catch (Exception e) {
+			// TODO: handle exception
+			resp = "Error al modificar instancia de pedido \n"
+					+ "Mensaje: "+ e.getMessage();
+		}
+		return resp;
+	}
+	
 	@Override
 	public String obtenerPedidosEnPreparacion() {
 		

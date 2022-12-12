@@ -147,6 +147,8 @@ export class FinanzasComponent implements OnInit {
       idTipoPago : boleta.id_tipo_pago,
       total : boleta.total
     };
+    console.log('this.boletaAPagarSelected', this.boletaAPagarSelected);
+    
     this.obtenerPedidosPorIdBoleta(boleta.id_boleta);
   }
 

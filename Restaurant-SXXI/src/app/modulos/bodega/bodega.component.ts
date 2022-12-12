@@ -57,6 +57,20 @@ export class BodegaComponent implements OnInit {
     localStorage.clear();
   }
 
+  ordenarBuzonPorFecha(){
+    this.buzonEntrada.sort(function(a,b){
+      let fechaA = Date.parse(a.registro['fecha_instancia'])
+      let fechaB = Date.parse(b.registro['fecha_instancia'])
+      if(fechaA > fechaB){
+        return -1
+      }
+      if (fechaA < fechaB){
+        return 1
+      }
+      return 0;
+    })
+  }
+
   obtenerProductos(){
     this.bodegaService.obtenerProductos().subscribe(resp=>{
       this.listaProductos = resp['productos'].sort((a,b) =>{
@@ -79,7 +93,10 @@ export class BodegaComponent implements OnInit {
         return r.ultima_version == true;
       })
 
+      this.listaRegistrosRecepcionSolicitudReabastecimiento.sort( (a,b) => Date.parse(b['fecha_instancia']) - Date.parse(a['fecha_instancia']))
+
       console.log('listaRegistrosRecepcionSolicitudReabastecimiento', this.listaRegistrosRecepcionSolicitudReabastecimiento);
+      // this.ordenarBuzonPorFecha();
     })
   }
 
@@ -100,6 +117,7 @@ export class BodegaComponent implements OnInit {
       }
       this.quitarUltimaVersionFalseBuzon();
       console.log('buzon',this.buzonEntrada);
+      this.ordenarBuzonPorFecha();
     })    
   }
 
@@ -121,6 +139,7 @@ export class BodegaComponent implements OnInit {
       }
       this.quitarUltimaVersionFalseBuzon();
       console.log('buzon',this.buzonEntrada);
+      this.ordenarBuzonPorFecha();
     })    
   }
 
@@ -142,6 +161,7 @@ export class BodegaComponent implements OnInit {
       }
       this.quitarUltimaVersionFalseBuzon();
       console.log('buzon',this.buzonEntrada);
+      this.ordenarBuzonPorFecha();
     })    
   }
 
@@ -163,6 +183,7 @@ export class BodegaComponent implements OnInit {
       }
       this.quitarUltimaVersionFalseBuzon();
       console.log('buzon',this.buzonEntrada);
+      this.ordenarBuzonPorFecha();
     })    
   }
 
@@ -184,6 +205,7 @@ export class BodegaComponent implements OnInit {
       }
       this.quitarUltimaVersionFalseBuzon();
       console.log('buzon',this.buzonEntrada);
+      this.ordenarBuzonPorFecha();
     })
   }
 

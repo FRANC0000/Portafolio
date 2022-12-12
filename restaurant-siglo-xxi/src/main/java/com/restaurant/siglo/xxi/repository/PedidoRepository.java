@@ -40,4 +40,8 @@ public interface PedidoRepository extends JpaRepository<Pedido, Integer>{
 	@Query(value = "select modificar_instancia_pedido(:id_pedido, :id_estado_instancia )", nativeQuery = true)
 	String modificarInstanciaPedido(@Param("id_pedido") int id_pedido, 
 			@Param("id_estado_instancia") int id_estado_instancia);
+	
+	@Query(value = "select cancelar_pedido(:id_pedido)", nativeQuery = true)
+	String cancelarPedido(@Param("id_pedido") int id_pedido);
+	
 }
