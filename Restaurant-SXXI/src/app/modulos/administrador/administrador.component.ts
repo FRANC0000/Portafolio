@@ -116,37 +116,41 @@ export class AdministradorComponent implements OnInit {
   reporteTiempoDuracionEstadiaMensual = [];
 
   kpiClientesAtendidos = [];
-  viewClientesAtendidos = [300, 150];
+  viewClientesAtendidos = [300, 200];
 
   kpiIngresoClientes = [];
   viewIngresoClientes = [700, 300];
 
   kpiTipoPago = [];
-  viewTipoPago = [300, 150];
+  viewTipoPago = [300, 200];
 
   kpiPlatosConsumidos = [];
   viewPlatosConsumidos = [700, 300];
 
   kpiFinanciero30m = [];
-  viewFinanciero30m = [900, 150];
+  viewFinanciero30m = [900, 200];
 
   kpiFinanciero40m = [];
-  viewFinanciero40m = [900, 150];
+  viewFinanciero40m = [900, 200];
 
   kpiFinanciero50m = [];
-  viewFinanciero50m = [900, 150];
+  viewFinanciero50m = [900, 200];
 
   kpiTiempoAtencion = [];
-  viewTiempoAtencion = [300, 150];
+  viewTiempoAtencion = [300, 200];
 
   kpiReporteReabastecimiento = [];
+  xlabel = "Cantidad de productos en unidad"
+  ylabel="Productos"
   kpiReporteReabastecimientoPrecios = [];
+  x2label="Valor en CLP"
+  y2label="Productos"
   viewReporteReabastecimiento = [900, 400];
 
   kpiCantidadProductos = [];
   kpiRelacionProductos = [];
   kpiDetalleProductos = [];
-  viewCantidadProductos = [300, 150];
+  viewCantidadProductos = [300, 200];
   viewStock = [900, 1000];
 
   // options
@@ -301,6 +305,7 @@ export class AdministradorComponent implements OnInit {
       }
       this.quitarUltimaVersionFalseBuzon();
       console.log('buzon',this.buzonEntrada);
+      this.ordenarBuzonPorFecha();
     })    
   }
 
@@ -322,6 +327,7 @@ export class AdministradorComponent implements OnInit {
       }
       this.quitarUltimaVersionFalseBuzon();
       console.log('buzon',this.buzonEntrada);
+      this.ordenarBuzonPorFecha();
     })    
   }
 
@@ -1315,7 +1321,7 @@ export class AdministradorComponent implements OnInit {
       }
       this.kpiCantidadProductos = [
         {
-          "name" : "Cantidad de productos",
+          "name" : "Productos en bodega",
           "value" : cantidadProductos
         }
       ]
@@ -1617,6 +1623,17 @@ export class AdministradorComponent implements OnInit {
       this.listReportes = resp['reportes'].filter(r =>{
         return r.eliminado != true
       });
+      this.listReportes.sort(function(a,b){
+        let fechaA = Date.parse(a['fecha_creacion'])
+        let fechaB = Date.parse(b['fecha_creacion'])
+        if(fechaA > fechaB){
+          return -1
+        }
+        if (fechaA < fechaB){
+          return 1
+        }
+        return 0;
+      })
     })
   }
 
@@ -1626,6 +1643,17 @@ export class AdministradorComponent implements OnInit {
       this.listSolicitudesReabastecimiento = resp['reportes'].filter(r =>{
         return r.eliminado != true && r.id_tipo_reporte == 4
       });
+      this.listSolicitudesReabastecimiento.sort(function(a,b){
+        let fechaA = Date.parse(a['fecha_creacion'])
+        let fechaB = Date.parse(b['fecha_creacion'])
+        if(fechaA > fechaB){
+          return -1
+        }
+        if (fechaA < fechaB){
+          return 1
+        }
+        return 0;
+      })
     })
   }
   listRegistros = []
@@ -1804,11 +1832,11 @@ export class AdministradorComponent implements OnInit {
             const pdfDefinitions :any = {
               content: [
                 {
-                  text: 'Reporte de atencion de clientes', alignment: 'center', style: 'header',
+                  text: 'Reporte de atención de clientes', alignment: 'center', style: 'header',
                   margin: [0, 10, 0, 30]
                 },
                 {
-                  text: 'Este reporte de atencion de clientes fue generado el día ' +  fecha + ' por el usuario ' + usuarioLog + ' y representa la cantidad total de clientes atendidos, cuantas veces han ingresado al local durante el mes y sus boletas. Este documento será utilizado para gestión y apoyo en la toma de decisiones del propio Restaurant Siglo XXI.' , 
+                  text: 'Este reporte de atención de clientes fue generado el día ' +  fecha + ' por el usuario ' + usuarioLog + ' y representa la cantidad total de clientes atendidos, cuantas veces han ingresado al local durante el mes y sus boletas. Este documento será utilizado para gestión y apoyo en la toma de decisiones del propio Restaurant Siglo XXI.' , 
                   margin: [0, 0, 0, 20] //izquierda, arriba, derecha, abajo
                 },
                 // {
@@ -2584,6 +2612,20 @@ export class AdministradorComponent implements OnInit {
     this.obtenerSolicitudReabastecimientoAprobada();
     this.obtenerSolicitudReabastecimientoModificada();
     this.cerrarRegistrosSolicitudesAprobadas();
+  }
+
+  ordenarBuzonPorFecha(){
+    this.buzonEntrada.sort(function(a,b){
+      let fechaA = Date.parse(a.registro['fecha_instancia'])
+      let fechaB = Date.parse(b.registro['fecha_instancia'])
+      if(fechaA > fechaB){
+        return -1
+      }
+      if (fechaA < fechaB){
+        return 1
+      }
+      return 0;
+    })
   }
 
   visible: boolean = false;

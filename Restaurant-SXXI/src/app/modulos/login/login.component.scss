@@ -2,17 +2,20 @@
   display: flex;
   width: 100%;
   height: 100%;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;  
   
   .credenciales{
-    background: #5000c3;
+    background: rgba(81, 0, 195, 0.319);
     display: flex;
     justify-content: center;
     align-items: center;
-    border-radius: 10px;
-    border: #3f009b 4px solid;
-    padding: 30px 100px;
+    // border-radius: 10px;
+    // border: #3f009b 4px solid;
+    // padding: 30px 100px;
+    width: 450px;
+    height: 100%;
+    box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
   }
 }
 

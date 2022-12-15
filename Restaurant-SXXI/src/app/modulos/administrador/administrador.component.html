@@ -1219,7 +1219,7 @@
               <div nz-col nzSpan="2"></div>
               <div nz-col nzSpan="11">
                 <div>
-                  <h3 nz-title style="background-color: rgba(81, 0, 195, 0.319); text-align: center; margin-bottom: 0;"> Reporte de clientes atendidos por boleta </h3>
+                  <h3 nz-title style="background-color: rgba(81, 0, 195, 0.319); text-align: center; margin-bottom: 0;"> Relación entre tipos de pago utilizados </h3>
                 </div>
                 <div style="display: grid; border: 1px solid rgba(81, 0, 195, 0.319); border-radius: 0px 0px 10px 10px;  justify-items: center; align-items: center;">
                   <ngx-charts-pie-chart
@@ -1248,7 +1248,7 @@
                   [gradient]="gradient"
                   [xAxis]="showXAxis"
                   [yAxis]="showYAxis"
-                  [legend]="showLegend"
+                  [legend]="false"
                   [showXAxisLabel]="showXAxisLabel"
                   [showYAxisLabel]="showYAxisLabel"
                   [xAxisLabel]="xAxisLabel"
@@ -1378,6 +1378,10 @@
                   [xAxis]="true"
                   [yAxis]="true"
                   [legend]="true"
+                  [showXAxisLabel]="true"
+                  [showYAxisLabel]="true"
+                  [xAxisLabel]="xlabel"
+                  [yAxisLabel]="ylabel"
                   legendTitle="Cantidades">
                 </ngx-charts-bar-horizontal-2d>
               </div>
@@ -1394,6 +1398,10 @@
                   [xAxis]="true"
                   [yAxis]="true"
                   [legend]="true"
+                  [showXAxisLabel]="true"
+                  [showYAxisLabel]="true"
+                  [xAxisLabel]="x2label"
+                  [yAxisLabel]="y2label"
                   legendTitle="Producto">
                 </ngx-charts-bar-horizontal>
               </div>
@@ -1524,7 +1532,7 @@
           <div *ngIf="tipoReporteSelected == 6">
             <div nz-row>
               <div>
-                <h3 nz-title style="background-color: rgba(81, 0, 195, 0.319); text-align: center; margin-bottom: 0;"> Reporte de tiempo de atencion </h3>
+                <h3 nz-title style="background-color: rgba(81, 0, 195, 0.319); text-align: center; margin-bottom: 0;"> Promedio de tiempo de atención este mes </h3>
               </div>
               <div style="display: grid; border: 1px solid rgba(81, 0, 195, 0.319); border-radius: 0px 0px 10px 10px; justify-items: center; align-items: center;">
                 <ngx-charts-number-card

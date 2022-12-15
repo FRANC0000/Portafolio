@@ -8,7 +8,7 @@
         <div *ngFor="let mesa of listadoMesas" class="mesas">
             <div class="card" *ngIf="mesa.nombre_estado_mesa == 'Disponible'" (click)="clickMesa(mesa)">
                 <div class="title-card">
-                    Mesa nro. {{mesa.id_mesa}}
+                    <h3 nz-title>Mesa #{{mesa.id_mesa}}</h3>
                 </div>
                 <div class="content-card">
                     Cantidad de asientos: {{mesa.cantidad_asientos}}
